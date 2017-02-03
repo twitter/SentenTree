@@ -1,14 +1,14 @@
-@import 'compass/css3';
-@import 'compass/css3/user-interface';
+// @import 'compass/css3';
+// @import 'compass/css3/user-interface';
 
-@import 'pure/sass/compassFlexbox';
-@import 'pure/sass/mixins';
-@import 'pure/sass/genericClasses';
+// @import 'pure/sass/compassFlexbox';
+@import '../pure/sass/mixins';
+// @import '../pure/sass/genericClasses';
 
 @import 'common/directives/widgets/promisePlaceholder';
 
 body{
-  font-family: 'Gotham Narrow SSm';
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   padding-bottom: 200px;
 }
 
@@ -45,7 +45,7 @@ body{
 }
 
 .label{
-  font-family: 'Gotham Narrow SSm', "Helvetica Neue", Helvetica, Arial, Impact, Charcoal, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, Impact, Charcoal, sans-serif;
   text-anchor: "middle";
 }
 

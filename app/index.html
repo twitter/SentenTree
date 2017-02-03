@@ -4,7 +4,6 @@
 <head>
   <meta charset="utf-8">
   <title>SentenTree</title>
-  <link rel="stylesheet" href="vendor/fonts/gotham-narrow-v1.css">
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="bower_components/sstooltip/dist/sstooltip.min.css">
   <!-- our custom style -->
@@ -37,12 +36,10 @@
                 <li ng-repeat="file in dataFiles">
                   <a href="#" ng-click="loadTweetFile(file)">{{file}}</a>
                 </li>
-<!--                 <li class="divider"></li>
-                <li><a href="#">Sochi dogs</a></li> -->
               </ul>
             </li>
           </ul>
-          <form class="navbar-form navbar-left" role="search">
+          <!--<form class="navbar-form navbar-left" role="search">
             <div class="form-group">
               <input ng-model="loadTweetsParams.term" type="text" class="form-control" placeholder="keywords">
               <input ng-model="loadTweetsParams.limit" type="text" class="form-control" placeholder="limit" style="width: 80px">
@@ -60,7 +57,7 @@
               </div>
             </div>
             <button ng-click="loadTweetsBtnClick()" type="submit" class="btn btn-default">Load Tweets</button>
-          </form>
+          </form>-->
           <div class="navbar-text navbar-right">
             <a href="https://twitter.com/mengdieh">@mengdieh</a>
             &amp;
@@ -98,10 +95,10 @@
 
   </div>
 
-  <script src="vendor/twitter-widgets.js"></script>
   <script src="bower_components/requirejs/require.js"></script>
   <script src="src/config.js"></script>
   <script src="src/main.js"></script>
+  <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script>
     function closeTweetDisplay() {
       var tooltipDiv = document.getElementById('tweet-display-area');

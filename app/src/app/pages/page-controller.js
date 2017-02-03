@@ -9,26 +9,28 @@ define([
 //---------------------------------------------------
 
 ngModule.controller('pageCtrl', ['$scope', 'safeApply', 'sstooltipManager', 'dateFilter', 'tweetDataService', function ($scope, safeApply, sstooltipManager, dateFilter, tweetDataService){
-  $scope.dataFiles = ['test.tsv', 
-                      'goal1.tsv', 
-                      'goal2.tsv', 
-                      'goal3.tsv', 
-                      'goal4.tsv',
-                      'sochidogs.tsv', 
-                      'vis14.tsv', 
-                      'eat24.tsv', 
-                      'robin_williams.json', 
-                      'yosemite.json', 
-                      'kindle.tsv',
-                      'lostsymbol.tsv', 
-                      'oscars2015.tsv',
-                      'samsung-tvs.tsv', 
-                      'genesis-reviews.tsv', 
-                      'genesis-and-forum.tsv', 
-                      'dowjones.tsv', 
-                      'superbowl2015.tsv',
-                      'reddit_apple_467bsj.tsv',
-                      'reddit_zuckerberg_3v1z0d.tsv'];
+  $scope.dataFiles = [
+    'test.tsv',
+    'goal1.tsv',
+    'goal2.tsv',
+    'goal3.tsv',
+    'goal4.tsv',
+    // 'sochidogs.tsv',
+    // 'vis14.tsv',
+    // 'eat24.tsv',
+    // 'robin_williams.json',
+    // 'yosemite.json',
+    // 'kindle.tsv',
+    // 'lostsymbol.tsv',
+    // 'oscars2015.tsv',
+    // 'samsung-tvs.tsv',
+    // 'genesis-reviews.tsv',
+    // 'genesis-and-forum.tsv',
+    // 'dowjones.tsv',
+    // 'superbowl2015.tsv',
+    // 'reddit_apple_467bsj.tsv',
+    // 'reddit_zuckerberg_3v1z0d.tsv'
+  ];
   $scope.selectedData = $scope.dataFiles[0];
   $scope.graphs = [];
   $scope.tokens = null;
@@ -40,22 +42,22 @@ ngModule.controller('pageCtrl', ['$scope', 'safeApply', 'sstooltipManager', 'dat
     console.log(dataFile);
     if( dataFile.indexOf('.tsv', dataFile.length-4) > -1)
       $scope.promises.tweets = tweetDataService.getDataFromTSVFile(dataFile);
-    else if( dataFile.indexOf('.json', dataFile.length-5) > -1) 
+    else if( dataFile.indexOf('.json', dataFile.length-5) > -1)
       $scope.promises.tweets = tweetDataService.getDataFromJSONFile(dataFile);
     console.log("start building graphs");
     $scope.promises.tweets.then(function(data){
       safeApply($scope, function() {
         $scope.metadata = data.metadata;
         $scope.tweets = data.data;
-        if( dataFile.indexOf('goal') == 0 ) 
+        if( dataFile.indexOf('goal') == 0 )
           $scope.terms = {'world':2, 'cup':2, 'brazil':1};
-        else if( dataFile.indexOf('vis14') == 0 ) 
+        else if( dataFile.indexOf('vis14') == 0 )
           $scope.terms = {'#ieeevis':2};
-        else if( dataFile.indexOf('alexfromtarget') == 0 ) 
+        else if( dataFile.indexOf('alexfromtarget') == 0 )
           $scope.terms = {'#alexfromtarget':2};
         else if( dataFile.indexOf('superbowl') == 0 )
           $scope.terms = {'superbowl':2};
-        else if( dataFile.indexOf('oscars') == 0 ) 
+        else if( dataFile.indexOf('oscars') == 0 )
           $scope.terms = {'oscars':2};
         else if( dataFile.indexOf('yosemite') == 0 )
           $scope.terms = {'yosemite':1};
@@ -132,22 +134,6 @@ ngModule.controller('pageCtrl', ['$scope', 'safeApply', 'sstooltipManager', 'dat
         $scope.terms = $scope.loadTweetsParams.term.split(' ');
       });
     });
-
-    // $http.jsonp('http://birdbrain-dev.local.twitter.com:3000/tools/senten_tree/get_top_tweets?callback=JSON_CALLBACK', {
-    //   params: params
-    // })
-    // .success(function(data, status){
-    //   console.log('success', data, status);
-    //   safeApply($scope, function() {
-    //     $scope.tweets = data;
-    //     $scope.terms = $scope.loadTweetsParams.term.split(' ');
-    //     if( d3.select("#status div") != null )
-    //       d3.select("#status div").text("");
-    //   });
-    // })
-    // .error(function(data, status){
-    //   console.log('error', data, status);
-    // });
   };
 
   this.test = function() {

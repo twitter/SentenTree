@@ -19,23 +19,23 @@
   "author": "@mengdieh, @kristw",
   "license": "Apache 2",
   "devDependencies": {
-    "chai": "~1.9.1",
-    "grunt": "~0.4.2",
-    "grunt-angular-templates": "~0.5.4",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-compass": "~0.7.2",
-    "grunt-contrib-connect": "~0.8.0",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-cssmin": "~0.8.0",
-    "grunt-contrib-htmlmin": "~0.2.0",
-    "grunt-contrib-requirejs": "~0.4.1",
-    "grunt-contrib-uglify": "~0.7.0",
-    "grunt-contrib-watch": "~0.6.1",
-    "grunt-replace": "~0.6.2",
-    "load-grunt-tasks": "~0.3.0",
-    "time-grunt": "~0.2.9"
+    "chai": "^1.9.1",
+    "grunt": "^0.4.2",
+    "grunt-angular-templates": "^0.5.4",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-connect": "^0.8.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-cssmin": "^0.8.0",
+    "grunt-contrib-htmlmin": "^0.2.0",
+    "grunt-contrib-requirejs": "^0.4.1",
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-replace": "^0.6.2",
+    "grunt-sass": "^2.0.0",
+    "load-grunt-tasks": "^0.3.0",
+    "time-grunt": "^0.2.9"
   },
   "dependencies": {
-    "lodash": "~2.4.1"
+    "lodash": "^2.4.1"
   }
 }

@@ -63,7 +63,7 @@ module.exports = function (grunt) {
           livereload: false
         },
         files: ['<%= yeoman.src %>/**/*.scss'],
-        tasks: ['compass:dev'],
+        tasks: ['sass'],
       },
       images:{
         files: ['<%= yeoman.src %>/images/{,*/}*.{gif,jpeg,jpg,png,svg,webp}'],
@@ -129,26 +129,34 @@ module.exports = function (grunt) {
       }
     },
 
-    // Compiles Sass to CSS and generates necessary files if requested
-    compass: {
-      dev: {
-        options: {
-          sassDir: '<%= yeoman.src %>',
-          cssDir: '<%= yeoman.src %>/auto',
-          generatedImagesDir: '<%= yeoman.src %>/../images/generated',
-          imagesDir: '<%= yeoman.src %>/../images',
-          javascriptsDir: '<%= yeoman.src %>',
-          fontsDir: '<%= yeoman.src %>/stylesheets/fonts',
-          importPath: '<%= yeoman.src %>/../bower_components',
-          httpImagesPath: '/images',
-          httpGeneratedImagesPath: '/images/generated',
-          httpFontsPath: '/styles/fonts',
-          relativeAssets: false,
-          assetCacheBuster: false
-          // specify: 'ddg.scss'
+    sass: {
+      dist: {
+        files: {
+          '<%= yeoman.src %>/auto/app/app.css': '<%= yeoman.src %>/app/app.scss'
         }
       }
     },
+
+    // // Compiles Sass to CSS and generates necessary files if requested
+    // compass: {
+    //   dev: {
+    //     options: {
+    //       sassDir: '<%= yeoman.src %>',
+    //       cssDir: '<%= yeoman.src %>/auto',
+    //       generatedImagesDir: '<%= yeoman.src %>/../images/generated',
+    //       imagesDir: '<%= yeoman.src %>/../images',
+    //       javascriptsDir: '<%= yeoman.src %>',
+    //       fontsDir: '<%= yeoman.src %>/stylesheets/fonts',
+    //       importPath: '<%= yeoman.src %>/../bower_components',
+    //       httpImagesPath: '/images',
+    //       httpGeneratedImagesPath: '/images/generated',
+    //       httpFontsPath: '/styles/fonts',
+    //       relativeAssets: false,
+    //       assetCacheBuster: false
+    //       // specify: 'ddg.scss'
+    //     }
+    //   }
+    // },
 
     // The following *-min tasks produce minified files in the dist folder
     htmlmin: {
@@ -229,7 +237,7 @@ module.exports = function (grunt) {
   //---------------------------------------------------
 
   grunt.registerTask('compile', 'Compile css and whatever that needs to be compile', [
-    'compass:dev',
+    'sass',
     'ngtemplates'
   ]);
 

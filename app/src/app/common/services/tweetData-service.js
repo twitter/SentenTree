@@ -52,39 +52,9 @@ ngModule.factory('tweetDataService', ['$q', '$http', function ($q, $http){
     return deferred.promise;
   }
 
-  function getDataFromVertica(params){
-    console.log('params', params);
-    var deferred = $q.defer();
-
-    $http.jsonp('http://birdbrain-dev.local.twitter.com:3000/tools/senten_tree/get_top_tweets?callback=JSON_CALLBACK', {
-      params: params
-    })
-    .success(function(data, status){
-      console.log('success', data, status);
-      var count = 0;
-      data.forEach(function(row){
-        count += +row.count;
-      });
-      deferred.resolve({
-        metadata: {
-          name: params.term,
-          count: count
-        },
-        data: data
-      });
-    })
-    .error(function(data, status){
-      console.log('error', data, status);
-      deferred.reject(data);
-    });
-
-    return deferred.promise;
-  }
-
   return{
     getDataFromTSVFile: getDataFromTSVFile,
-    getDataFromJSONFile: getDataFromJSONFile,
-    getDataFromVertica: getDataFromVertica
+    getDataFromJSONFile: getDataFromJSONFile
   };
 }]);
 

@@ -49,7 +49,6 @@ requirejs.config({
     'angular-ui-sortable':    {deps: ['angular', 'jquery-ui']},
     'angular-spinkit':        {deps: ['angular']},
     'angular-sanitize':       {deps: ['angular']},
-    // 'd3':                     {deps: ['jquery']},
     'bootstrap':              {deps: ['jquery']},
     'cola':                   {exports: 'cola', deps: ['d3', 'pure/js/shim/d3Shim']},
     'colorbrewer':            {exports: 'colorbrewer'},
