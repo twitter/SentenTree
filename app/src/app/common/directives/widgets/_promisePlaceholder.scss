@@ -1,0 +1,23 @@
+promise-placeholder, *[promise-placeholder]{
+
+  .placeholder{
+
+    text-align: center;
+    border: 1px dashed #e1e8ed;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    img{
+      width: 100px;
+    }
+
+    .loading-title{
+      text-align: center;
+      color: #8899a6;
+      text-transform: uppercase;
+      font-size: 15px;
+    }
+
+  }
+
+}

@@ -1,0 +1,27 @@
+.chart-legend{
+  display: inline-block;
+  background: $tw-faint-gray;
+  border: 1px solid $tw-border-gray;
+  padding: 2px 4px;
+  margin-top: 10px;
+  @include border-radius(4px);
+
+  .legend-block{
+    float: left;
+    display:inline-block;
+    padding: 4px 5px;
+    font-size: 11px;
+
+    .legend-color-sample{
+      float: left;
+      display: inline-block;
+      margin-top: 4px;
+      margin-right: 3px;
+      line-height: 2px;
+      width: 8px;
+      height: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+  }
+}

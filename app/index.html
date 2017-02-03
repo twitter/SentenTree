@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>SentenTree</title>
+  <link rel="stylesheet" href="vendor/fonts/gotham-narrow-v1.css">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bower_components/sstooltip/dist/sstooltip.min.css">
+  <!-- our custom style -->
+  <link rel="stylesheet" href="src/auto/app/app.css">
+</head>
+
+<body>
+  <img src="images/loader/duck.gif" alt="" style="display:none">
+
+  <div ng-controller="pageCtrl">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">SentenTree</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sample data <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="file in dataFiles">
+                  <a href="#" ng-click="loadTweetFile(file)">{{file}}</a>
+                </li>
+<!--                 <li class="divider"></li>
+                <li><a href="#">Sochi dogs</a></li> -->
+              </ul>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input ng-model="loadTweetsParams.term" type="text" class="form-control" placeholder="keywords">
+              <input ng-model="loadTweetsParams.limit" type="text" class="form-control" placeholder="limit" style="width: 80px">
+              <div class="input-group">
+                <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="loadTweetsParams.minTime" is-open="minDateOpened" min-date="'2014-06-01'" max-date="'2014-08-10'" datepicker-options="dateOptions" ng-required="true" close-text="Close" style="width:110px"/>
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-default" ng-click="openMinDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+              </div>
+              <div class="input-group">
+                <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="loadTweetsParams.maxTime" is-open="maxDateOpened" min-date="'2014-06-01'" max-date="'2014-08-10'" datepicker-options="dateOptions" ng-required="true" close-text="Close" style="width:110px"/>
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-default" ng-click="openMaxDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+              </div>
+            </div>
+            <button ng-click="loadTweetsBtnClick()" type="submit" class="btn btn-default">Load Tweets</button>
+          </form>
+          <div class="navbar-text navbar-right">
+            <a href="https://twitter.com/mengdieh">@mengdieh</a>
+            &amp;
+            <a href="https://twitter.com/kristw">@kristw</a>
+          </div>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <!-- content start here -->
+    <div class="container-fluid">
+      <div class="row">
+        <div promise-placeholder promise="promises.tweets">
+          <div class="col-md-12">
+            <div class="alert alert-info">
+              <strong>Displaying '{{metadata.name}}'</strong> ({{tweets.length}} unique Tweets / {{metadata.count}} if count retweets and duplicates)
+            </div>
+          </div>
+          <div class="col-md-12">
+            <sentenforest tweets="tweets" terms="terms"></sentenforest>
+          </div>
+        </div>
+      </div>
+      <!-- placeholder for views -->
+      <!-- <div ng-view></div> -->
+    </div>
+    <!-- content end here -->
+
+
+    <div class="sticky-footer">
+      <a onclick="closeTweetDisplay()" class="close">&times;</a>
+      <div id="tweet-display-area">
+      </div>
+    </div>
+
+  </div>
+
+  <script src="vendor/twitter-widgets.js"></script>
+  <script src="bower_components/requirejs/require.js"></script>
+  <script src="src/config.js"></script>
+  <script src="src/main.js"></script>
+  <script>
+    function closeTweetDisplay() {
+      var tooltipDiv = document.getElementById('tweet-display-area');
+      tooltipDiv.innerHTML = '';
+    }
+  </script>
+</body>

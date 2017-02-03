@@ -1,0 +1,59 @@
+.inline-block{
+  display: inline-block;
+}
+
+.fill-parent{
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.overflow-hidden{
+  overflow: hidden;
+}
+
+.ss-content-left{
+  text-align: left;
+}
+
+.ss-content-center{
+  text-align: center;
+}
+
+.ss-content-right{
+  text-align: right;
+}
+
+.ss-large-text{
+  font-size: 1.1em;
+}
+
+.flex-container-vertical{
+  @include display-flex;
+  @include flex-direction(column);
+  @include align-items(stretch);
+}
+
+.flex-container-horizontal{
+  @include display-flex;
+  @include flex-direction(row);
+  @include align-items(stretch);
+}
+
+.flex-fixed{
+  @include flex(0 0 auto);
+}
+
+.flex-spring{
+  @include flex(1 1 auto);
+}
+
+.no-margin-top{
+  margin-top: 0px;
+}
+
+.no-padding-top{
+  padding-top: 0px !important;
+}

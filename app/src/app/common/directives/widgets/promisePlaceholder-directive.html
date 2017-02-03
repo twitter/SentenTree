@@ -1,0 +1,22 @@
+<div>
+  <div ng-show="isLoading" ng-style="style" class="placeholder">
+    <img src="images/loader/danceDuck.gif" alt="">
+    <div class="loading-title">
+      loading...
+    </div>
+  </div>
+  <div ng-show="!isLoading" class="actual-content">
+    <div ng-if="isError">
+      <div ng-if="hasRetryFunction" class="ss-content-center">
+        <button class="btn btn-warning" ng-click="retry()">
+          Retry&nbsp;&nbsp;<i class="glyphicon glyphicon-refresh"></i>
+        </button>
+      </div>
+      Error:
+      <div hljs language="js" source="outputError | json"></div>
+    </div>
+    <div ng-show="isSuccess">
+      <div ng-transclude></div>
+    </div>
+  </div>
+</div>

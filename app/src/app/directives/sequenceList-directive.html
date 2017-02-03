@@ -1,0 +1,5 @@
+<div>
+	<button ng-repeat="seq in sequences" ng-click="setSelSeq(seq.slice(1))">
+		{{seq.slice(1).join(' ') + ' (' + seq[0] + ')'}}
+	</button>
+</div>
