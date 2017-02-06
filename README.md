@@ -16,17 +16,17 @@ Mengdie Hu, Krist Wongsuphasawat and John Stasko. [Visualizing Social Media Cont
 ## For developers
 
 ### Setup
-Install compass, grunt and bower. Then,
+Install dependencies via npm and bower
 
 ```
 $ npm install
 $ bower install
 ```
 
-### Run local instance
+Then run local instance via
 
 ```
-$ grunt
+$ npm run start
 ```
 
 ## License
