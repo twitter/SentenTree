@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "A novel text visualization technique",
   "main": "public/src/main-angular.js",
-  "keywords": [
-    "ddg"
-  ],
+  "keywords": ["sententree"],
   "directories": {
     "test": "test"
   },
