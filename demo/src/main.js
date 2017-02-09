@@ -8,5 +8,5 @@ d3Text('data/goal1.tsv', (error, data) => {
   console.log('data', rows);
 
   const model = new SentenTreeModel(rows);
-  console.log('model.graph', model.graph);
+  console.log('model', model);
 });

@@ -1,5 +1,6 @@
 import WordFilter from './WordFilter.js';
 import { tokenize } from './tokenizer.js';
+import Graph from './Graph.js';
 
 const DEFAULT_FILTER = new WordFilter();
 const DEFAULT_NODE_COUNT = 150;
@@ -42,7 +43,11 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
           graph = new Graph(minSupport, maxSupport);
           graphs.push(graph);
         }
-        var newWord = {entity:itemset[word], freq:cnt, id:graph.totalNodeCnt++};
+        var newWord = {
+          entity:itemset[word],
+          freq:cnt,
+          id:graph.totalNodeCnt++
+        };
         newWord.topTweet = s1.DBs[0].tweetId;
         var newWords = s.words.slice();
         newWords.splice(pos, 0, newWord);
@@ -158,21 +163,19 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
       }
   }
 
-  return {word:word, pos:pos, cnt:cnt, s0:s0, s1:s1};
+  return { word, pos, cnt, s0, s1 };
 }
 
 function updateNodesEdges( graphs, leafSeqs ) {
-  graphs.forEach( function(graph) {
-    for( var i = 0; i < graph.nodes.length; i++ ) {
-      graph.nodes[i].nid = i;
-    }
-  });
+  graphs.forEach(g => { g.generateNodeIds(); });
+
   var freqMax = 0, freqMin = 0;
 
-  leafSeqs.forEach( function(seq) {
-    if( graphs.indexOf(seq.graph) >= 0 ) {
-      var words = seq.words;
-//        printSeq(seq);
+  leafSeqs
+    .filter(seq => graphs.indexOf(seq.graph) >= 0)
+    .forEach( function(seq) {
+      const words = seq.words;
+  //        printSeq(seq);
       for( var i = 0; i < words.length - 1; i++ ) {
         var linkadj = seq.graph.linkadj;
         if( !(words[i].nid in linkadj ) )
@@ -194,9 +197,8 @@ function updateNodesEdges( graphs, leafSeqs ) {
         if( !words[i].leafSeq || words[i].leafSeq.size < seq.size )
           words[i].leafSeq = seq;
       }
-    }
-  });
-  console.log(freqMax);
+    });
+
   graphs.forEach (function(graph){
     graph.graphsFreqMax = freqMax;
     graph.graphsFreqMin = freqMin;
@@ -206,19 +208,17 @@ function updateNodesEdges( graphs, leafSeqs ) {
 }
 
 function printSeq (words) {
-  var str = "";
-  for( var i = 0; i < words.length; i++ )
-    str += words[i].entity + " ";
+  const str = words.map(w => w.entity).join(' ');
   console.log(str);
 }
 
 export default class SentenTreeModel {
   constructor(
-    entries,
+    inputEntries,
     wordFilter = DEFAULT_FILTER,
     termWeights = {}
   ) {
-    const dataset = tokenize(entries).filter(wordFilter);
+    const dataset = tokenize(inputEntries).filter(wordFilter);
     const terms = dataset.encodeTermWeights(termWeights);
 
     // Revised from initGraphs
@@ -259,7 +259,7 @@ export default class SentenTreeModel {
     );
 
     this.graphs = graphs
-      .filter(g =>  graph.nodes.length > 2)
+      .filter(g =>  g.nodes.length > 2)
       .slice(0, 10);
 
     const graphsFreq = updateNodesEdges(this.graphs, visibleGroups);

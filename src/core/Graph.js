@@ -7,8 +7,14 @@ export default class Graph {
     this.totalNodeCnt = 0;
   }
 
+  generateNodeIds() {
+    this.nodes.forEach((n, i) => { n.nid = i; });
+    return this;
+  }
+
   clear() {
     this.nodes = [];
     this.linkadj = [];
+    return this;
   }
 }
