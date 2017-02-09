@@ -11,6 +11,7 @@ export function tokenize(inputEntries){
     .map(entry => {
       const tokens = [];
       PATTERN.lastIndex = 0;
+      let tokenResult;
       while( (tokenResult = PATTERN.exec(entry.text)) != null ) {
         let t = tokenResult[0];
         // HACK
@@ -27,7 +28,7 @@ export function tokenize(inputEntries){
       return {
         id: entry.id,
         tokens,
-        count: +entry.count,
+        cnt: +entry.cnt,
         rawText: entry.text
       };
     });

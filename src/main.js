@@ -1,13 +1,7 @@
-import WordFilter from './core/WordFilter.js';
-import { initGraph } from './core/GraphBuilder.js';
-import { tokenize } from './core/tokenizer.js';
+import * as GraphBuilder from './core/GraphBuilder.js';
+import * as Tokenizer from './core/tokenizer.js';
+export { Tokenizer };
+export { GraphBuilder };
 
-const DEFAULT_FILTER = new WordFilter();
-
-export class SentenTreeModel {
-  constructor(entries, wordFilter = DEFAULT_FILTER, termWeights = {}) {
-    const dataset = tokenize(entries).filter(wordFilter);
-    const terms = dataset.encodeTermWeights(termWeights);
-    initGraph(dataset, terms);
-  }
-}
+export { default as SentenTreeModel } from './core/SentenTreeModel.js';
+export { default as WordFilter } from './core/WordFilter.js';

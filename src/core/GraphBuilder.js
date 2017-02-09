@@ -1,29 +1,32 @@
+import { sum } from 'lodash-es';
+
 const defaultNodeCnt = 150;
 
 export function initGraphs(tokens, terms) {
-  if(!tokens) return {root:null, graphs:[]};
+  if(!tokens) return {
+    root: null,
+    graphs:[]
+  };
 
-  var tokenlist = tokens.tokenlist;
-  var dbsize = 0;
-  for(var i = 0; i < tokenlist.length; i++ ) {
-    dbsize += tokenlist[i].cnt;
-  }
-  tokenlist.forEach(function(t) {
+  console.log('tokens', tokens);
+
+  const entries = tokens.entries;
+  const dbsize = sum(entries.map(e => e.cnt));
+  entries.forEach(function(t) {
     t.seqIndices = [];
-    t.text.forEach(function(i) {return +i;});
+    t.tokens.forEach(function(i) {return +i;});
   });
   console.log('dbsize = ' + dbsize);
 
-  var minSupport = dbsize * 0.001;
-  if( minSupport < 2 ) minSupport = 2;
-  var maxSupport = dbsize /3;
+  const minSupport = Math.max(dbsize * 0.001, 2);
+  const maxSupport = dbsize / 3;
 
-  var rootSeq = {
-    words:[],
-    newWord:null,
-    graph:null,
-    size:dbsize,
-    DBs:tokenlist
+  const rootSeq = {
+    words: [],
+    newWord: null,
+    graph: null,
+    size: dbsize,
+    DBs: entries
   };
   var graphs = [];
 
@@ -33,7 +36,7 @@ export function initGraphs(tokens, terms) {
     return graph.nodes.length > 2;
   }).slice(0, 10);
 
-  graphsFreq = updateNodesEdges(graphs, visibleGroups);
+  const graphsFreq = updateNodesEdges(graphs, visibleGroups);
 
   return {
     root:rootSeq,
@@ -155,12 +158,12 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
       else
         l = t.seqIndices[s-1] + 1;
       if( s == seq.words.length )
-        r = t.text.length;
+        r = t.tokens.length;
       else
         r = t.seqIndices[s];
       var duplicate = [];
       for(var i = l; i < r; i++ ) {
-        var w = t.text[i];
+        var w = t.tokens[i];
         if( w in duplicate )
           continue;
         else
@@ -205,10 +208,10 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
         else
           l = t.seqIndices[pos-1] + 1;
         if( pos == words.length )
-          r = t.text.length;
+          r = t.tokens.length;
         else
           r = t.seqIndices[pos];
-        var i = t.text.slice(l, r).indexOf(word);
+        var i = t.tokens.slice(l, r).indexOf(word);
         if( i < 0 ) {
           s0.DBs.push(t);
           s0.size += t.cnt;
@@ -280,29 +283,29 @@ export function growGraphs(tokens, terms) {
   if(!tokens) return [];
 
   var itemset = tokens.itemset;
-  var tokenlist = tokens.tokenlist;
+  var entries = tokens.entries;
   var dbsize = 0;
 
-  for(var i = 0; i < tokenlist.length; i++ )
-    dbsize += tokenlist[i].cnt;
+  for(var i = 0; i < entries.length; i++ )
+    dbsize += entries[i].cnt;
   var minSupport = dbsize * 0.002;
   if( minSupport < 2 ) minSupport = 2;
   console.log("dbsize = " + dbsize + " minSupport = " + minSupport);
 
   var maxNumNodes = 200, nodeCnt = 0;
 
-  //TODO: function - remove stopwords from tokenlist
+  //TODO: function - remove stopwords from entries
 
   var graphs = [];
   var groups = [];
   var finalSeqs = [];
 
   //init groups
-  tokenlist.forEach(function(t) {
+  entries.forEach(function(t) {
     t.seqIndices = [];
-    t.text.forEach(function(i) {return +i;});
+    t.tokens.forEach(function(i) {return +i;});
   });
-  var g0 = {seq:[], graph:null, size:dbsize, DBs:tokenlist};
+  var g0 = {seq:[], graph:null, size:dbsize, DBs:entries};
   groups.push(g0);
 
   //grow groups
@@ -322,12 +325,12 @@ export function growGraphs(tokens, terms) {
         else
           l = t.seqIndices[s-1] + 1;
         if( s == g.seq.length )
-          r = t.text.length;
+          r = t.tokens.length;
         else
           r = t.seqIndices[s];
         var duplicate = [];
         for(var i = l; i < r; i++ ) {
-          var w = t.text[i];
+          var w = t.tokens[i];
           if( w in duplicate )
             continue;
           else
@@ -382,10 +385,10 @@ console.log(newWord.entity);
       else
         l = t.seqIndices[pos-1] + 1;
       if( pos == seq.length )
-        r = t.text.length;
+        r = t.tokens.length;
       else
         r = t.seqIndices[pos];
-      var i = t.text.slice(l, r).indexOf(word);
+      var i = t.tokens.slice(l, r).indexOf(word);
       if( i < 0 ) {
         g0.DBs.push(t);
         g0.size += t.cnt;
