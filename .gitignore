@@ -7,3 +7,5 @@ Gemfile.lock
 *.pyc
 *.log
 bower_components
+.vscode/*
+demo/dist/*

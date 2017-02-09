@@ -1,0 +1,23 @@
+{
+  "presets": [
+    "es2015"
+  ],
+  "plugins": [
+    "transform-object-assign"
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        [
+          "istanbul",
+          {
+            "exclude": [
+              "src/**/*.spec.js",
+              "node_modules/**/*"
+            ]
+          }
+        ]
+      ]
+    }
+  }
+}
