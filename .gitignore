@@ -1,7 +1,6 @@
 .sass-cache
 .DS_Store
 node_modules
-archive
 Gemfile
 Gemfile.lock
 *.pyc

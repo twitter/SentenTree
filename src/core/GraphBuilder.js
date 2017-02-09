@@ -1,4 +1,6 @@
 import { sum } from 'lodash-es';
+import Graph from './Graph.js';
+import GraphDataset from './GraphDataset.js';
 
 const defaultNodeCnt = 150;
 
@@ -11,7 +13,7 @@ export function initGraphs(tokens, terms) {
   console.log('tokens', tokens);
 
   const entries = tokens.entries;
-  const dbsize = sum(entries.map(e => e.cnt));
+  const dbsize = tokens.computeSize();
   entries.forEach(function(t) {
     t.seqIndices = [];
     t.tokens.forEach(function(i) {return +i;});
@@ -106,7 +108,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
       else{
         /* create new sequences and add new word */
         if(!graph) {
-          graph = {nodes:[], linkadj:[], minSupport:minSupport, maxSupport:maxSupport, totalNodeCnt:0};
+          graph = new Graph(minSupport, maxSupport);
           graphs.push(graph);
         }
         var newWord = {entity:itemset[word], freq:cnt, id:graph.totalNodeCnt++};
@@ -284,10 +286,7 @@ export function growGraphs(tokens, terms) {
 
   var itemset = tokens.itemset;
   var entries = tokens.entries;
-  var dbsize = 0;
-
-  for(var i = 0; i < entries.length; i++ )
-    dbsize += entries[i].cnt;
+  var dbsize = tokens.computeSize();
   var minSupport = dbsize * 0.002;
   if( minSupport < 2 ) minSupport = 2;
   console.log("dbsize = " + dbsize + " minSupport = " + minSupport);

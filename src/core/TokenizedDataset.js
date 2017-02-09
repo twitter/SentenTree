@@ -1,3 +1,5 @@
+import { sum } from 'lodash-es';
+
 export default class TokenizedDataset {
   constructor(vocabularies = {}, itemset = [], entries = []) {
     this.vocabularies = vocabularies;
@@ -30,5 +32,9 @@ export default class TokenizedDataset {
         acc[this.vocabularies[key]] = termWeights[key];
         return acc;
       }, {});
+  }
+
+  computeSize() {
+    return sum(this.entries.map(e => e.cnt));
   }
 }
