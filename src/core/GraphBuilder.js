@@ -1,7 +1,7 @@
 /* Deprecated */
 
-import Graph from './Graph.js';
 import GraphDataset from './GraphDataset.js';
+import RawGraph from './RawGraph.js';
 import { sum } from 'lodash-es';
 
 const defaultNodeCnt = 150;
@@ -110,7 +110,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
       else{
         /* create new sequences and add new word */
         if(!graph) {
-          graph = new Graph(minSupport, maxSupport);
+          graph = new RawGraph(minSupport, maxSupport);
           graphs.push(graph);
         }
         var newWord = {entity:itemset[word], freq:cnt, id:graph.totalNodeCnt++};

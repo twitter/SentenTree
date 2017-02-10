@@ -1,4 +1,4 @@
-import Graph from './Graph.js';
+import RawGraph from './RawGraph.js';
 import WordFilter from './WordFilter.js';
 import { tokenize } from './tokenizer.js';
 
@@ -39,7 +39,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
       else{
         /* create new sequences and add new word */
         if(!graph) {
-          graph = new Graph(minSupport, maxSupport);
+          graph = new RawGraph(minSupport, maxSupport);
           graphs.push(graph);
         }
         var newWord = {

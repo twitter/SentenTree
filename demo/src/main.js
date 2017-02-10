@@ -9,4 +9,7 @@ d3Text('data/goal1.tsv', (error, data) => {
 
   const model = new SentenTreeModel(rows);
   console.log('model', model);
+
+  const graph = model.graphs[0].toRenderedGraph();
+  console.log('graph', graph);
 });

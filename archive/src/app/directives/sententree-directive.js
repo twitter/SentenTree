@@ -41,7 +41,7 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
                       .attr("width", svgw)
                       .attr("height", svgh)
                       .attr("pointer-events", "all");
-        
+
         scope.svg.append('rect')
           .attr('class', 'background')
           .attr('width', "100%")
@@ -89,27 +89,27 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
         //  .size([svgw, svgh]);
 
         console.log("nodes count: " + scope.graph.nodes.length);
-        // assign nodes and links data
-        var nodes = scope.graph.nodes;
-        for( var i = 0; i < nodes.length; i++ ) {
-          nodes[i].left = 0;
-          nodes[i].leftNodes = [];
-          nodes[i].right = 0;
-          nodes[i].rightNodes = [];
-        }
-        var links = [];
-        for( var l in scope.graph.linkadj )
-          for( var r in scope.graph.linkadj[l]) {
-            nodes[l].right += 1;
-            nodes[l].rightNodes.push(r);
-            nodes[r].left += 1;
-            nodes[r].leftNodes.push(l);
-            links.push({
-              source: +l,
-              target: +r,
-              freq: scope.graph.linkadj[l][r]
-            });
-          }
+        // // assign nodes and links data
+        // var nodes = scope.graph.nodes;
+        // for( var i = 0; i < nodes.length; i++ ) {
+        //   nodes[i].left = 0;
+        //   nodes[i].leftNodes = [];
+        //   nodes[i].right = 0;
+        //   nodes[i].rightNodes = [];
+        // }
+        // var links = [];
+        // for( var l in scope.graph.linkadj )
+        //   for( var r in scope.graph.linkadj[l]) {
+        //     nodes[l].right += 1;
+        //     nodes[l].rightNodes.push(r);
+        //     nodes[r].left += 1;
+        //     nodes[r].leftNodes.push(l);
+        //     links.push({
+        //       source: +l,
+        //       target: +r,
+        //       freq: scope.graph.linkadj[l][r]
+        //     });
+        //   }
 
         var freqMin = scope.graph.graphsFreqMin;
         var freqMax = scope.graph.graphsFreqMax;
@@ -123,7 +123,7 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
             //return Math.sqrt(d.freq/nodes[nodes.length-1].freq)*10+'px';
           }
         //}
-        
+
         //var linkweight = scope.linkweight;
         //if( !linkweight ) {
           var linkweight = scope.linkweight = function(d) {
@@ -148,7 +148,7 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
                 .domain(d3.range(freqMin, freqMax, (freqMax - freqMin) / 4))
                 .range(colorbrewer.PuBu[9].slice(4));
           var color = scope.color = function(d) {
-            return blues(d.freq); 
+            return blues(d.freq);
           }
         //}
 
@@ -166,7 +166,7 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
         //update graph
         var path = linkGroup.selectAll(".link")
             .data(links);
-        
+
         path.enter().append('svg:path')
             .attr('class', 'link');
             // .attr('stroke-width', linkweight);
@@ -213,7 +213,7 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
           .style('vector-effect', 'non-scaling-stroke')
           .style('stroke-width', function(d){return isTheOnlyBridge(d) ? '1px' : '2px';})
           .style('stroke', function(d){return isTheOnlyBridge(d) ? '#4eb3d3' : '#ccc';})
-        
+
 
         /* defining interactions with the label */
         label.on('mouseover', function(d){
@@ -271,12 +271,12 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
             //showExampleTexts(d);
           //}
         });
-        
+
 
         /* add constraints for direct left/right nodes to have same x positions */
         var alignmentConstraints = applyConstraints();
 
-        /* initialize force-layout adaptor */        
+        /* initialize force-layout adaptor */
         colaAdaptor
           .avoidOverlaps(true)
           .nodes(nodes)
@@ -333,11 +333,11 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
           }
         });
 
-        colaAdaptor.on("end", function (event) {    
+        colaAdaptor.on("end", function (event) {
           console.log("end");
         });
-        
-        
+
+
 
         //---------------------------------------------------
         // Functions
@@ -354,129 +354,129 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
           svg.attr("width", gbbox.width + 10);
         }
 
-        function applyConstraints() {
-          var alignmentConstraints = [];
+        // function applyConstraints() {
+        //   var alignmentConstraints = [];
 
-          // if there is nothing else between left and right nodes
-          // these link can be shorten and we can fix left and right node to the same y
-          links.filter(isTheOnlyBridge).forEach(function(l){
-            // shorten link
-            l.gap = nodes[l.left].width/2 + nodes[l.right].width/2 + 5;
-            // add y-axis constraint
-            alignmentConstraints.push({
-              type: 'alignment',
-              axis: 'y',
-              offsets: [
-                {node: l.left, offset: 0},
-                {node: l.right, offset: 0}
-              ]
-            });
-          });
+        //   // if there is nothing else between left and right nodes
+        //   // these link can be shorten and we can fix left and right node to the same y
+        //   links.filter(isTheOnlyBridge).forEach(function(l){
+        //     // shorten link
+        //     l.gap = nodes[l.left].width/2 + nodes[l.right].width/2 + 5;
+        //     // add y-axis constraint
+        //     alignmentConstraints.push({
+        //       type: 'alignment',
+        //       axis: 'y',
+        //       offsets: [
+        //         {node: l.left, offset: 0},
+        //         {node: l.right, offset: 0}
+        //       ]
+        //     });
+        //   });
 
-          var visitedNodes = [];
-          (function(){
-            for (var i=0;i<nodes.length;i++){
-              visitedNodes.push(false);
-            }
-            var queue = [0];
-            while(queue.length>0){
-              var nodeIndex = queue.shift();
-              if(visitedNodes[nodeIndex]) continue;
-              visitedNodes[nodeIndex] = true;
-              var node = nodes[nodeIndex];
+        //   var visitedNodes = [];
+        //   (function(){
+        //     for (var i=0;i<nodes.length;i++){
+        //       visitedNodes.push(false);
+        //     }
+        //     var queue = [0];
+        //     while(queue.length>0){
+        //       var nodeIndex = queue.shift();
+        //       if(visitedNodes[nodeIndex]) continue;
+        //       visitedNodes[nodeIndex] = true;
+        //       var node = nodes[nodeIndex];
 
-              var constraints = computeRightConstraints(nodeIndex);
-              if(constraints){
-                alignmentConstraints.push(constraints);
-              }
+        //       var constraints = computeRightConstraints(nodeIndex);
+        //       if(constraints){
+        //         alignmentConstraints.push(constraints);
+        //       }
 
-              if(node.rightNodes){
-                queue = queue.concat(node.rightNodes);
-              }
-            }
-          }());
+        //       if(node.rightNodes){
+        //         queue = queue.concat(node.rightNodes);
+        //       }
+        //     }
+        //   }());
 
-          (function(){
-            for (var i=0;i<nodes.length;i++){
-              visitedNodes[i] = false;
-            }
-            var queue = [0];
-            while(queue.length>0){
-              var nodeIndex = queue.shift();
-              if(visitedNodes[nodeIndex]) continue;
-              visitedNodes[nodeIndex] = true;
-              var node = nodes[nodeIndex];
+        //   (function(){
+        //     for (var i=0;i<nodes.length;i++){
+        //       visitedNodes[i] = false;
+        //     }
+        //     var queue = [0];
+        //     while(queue.length>0){
+        //       var nodeIndex = queue.shift();
+        //       if(visitedNodes[nodeIndex]) continue;
+        //       visitedNodes[nodeIndex] = true;
+        //       var node = nodes[nodeIndex];
 
-              var constraints = computeLeftConstraints(nodeIndex);
-              if(constraints){
-                alignmentConstraints.push(constraints);
-              }
+        //       var constraints = computeLeftConstraints(nodeIndex);
+        //       if(constraints){
+        //         alignmentConstraints.push(constraints);
+        //       }
 
-              if(node.leftNodes){
-                queue = queue.concat(node.leftNodes);
-              }
-            }
-          }());
+        //       if(node.leftNodes){
+        //         queue = queue.concat(node.leftNodes);
+        //       }
+        //     }
+        //   }());
 
-          return alignmentConstraints;
-        }
+        //   return alignmentConstraints;
+        // }
 
-        // check if there is nothing else between left and right nodes
-        function isTheOnlyBridge(l){
-          return nodes[l.left].right==1 && nodes[l.right].left==1;
-        }
+        // // check if there is nothing else between left and right nodes
+        // function isTheOnlyBridge(l){
+        //   return nodes[l.left].right==1 && nodes[l.right].left==1;
+        // }
 
-        function computeLeftConstraints(nodeIndex){
-          var leftNodes = nodes[nodeIndex].leftNodes;
+        // function computeLeftConstraints(nodeIndex){
+        //   var leftNodes = nodes[nodeIndex].leftNodes;
 
-          if(leftNodes){
-            leftNodes = leftNodes.filter(function(nodeIndex){
-              return nodes[nodeIndex].right==1;
-            });
-          }
-          else{
-            return null;
-          }
+        //   if(leftNodes){
+        //     leftNodes = leftNodes.filter(function(nodeIndex){
+        //       return nodes[nodeIndex].right==1;
+        //     });
+        //   }
+        //   else{
+        //     return null;
+        //   }
 
-          if(leftNodes.length>1){
-            return createAlignmentConstraints('x', leftNodes);
-          }
-          return null;
-        }
+        //   if(leftNodes.length>1){
+        //     return createAlignmentConstraints('x', leftNodes);
+        //   }
+        //   return null;
+        // }
 
-        function computeRightConstraints(nodeIndex){
-          var rightNodes = nodes[nodeIndex].rightNodes;
+        // function computeRightConstraints(nodeIndex){
+        //   var rightNodes = nodes[nodeIndex].rightNodes;
 
-          if(rightNodes){
-            rightNodes = rightNodes.filter(function(nodeIndex){
-          if( !nodes[nodeIndex])
-            console.log("nodeIndex=" + nodeIndex + " rightNodes=" + rightNodes);
-              return nodes[nodeIndex].left==1;
-            });
-          }
-          else{
-            return null;
-          }
+        //   if(rightNodes){
+        //     rightNodes = rightNodes.filter(function(nodeIndex){
+        //   if( !nodes[nodeIndex])
+        //     console.log("nodeIndex=" + nodeIndex + " rightNodes=" + rightNodes);
+        //       return nodes[nodeIndex].left==1;
+        //     });
+        //   }
+        //   else{
+        //     return null;
+        //   }
 
-          if(rightNodes.length>1){
-            return createAlignmentConstraints('x', rightNodes);
-          }
-          return null;
-        }
+        //   if(rightNodes.length>1){
+        //     return createAlignmentConstraints('x', rightNodes);
+        //   }
+        //   return null;
+        // }
 
-        function createAlignmentConstraints(axis, nodes){
-          return {
-            type: 'alignment',
-            axis: axis,
-            offsets: nodes.map(function(nodeIndex){
-              return {node: nodeIndex, offset: 0}
-            })
-          };
-        }
+        // function createAlignmentConstraints(axis, nodes){
+        //   return {
+        //     type: 'alignment',
+        //     axis: axis,
+        //     offsets: nodes.map(function(nodeIndex){
+        //       return {node: nodeIndex, offset: 0}
+        //     })
+        //   };
+        // }
 
-        function isLeafNode(node){
-          return !node.left || !node.right;
-        }
+        // function isLeafNode(node){
+        //   return !node.left || !node.right;
+        // }
 
         function showTooltip(d) {
           var tooltipDiv = document.getElementById('tweet-display-area');
