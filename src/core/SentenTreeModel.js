@@ -166,8 +166,6 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
 }
 
 function updateNodesEdges( graphs, leafSeqs ) {
-  graphs.forEach(g => { g.generateNodeIds(); });
-
   var freqMax = 0, freqMin = 0;
 
   leafSeqs
@@ -177,12 +175,12 @@ function updateNodesEdges( graphs, leafSeqs ) {
   //        printSeq(seq);
       for( var i = 0; i < words.length - 1; i++ ) {
         var linkadj = seq.graph.linkadj;
-        if( !(words[i].nid in linkadj ) )
-          linkadj[words[i].nid] = {};
-        if( words[i+1].nid in linkadj[words[i].nid] )
-          linkadj[words[i].nid][words[i+1].nid] += seq.size;
+        if( !(words[i].id in linkadj ) )
+          linkadj[words[i].id] = {};
+        if( words[i+1].id in linkadj[words[i].id] )
+          linkadj[words[i].id][words[i+1].id] += seq.size;
         else
-          linkadj[words[i].nid][words[i+1].nid] = seq.size;
+          linkadj[words[i].id][words[i+1].id] = seq.size;
 
         if (freqMax == 0 && freqMin == 0) {
           freqMax = freqMin = words[i].freq;

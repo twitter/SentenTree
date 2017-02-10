@@ -1,6 +1,5 @@
 export default class Node {
-  constructor(rawNode, index) {
-    this.index = index;
+  constructor(rawNode) {
     this.left = 0;
     this.leftNodes = [];
     this.right = 0;

@@ -3,7 +3,7 @@ import Node from './Node.js';
 
 export default class RenderedGraph {
   constructor(rawGraph) {
-    this.nodes = rawGraph.nodes.map((n, i) => new Node(n, i));
+    this.nodes = rawGraph.nodes.map(n => new Node(n));
     this.links = [];
 
     for( let l in rawGraph.linkadj ) {
@@ -42,7 +42,7 @@ export default class RenderedGraph {
       let queue = [this.nodes[0]];
       while(queue.length > 0){
         const node = queue.shift();
-        const nodeIndex = node.index;
+        const nodeIndex = node.data.id;
         if(visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
         const constraints = this.computeRightConstraints(node);
@@ -61,7 +61,7 @@ export default class RenderedGraph {
 
       while(queue.length>0){
         const node = queue.shift();
-        const nodeIndex = node.index;
+        const nodeIndex = node.data.id;
         if(visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
         const constraints = this.computeLeftConstraints(node);
@@ -97,7 +97,7 @@ export default class RenderedGraph {
     return {
       type: 'alignment',
       axis,
-      offsets: nodes.map(n => ({node: n.index, offset: 0}))
+      offsets: nodes.map(n => ({node: n.data.id, offset: 0}))
     };
   }
 
