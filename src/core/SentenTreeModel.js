@@ -1,8 +1,7 @@
+import Graph from './Graph.js';
 import WordFilter from './WordFilter.js';
 import { tokenize } from './tokenizer.js';
-import Graph from './Graph.js';
 
-const DEFAULT_FILTER = new WordFilter();
 const DEFAULT_NODE_COUNT = 150;
 
 function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms, itemset) {
@@ -215,7 +214,7 @@ function printSeq (words) {
 export default class SentenTreeModel {
   constructor(
     inputEntries,
-    wordFilter = DEFAULT_FILTER,
+    wordFilter = WordFilter.DEFAULT,
     termWeights = {}
   ) {
     const dataset = tokenize(inputEntries).filter(wordFilter);

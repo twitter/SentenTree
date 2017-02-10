@@ -1,0 +1,16 @@
+<div class="seqtree-table">
+	<table>
+	  <tr ng-repeat="r in patterns">
+	    <td ng-repeat="c in r track by $index">
+        <span ng-if="c.isAlignment">
+          <b>
+            {{c.chunk}}
+          </b>
+        </span>
+        <span ng-if="!c.isAlignment">
+          {{c.chunk}}
+        </span>
+	    </td>
+	  </tr>
+	</table>
+</div>

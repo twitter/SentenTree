@@ -24,3 +24,6 @@ export default class WordFilter {
     return this.regex.test(word);
   }
 }
+
+WordFilter.DEFAULT = new WordFilter();
+

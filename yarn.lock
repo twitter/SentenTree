@@ -4102,6 +4102,10 @@ weak-map@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/weak-map/-/weak-map-1.0.0.tgz#b66e56a9df0bd25a76bbf1b514db129080614a37"
 
+webcola@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/webcola/-/webcola-3.3.0.tgz#8ca24691f26876b6fe3d57fa7480b0e7b4041a23"
+
 weinre@^2.0.0-pre-I0Z7U9OV:
   version "2.0.0-pre-I0Z7U9OV"
   resolved "https://registry.yarnpkg.com/weinre/-/weinre-2.0.0-pre-I0Z7U9OV.tgz#fef8aa223921f7b40bbbbd4c3ed4302f6fd0a813"

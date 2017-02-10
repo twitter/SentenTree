@@ -1,6 +1,8 @@
-import { sum } from 'lodash-es';
+/* Deprecated */
+
 import Graph from './Graph.js';
 import GraphDataset from './GraphDataset.js';
+import { sum } from 'lodash-es';
 
 const defaultNodeCnt = 150;
 
