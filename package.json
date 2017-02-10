@@ -70,6 +70,7 @@
     "uglifyjs": "^2.4.10"
   },
   "dependencies": {
+    "d3kit": "^3.2.0",
     "lodash": "^4.17.4",
     "lodash-es": "^4.17.4",
     "webcola": "^3.3.0"

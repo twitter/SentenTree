@@ -1091,7 +1091,7 @@ d3-color@1, d3-color@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-1.0.2.tgz#83cb4b3a9474e40795f009d97e97a15649830bbc"
 
-d3-dispatch@1, d3-dispatch@1.0.2:
+d3-dispatch@1, d3-dispatch@1.0.2, d3-dispatch@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/d3-dispatch/-/d3-dispatch-1.0.2.tgz#5b511e79a46a1f89492841c0a8f656687d5daa0a"
 
@@ -1184,7 +1184,7 @@ d3-scale@1.0.4:
     d3-time "1"
     d3-time-format "2"
 
-d3-selection@1, d3-selection@1.0.3:
+d3-selection@1, d3-selection@1.0.3, d3-selection@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-selection/-/d3-selection-1.0.3.tgz#e63e51416172427854c1bcdfa066eb5fe872c108"
 
@@ -1267,6 +1267,13 @@ d3@^4.4.1:
     d3-transition "1.0.3"
     d3-voronoi "1.1.1"
     d3-zoom "1.1.1"
+
+d3kit@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/d3kit/-/d3kit-3.2.0.tgz#db40503252a6bb02baafa9deb7193165ae16a464"
+  dependencies:
+    d3-dispatch "^1.0.1"
+    d3-selection "^1.0.2"
 
 d@^0.1.1, d@~0.1.1:
   version "0.1.1"
