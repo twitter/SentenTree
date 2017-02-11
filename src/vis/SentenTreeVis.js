@@ -7,7 +7,7 @@ import { d3adaptor } from 'webcola/WebCola/cola.js';
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
     return helper.deepExtend(super.getDefaultOptions(), {
-
+      initialWidth: 900,
     });
   }
 
@@ -74,9 +74,9 @@ class SentenTreeVis extends SvgChart {
 
   placeLinks() {
     this.sLinks
-      .attr('x1', link => link.sourceNode.x)
+      .attr('x1', link => link.sourceNode.rightEdge())
       .attr('y1', link => link.sourceNode.y)
-      .attr('x2', link => link.targetNode.x)
+      .attr('x2', link => link.targetNode.leftEdge())
       .attr('y2', link => link.targetNode.y);
   }
 

@@ -9,7 +9,7 @@ export default class Node {
     this.x = 0;
     this.y = 0;
     this.width = 50;
-    this.height = 14;
+    this.height = 18;
   }
 
   isLeaf(){
@@ -22,5 +22,13 @@ export default class Node {
 
   isRightLeaf() {
     return this.right === 0;
+  }
+
+  leftEdge() {
+    return this.isLeaf() ? this.x : this.x - this.width / 2;
+  }
+
+  rightEdge() {
+    return this.isLeaf() ? this.x : this.x + this.width / 2;
   }
 }
