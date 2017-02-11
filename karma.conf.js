@@ -29,7 +29,7 @@ module.exports = function (config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 
     preprocessors: {
-      'src/**/*.spec.js': ['rollup']
+      'src/**/*.spec.js': ['webpack']
     },
     rollupPreprocessor: {
       // rollup settings. See Rollup documentation
