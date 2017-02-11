@@ -13,7 +13,7 @@ export function tokenize(inputEntries){
       PATTERN.lastIndex = 0;
       let tokenResult;
       while( (tokenResult = PATTERN.exec(entry.text)) != null ) {
-        let t = tokenResult[0];
+        let t = tokenResult[0].trim();
         // HACK
         if(t=='scores' || t=='scored'){
           t='score';

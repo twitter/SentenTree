@@ -72,21 +72,25 @@ class SentenTreeVis extends SvgChart {
       if(!n.x) {
         n.x = Math.random() * this.getInnerWidth();
         n.y = Math.random() * this.getInnerHeight();
+        n.width = 10;
+        n.height = 10;
       }
     });
+
+    console.log('graph.getConstraints()', graph.getConstraints());
 
     this.colaAdaptor
       .nodes(graph.nodes)
       .links(graph.links)
-      // .constraints(graph.getConstraints())
+      .constraints(graph.getConstraints())
       .symmetricDiffLinkLengths(5)
-    //   // .jaccardLinkLengths()
+      // .jaccardLinkLengths()
       .start(10,10,10);
 
     this.renderNodes(graph.nodes);
     this.renderLinks(graph.links);
 
-    this.colaAdaptor.on("tick", function (event) {
+    this.colaAdaptor.on("tick", event => {
       // draw directed edges with proper padding from node centers
       // path.each(function (d) {
       //   var deltaX = d.target.x - d.source.x;
@@ -105,11 +109,16 @@ class SentenTreeVis extends SvgChart {
 
       // path.attr('d', diagonal);
 
-      // box
-      //   .attr("x", function (d) { return d.bounds.x; })
-      //   .attr("y", function (d) { return d.bounds.y; })
+      this.layers.get('node').selectAll('g')
+        .attr('transform', d => `translate(${d.x}, ${d.y})`)
       //   .attr("width", function (d) { return d.bounds.width(); })
       //   .attr("height", function (d) { return d.bounds.height(); });
+
+      this.layers.get('link').selectAll('line')
+        .attr('x1', link => link.sourceNode.x)
+        .attr('y1', link => link.sourceNode.y)
+        .attr('x2', link => link.targetNode.x)
+        .attr('y2', link => link.targetNode.y)
 
       // label
       //   .attr("x", function (d) { return d.x - d.bounds.width()/2; })
@@ -125,9 +134,9 @@ class SentenTreeVis extends SvgChart {
       // }
     });
 
-    this.colaAdaptor.on("end", function (event) {
-      console.log("end");
-    });
+    // this.colaAdaptor.on("end", function (event) {
+    //   console.log("end");
+    // });
   }
 }
 
