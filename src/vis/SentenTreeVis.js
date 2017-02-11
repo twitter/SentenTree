@@ -94,6 +94,12 @@ class SentenTreeVis extends SvgChart {
       }
     });
 
+    this.sNodes.each(function(d) {
+      const bbox = this.getBBox();
+      d.width = bbox.width + 4;
+      d.height = bbox.height + 4;
+    });
+
     this.colaAdaptor
       .nodes(graph.nodes)
       .links(graph.links)
