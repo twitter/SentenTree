@@ -1,4 +1,4 @@
-import { SentenTreeModel } from '../../src/main.js';
+import { SentenTreeModel, SentenTreeVis } from '../../src/main.js';
 import { text as d3Text } from 'd3-request';
 import { tsvParseRows } from 'd3-dsv';
 
@@ -12,4 +12,7 @@ d3Text('data/goal1.tsv', (error, data) => {
 
   const graph = model.graphs[0].toRenderedGraph();
   console.log('graph', graph);
+
+  const chart = new SentenTreeVis('#vis')
+    .data(graph);
 });

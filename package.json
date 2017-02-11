@@ -27,8 +27,8 @@
     "version": "npm run build && git add -A dist",
     "postversion": "git push ; git push --tags; pkgfiles",
     "prepublish": "pkgfiles",
-    "server": "browser-sync start --server 'demo' --browser \"Google Chrome\" --files \"demo/**/*.*\" --port 3003",
-    "start": "rollup -c rollup.config.demo.js -w & npm run server",
+    "server": "browser-sync start --server 'demo' --browser \"Google Chrome\" --files \"demo/dist/**/*.*\" --port 3003",
+    "start": "rollup -c rollup.config.demo.js --sourcemap inline -w & npm run server",
     "build-demo": "rollup -c rollup.config.demo.js",
     "gh-pages": "npm run build-demo && gh-pages -d demo"
   },

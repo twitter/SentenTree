@@ -1,4 +1,5 @@
-import { SvgChart, helper } from 'd3kit';
+import { SvgChart, helper } from 'd3kit/dist/d3kit-es.js';
+import 'webcola/WebCola/cola.min.js';
 
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
@@ -20,12 +21,21 @@ class SentenTreeVis extends SvgChart {
     this.on('data', this.visualize);
     this.on('options', this.visualize);
     this.on('resize', this.visualize);
+
+    console.log('cola', cola);
+
+    // this.colaAdaptor = cola.d3adaptor()
+    //   .flowLayout('x')
+    //   .avoidOverlaps(true);
+
   }
 
   visualize() {
     if (!this.hasData() || !this.hasNonZeroArea()) return;
 
     const data = this.data();
+
+
   }
 }
 

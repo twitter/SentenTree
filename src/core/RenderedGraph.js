@@ -101,14 +101,11 @@ export default class RenderedGraph {
     };
   }
 
-  updateNodeSize(d3Text) {
+  updateNodeSize(sizeFn) {
     this.nodes.forEach(node => {
-      const bbox = d3Text
-        .datum(node)
-        .node()
-        .getBBox();
-      node.width = bbox.width;
-      node.height = bbox.height;
+      const {width, height} = sizeFn(node);
+      node.width = width;
+      node.height = height;
     });
     return this;
   }
