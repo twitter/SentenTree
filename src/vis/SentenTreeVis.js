@@ -29,8 +29,7 @@ class SentenTreeVis extends SvgChart {
       .flowLayout('x', 5)
       .avoidOverlaps(true)
       .size([this.getInnerWidth(), this.getInnerHeight()])
-      .linkDistance(5)
-      //.symmetricDiffLinkLengths()
+      .linkDistance(5);
   }
 
   renderNodes(nodes) {
@@ -39,13 +38,25 @@ class SentenTreeVis extends SvgChart {
 
     sUpdate.exit().remove();
 
-    const sEnter = sUpdate.enter().append('g')
-      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+    const sEnter = sUpdate.enter().append('g');
 
     sEnter.append('text')
+      .attr('dy', '.28em')
       .text(d => d.data.entity)
 
+    const sMerge = sEnter.merge(sUpdate)
+      .style('text-anchor', d => {
+        if(d.isLeftLeaf()) return 'end';
+        else if(d.isRightLeaf()) return 'start';
+        else return 'middle';
+      });
 
+    this.sNodes = sMerge;
+  }
+
+  placeNodes() {
+    this.sNodes
+      .attr('transform', d => `translate(${d.x}, ${d.y})`)
   }
 
   renderLinks(links) {
@@ -54,13 +65,19 @@ class SentenTreeVis extends SvgChart {
 
     sUpdate.exit().remove();
 
-    sUpdate.enter().append('line')
+    const sEnter = sUpdate.enter().append('line')
       .style('stroke', '#222')
-      .style('fill', 'none')
+      .style('fill', 'none');
+
+    this.sLinks = sEnter.merge(sUpdate);
+  }
+
+  placeLinks() {
+    this.sLinks
       .attr('x1', link => link.sourceNode.x)
       .attr('y1', link => link.sourceNode.y)
       .attr('x2', link => link.targetNode.x)
-      .attr('y2', link => link.targetNode.y)
+      .attr('y2', link => link.targetNode.y);
   }
 
   visualize() {
@@ -68,27 +85,26 @@ class SentenTreeVis extends SvgChart {
 
     const graph = this.data();
 
+    this.renderNodes(graph.nodes);
+
     graph.nodes.forEach(n => {
       if(!n.x) {
         n.x = Math.random() * this.getInnerWidth();
         n.y = Math.random() * this.getInnerHeight();
-        n.width = 10;
-        n.height = 10;
       }
     });
-
-    console.log('graph.getConstraints()', graph.getConstraints());
 
     this.colaAdaptor
       .nodes(graph.nodes)
       .links(graph.links)
       .constraints(graph.getConstraints())
-      .symmetricDiffLinkLengths(5)
-      // .jaccardLinkLengths()
+      // .symmetricDiffLinkLengths(5)
+      .jaccardLinkLengths(10)
       .start(10,10,10);
 
-    this.renderNodes(graph.nodes);
+    this.placeNodes();
     this.renderLinks(graph.links);
+    this.placeLinks();
 
     this.colaAdaptor.on("tick", event => {
       // draw directed edges with proper padding from node centers
@@ -109,16 +125,14 @@ class SentenTreeVis extends SvgChart {
 
       // path.attr('d', diagonal);
 
-      this.layers.get('node').selectAll('g')
-        .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      this.placeNodes();
+      this.placeLinks();
+
+      // this.layers.get('node').selectAll('g')
+      //   .attr('transform', d => `translate(${d.x}, ${d.y})`)
       //   .attr("width", function (d) { return d.bounds.width(); })
       //   .attr("height", function (d) { return d.bounds.height(); });
 
-      this.layers.get('link').selectAll('line')
-        .attr('x1', link => link.sourceNode.x)
-        .attr('y1', link => link.sourceNode.y)
-        .attr('x2', link => link.targetNode.x)
-        .attr('y2', link => link.targetNode.y)
 
       // label
       //   .attr("x", function (d) { return d.x - d.bounds.width()/2; })
