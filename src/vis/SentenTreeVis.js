@@ -8,7 +8,7 @@ import { diagonal, line } from './shapeUtil.js';
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
     return helper.deepExtend(super.getDefaultOptions(), {
-      initialWidth: 1100,
+      initialWidth: 1200,
       initialHeight: 300,
       fontSize: [10, 48],
     });
@@ -132,10 +132,6 @@ class SentenTreeVis extends SvgChart {
         // }
         return diagonal(...points);
       });
-      // .attr('x1', link => link.sourceNode.rightEdge())
-      // .attr('y1', link => link.sourceNode.y)
-      // .attr('x2', link => link.targetNode.leftEdge())
-      // .attr('y2', link => link.targetNode.y);
   }
 
   visualize() {
