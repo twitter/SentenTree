@@ -8,6 +8,8 @@ export default class RenderedGraph {
 
     this.freqMin = rawGraph.freqMin;
     this.freqMax = rawGraph.freqMax;
+    this.minSupport = rawGraph.minSupport;
+    this.maxSupport = rawGraph.maxSupport;
 
     for( let l in rawGraph.linkadj ) {
       const leftNode = this.nodes[l];

@@ -3,11 +3,12 @@ import * as d3 from 'd3';
 import { SvgChart, helper } from 'd3kit/dist/d3kit-es.js';
 
 import { d3adaptor } from 'webcola/WebCola/cola.js';
+import { diagonal } from './shapeUtil.js';
 
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
     return helper.deepExtend(super.getDefaultOptions(), {
-      initialWidth: 900,
+      initialWidth: 1100,
       initialHeight: 300,
       fontSize: [10, 48],
     });
@@ -35,7 +36,7 @@ class SentenTreeVis extends SvgChart {
   }
 
   fontSize(node) {
-    return Math.round(this.fontSizeScale(node.data.freq));
+    return `${Math.round(this.fontSizeScale(node.data.freq))}px`;
   }
 
   renderNodes(nodes) {
@@ -49,6 +50,9 @@ class SentenTreeVis extends SvgChart {
     sEnter.append('text')
       .attr('dy', '.28em')
       .text(d => d.data.entity)
+      .on('click', node => {
+        console.log(node, node);
+      })
 
     const sMerge = sEnter.merge(sUpdate)
       .style('font-size', d => this.fontSize(d))
@@ -68,26 +72,58 @@ class SentenTreeVis extends SvgChart {
   }
 
   renderLinks(links) {
-    const sUpdate = this.layers.get('link').selectAll('line')
+    const sUpdate = this.layers.get('link').selectAll('path')
       .data(links);
 
     sUpdate.exit().remove();
 
-    const sEnter = sUpdate.enter().append('line')
+    const sEnter = sUpdate.enter().append('path')
       .style('vector-effect', 'non-scaling-stroke')
+      .style('opacity', 0.5)
       .style('stroke', '#222')
       .style('fill', 'none');
 
     this.sLinks = sEnter.merge(sUpdate)
-      .style('stroke', l => l.isTheOnlyBridge() ? 'red' : '#222');
+      .style('stroke-width', this.strokeWidth)
+      .style('stroke', l => l.isTheOnlyBridge() ? '#777' : '#55acee');
   }
 
   placeLinks() {
+    // draw directed edges with proper padding from node centers
+    this.data().links.forEach(d => {
+      const deltaX = d.target.x - d.source.x;
+      const deltaY = d.target.y - d.source.y;
+      const dist = Math.max(1, Math.sqrt(deltaX * deltaX + deltaY * deltaY));
+      const normX = deltaX / dist;
+      const normY = deltaY / dist;
+
+      d.points = {
+        x1: d.source.rightEdge(),
+        // x1: d.source.x + (d.source.bounds.width()/2 * normX),
+        y1: d.source.y + (d.source.bounds.height()/2 * normY),
+        x2: d.target.leftEdge(),
+        // x2: d.target.x - (d.target.bounds.width()/2 * normX),
+        y2: d.target.y - (d.target.bounds.height()/2 * normY),
+      };
+    });
+
     this.sLinks
-      .attr('x1', link => link.sourceNode.rightEdge())
-      .attr('y1', link => link.sourceNode.y)
-      .attr('x2', link => link.targetNode.leftEdge())
-      .attr('y2', link => link.targetNode.y);
+      .attr('d', link => diagonal(
+        link.points.x1,
+        link.points.y1,
+        link.points.x2,
+        link.points.y2
+      ));
+      // .attr('d', link => diagonal(
+      //   link.sourceNode.rightEdge(),
+      //   link.sourceNode.y,
+      //   link.targetNode.leftEdge(),
+      //   link.targetNode.y
+      // ));
+      // .attr('x1', link => link.sourceNode.rightEdge())
+      // .attr('y1', link => link.sourceNode.y)
+      // .attr('x2', link => link.targetNode.leftEdge())
+      // .attr('y2', link => link.targetNode.y);
   }
 
   visualize() {
@@ -101,9 +137,9 @@ class SentenTreeVis extends SvgChart {
       .range(fontSize)
       .clamp(true);
 
-    // const contrast = Math.sqrt(graph.freqMax/graph.freqMin);
-    // const alpha = Math.max(5, 70/contrast);
-    // this.fontSize = d => `${Math.sqrt(d.data.freq/graph.freqMin) * alpha}px`;
+    this.strokeWidth = link => {
+      return `${Math.round(Math.sqrt(link.freq / graph.minSupport))}px`;
+    }
 
     this.renderNodes(graph.nodes);
 
@@ -131,6 +167,11 @@ class SentenTreeVis extends SvgChart {
     this.placeNodes();
     this.renderLinks(graph.links);
     this.placeLinks();
+
+    const colaAdaptor = this.colaAdaptor;
+
+    // this.sNodes.call(colaAdaptor.drag);
+    // this.sLinks.call(colaAdaptor.drag);
 
     this.colaAdaptor.on("tick", event => {
       // draw directed edges with proper padding from node centers
