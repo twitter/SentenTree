@@ -197,8 +197,8 @@ function updateNodesEdges( graphs, leafSeqs ) {
     });
 
   graphs.forEach (function(graph){
-    graph.graphsFreqMax = freqMax;
-    graph.graphsFreqMin = freqMin;
+    graph.freqMin = freqMin;
+    graph.freqMax = freqMax;
   });
 
   return {graphsFreqMax: freqMax, graphsFreqMin: freqMin};

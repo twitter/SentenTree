@@ -7,6 +7,8 @@ export default class RawGraph {
     this.minSupport = minSupport;
     this.maxSupport = maxSupport;
     this.totalNodeCnt = 0;
+    this.freqMin = 1;
+    this.freqMax = 2;
   }
 
   generateNodeIds() {

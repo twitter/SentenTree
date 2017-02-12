@@ -23,7 +23,7 @@ class SentenTreeVis extends SvgChart {
     this.visualize = this.visualize.bind(this);
     this.on('data', this.visualize);
     this.on('options', this.visualize);
-    this.on('resize', this.visualize);
+    // this.on('resize', this.visualize);
 
     this.colaAdaptor = d3adaptor(d3)
       .flowLayout('x', 5)
@@ -45,6 +45,7 @@ class SentenTreeVis extends SvgChart {
       .text(d => d.data.entity)
 
     const sMerge = sEnter.merge(sUpdate)
+      .style('font-size', this.fontSize)
       .style('text-anchor', d => {
         if(d.isLeftLeaf()) return 'end';
         else if(d.isRightLeaf()) return 'start';
@@ -84,6 +85,10 @@ class SentenTreeVis extends SvgChart {
     if (!this.hasData() || !this.hasNonZeroArea()) return;
 
     const graph = this.data();
+
+    const contrast = Math.sqrt(graph.freqMax/graph.freqMin);
+    const alpha = Math.max(5, 70/contrast);
+    this.fontSize = d => `${Math.sqrt(d.data.freq/graph.freqMin) * alpha}px`;
 
     this.renderNodes(graph.nodes);
 

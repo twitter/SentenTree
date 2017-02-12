@@ -6,6 +6,9 @@ export default class RenderedGraph {
     this.nodes = rawGraph.nodes.map(n => new Node(n));
     this.links = [];
 
+    this.freqMin = rawGraph.freqMin;
+    this.freqMax = rawGraph.freqMax;
+
     for( let l in rawGraph.linkadj ) {
       const leftNode = this.nodes[l];
       for( let r in rawGraph.linkadj[l]) {
