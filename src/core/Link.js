@@ -3,10 +3,17 @@ export default class Link {
     this.source = sourceNode;
     this.target = targetNode;
     this.freq = freq;
+    this.attachPoints = {
+      x1: 0,
+      y1: 0,
+      x2: 1,
+      y2: 1
+    };
   }
 
   isTheOnlyBridge() {
-    return this.source.right === 1 && this.target.left === 1;
+    return this.source.rightNodes.length === 1
+      && this.target.leftNodes.length === 1;
   }
 
   toConstraint() {

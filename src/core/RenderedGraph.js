@@ -16,9 +16,7 @@ export default class RenderedGraph {
       const rights = rawGraph.linkadj[l];
       for( let r in rights) {
         const rightNode = this.nodes[r];
-        leftNode.right += 1;
         leftNode.rightNodes.push(rightNode);
-        rightNode.left += 1;
         rightNode.leftNodes.push(leftNode);
         const link = new Link(
           leftNode,
@@ -85,7 +83,7 @@ export default class RenderedGraph {
   }
 
   computeLeftConstraints(node){
-    const leftNodes = node.leftNodes.filter(n => n.right === 1);
+    const leftNodes = node.leftNodes.filter(n => n.rightNodes.length === 1);
     if(leftNodes.length > 1){
       return this.createAlignmentConstraints('x', leftNodes);
     }
@@ -93,7 +91,7 @@ export default class RenderedGraph {
   }
 
   computeRightConstraints(node){
-    const rightNodes = node.rightNodes.filter(n => n.left === 1);
+    const rightNodes = node.rightNodes.filter(n => n.leftNodes.length === 1);
     if(rightNodes.length > 1){
       return this.createAlignmentConstraints('x', rightNodes);
     }

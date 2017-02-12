@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { SvgChart, helper } from 'd3kit/dist/d3kit-es.js';
 
 import { d3adaptor } from 'webcola/WebCola/cola.js';
-import { diagonal } from './shapeUtil.js';
+import { diagonal, line } from './shapeUtil.js';
 
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
@@ -51,7 +51,7 @@ class SentenTreeVis extends SvgChart {
       .attr('dy', '.28em')
       .text(d => d.data.entity)
       .on('click', node => {
-        console.log(node, node);
+        console.log(node);
       })
 
     const sMerge = sEnter.merge(sUpdate)
@@ -72,6 +72,11 @@ class SentenTreeVis extends SvgChart {
   }
 
   renderLinks(links) {
+    const graph = this.data();
+    links.forEach(link => {
+      link.strokeWidth = Math.round(Math.sqrt(link.freq / graph.minSupport));
+    });
+
     const sUpdate = this.layers.get('link').selectAll('path')
       .data(links);
 
@@ -84,42 +89,49 @@ class SentenTreeVis extends SvgChart {
       .style('fill', 'none');
 
     this.sLinks = sEnter.merge(sUpdate)
-      .style('stroke-width', this.strokeWidth)
+      .style('stroke-width', d => `${d.strokeWidth}px`)
       .style('stroke', l => l.isTheOnlyBridge() ? '#777' : '#55acee');
   }
 
   placeLinks() {
     // draw directed edges with proper padding from node centers
-    this.data().links.forEach(d => {
-      const deltaX = d.target.x - d.source.x;
-      const deltaY = d.target.y - d.source.y;
-      const dist = Math.max(1, Math.sqrt(deltaX * deltaX + deltaY * deltaY));
-      const normX = deltaX / dist;
-      const normY = deltaY / dist;
+    const graph = this.data();
 
-      d.points = {
-        x1: d.source.rightEdge(),
-        // x1: d.source.x + (d.source.bounds.width()/2 * normX),
-        y1: d.source.y + (d.source.bounds.height()/2 * normY),
-        x2: d.target.leftEdge(),
-        // x2: d.target.x - (d.target.bounds.width()/2 * normX),
-        y2: d.target.y - (d.target.bounds.height()/2 * normY),
-      };
+    graph.nodes.forEach(node => {
+      node.updateAttachPoints();
     });
 
+    // graph.links.forEach(d => {
+    //   const deltaX = d.target.x - d.source.x;
+    //   const deltaY = d.target.y - d.source.y;
+    //   const dist = Math.max(1, Math.sqrt(deltaX * deltaX + deltaY * deltaY));
+    //   const normX = deltaX / dist;
+    //   const normY = deltaY / dist;
+
+    //   d.points = {
+    //     x1: d.source.rightEdge(),
+    //     // x1: d.source.x + (d.source.bounds.width()/2 * normX),
+    //     y1: d.source.y + (d.source.bounds.height()/2 * normY),
+    //     x2: d.target.leftEdge(),
+    //     // x2: d.target.x - (d.target.bounds.width()/2 * normX),
+    //     y2: d.target.y - (d.target.bounds.height()/2 * normY),
+    //   };
+    // });
+
     this.sLinks
-      .attr('d', link => diagonal(
-        link.points.x1,
-        link.points.y1,
-        link.points.x2,
-        link.points.y2
-      ));
-      // .attr('d', link => diagonal(
-      //   link.sourceNode.rightEdge(),
-      //   link.sourceNode.y,
-      //   link.targetNode.leftEdge(),
-      //   link.targetNode.y
-      // ));
+      .attr('d', link => {
+        const points = [
+          link.source.rightEdge(),
+          link.attachPoints.y1,
+          link.target.leftEdge(),
+          link.attachPoints.y2
+        ];
+        // const xGap = link.target.leftEdge() - link.source.rightEdge();
+        // if (xGap > 30) {
+        //   return line(...points);
+        // }
+        return diagonal(...points);
+      });
       // .attr('x1', link => link.sourceNode.rightEdge())
       // .attr('y1', link => link.sourceNode.y)
       // .attr('x2', link => link.targetNode.leftEdge())
@@ -137,11 +149,8 @@ class SentenTreeVis extends SvgChart {
       .range(fontSize)
       .clamp(true);
 
-    this.strokeWidth = link => {
-      return `${Math.round(Math.sqrt(link.freq / graph.minSupport))}px`;
-    }
-
     this.renderNodes(graph.nodes);
+    this.renderLinks(graph.links);
 
     // graph.nodes.forEach(n => {
     //   if(!n.x) {
@@ -165,7 +174,6 @@ class SentenTreeVis extends SvgChart {
       .start(10,20,50);
 
     this.placeNodes();
-    this.renderLinks(graph.links);
     this.placeLinks();
 
     const colaAdaptor = this.colaAdaptor;
@@ -173,38 +181,9 @@ class SentenTreeVis extends SvgChart {
     // this.sNodes.call(colaAdaptor.drag);
     // this.sLinks.call(colaAdaptor.drag);
 
-    this.colaAdaptor.on("tick", event => {
-      // draw directed edges with proper padding from node centers
-      // path.each(function (d) {
-      //   var deltaX = d.target.x - d.source.x;
-      //   var deltaY = d.target.y - d.source.y;
-      //   var dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      //   dist = dist===0 ? 1 : dist;
-
-      //   var normX = deltaX / dist,
-      //       normY = deltaY / dist;
-
-      //   d.s = {'y':d.source.x + (d.source.bounds.width()/2 * normX),
-      //           'x':d.source.y + (d.source.bounds.height()/2 * normY)};
-      //   d.t = {'y':d.target.x - (d.target.bounds.width()/2 * normX),
-      //           'x':d.target.y - (d.target.bounds.height()/2 * normY)};
-      // });
-
-      // path.attr('d', diagonal);
-
+    this.colaAdaptor.on('tick', event => {
       this.placeNodes();
       this.placeLinks();
-
-      // this.layers.get('node').selectAll('g')
-      //   .attr('transform', d => `translate(${d.x}, ${d.y})`)
-      //   .attr("width", function (d) { return d.bounds.width(); })
-      //   .attr("height", function (d) { return d.bounds.height(); });
-
-
-      // label
-      //   .attr("x", function (d) { return d.x - d.bounds.width()/2; })
-      //   .attr('dy', '.28em')
-      //   .attr("y", function (d) { return d.y; });
 
       // // crop SVG
       // var gbbox = nodeGroup.node().getBBox();
