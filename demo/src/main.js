@@ -13,6 +13,14 @@ d3Text('data/goal1.tsv', (error, data) => {
   const graph = model.graphs[0].toRenderedGraph();
   console.log('graph', graph);
 
-  const chart = new SentenTreeVis('#vis')
-    .data(graph);
+  const container = document.querySelector('#vis');
+
+  model.graphs
+    .slice(0,5)
+    .forEach(rawGraph => {
+      const graph = rawGraph.toRenderedGraph();
+      const div = document.createElement('div');
+      container.appendChild(div);
+      new SentenTreeVis(div).data(graph);
+    })
 });
