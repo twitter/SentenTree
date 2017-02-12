@@ -8,6 +8,8 @@ class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
     return helper.deepExtend(super.getDefaultOptions(), {
       initialWidth: 900,
+      initialHeight: 300,
+      fontSize: [10, 48],
     });
   }
 
@@ -32,6 +34,10 @@ class SentenTreeVis extends SvgChart {
       .linkDistance(5);
   }
 
+  fontSize(node) {
+    return Math.round(this.fontSizeScale(node.data.freq));
+  }
+
   renderNodes(nodes) {
     const sUpdate = this.layers.get('node').selectAll('g')
       .data(nodes, n => n.data.id);
@@ -45,12 +51,13 @@ class SentenTreeVis extends SvgChart {
       .text(d => d.data.entity)
 
     const sMerge = sEnter.merge(sUpdate)
-      .style('font-size', this.fontSize)
-      .style('text-anchor', d => {
-        if(d.isLeftLeaf()) return 'end';
-        else if(d.isRightLeaf()) return 'start';
-        else return 'middle';
-      });
+      .style('font-size', d => this.fontSize(d))
+      .style('text-anchor', 'middle')
+      // .style('text-anchor', d => {
+      //   if(d.isLeftLeaf()) return 'end';
+      //   else if(d.isRightLeaf()) return 'start';
+      //   else return 'middle';
+      // });
 
     this.sNodes = sMerge;
   }
@@ -67,10 +74,12 @@ class SentenTreeVis extends SvgChart {
     sUpdate.exit().remove();
 
     const sEnter = sUpdate.enter().append('line')
+      .style('vector-effect', 'non-scaling-stroke')
       .style('stroke', '#222')
       .style('fill', 'none');
 
-    this.sLinks = sEnter.merge(sUpdate);
+    this.sLinks = sEnter.merge(sUpdate)
+      .style('stroke', l => l.isTheOnlyBridge() ? 'red' : '#222');
   }
 
   placeLinks() {
@@ -85,19 +94,25 @@ class SentenTreeVis extends SvgChart {
     if (!this.hasData() || !this.hasNonZeroArea()) return;
 
     const graph = this.data();
+    const { fontSize } = this.options();
 
-    const contrast = Math.sqrt(graph.freqMax/graph.freqMin);
-    const alpha = Math.max(5, 70/contrast);
-    this.fontSize = d => `${Math.sqrt(d.data.freq/graph.freqMin) * alpha}px`;
+    this.fontSizeScale = d3.scaleSqrt()
+      .domain([graph.freqMin, graph.freqMax])
+      .range(fontSize)
+      .clamp(true);
+
+    // const contrast = Math.sqrt(graph.freqMax/graph.freqMin);
+    // const alpha = Math.max(5, 70/contrast);
+    // this.fontSize = d => `${Math.sqrt(d.data.freq/graph.freqMin) * alpha}px`;
 
     this.renderNodes(graph.nodes);
 
-    graph.nodes.forEach(n => {
-      if(!n.x) {
-        n.x = Math.random() * this.getInnerWidth();
-        n.y = Math.random() * this.getInnerHeight();
-      }
-    });
+    // graph.nodes.forEach(n => {
+    //   if(!n.x) {
+    //     n.x = Math.random() * this.getInnerWidth();
+    //     n.y = Math.random() * this.getInnerHeight();
+    //   }
+    // });
 
     this.sNodes.each(function(d) {
       const bbox = this.getBBox();
@@ -111,7 +126,7 @@ class SentenTreeVis extends SvgChart {
       .constraints(graph.getConstraints())
       // .symmetricDiffLinkLengths(5)
       .jaccardLinkLengths(10)
-      .start(10,10,10);
+      .start(10,20,50);
 
     this.placeNodes();
     this.renderLinks(graph.links);

@@ -25,10 +25,10 @@ export default class Node {
   }
 
   leftEdge() {
-    return this.isLeaf() ? this.x : this.x - this.width / 2;
+    return this.x - this.width / 2;
   }
 
   rightEdge() {
-    return this.isLeaf() ? this.x : this.x + this.width / 2;
+    return this.x + this.width / 2;
   }
 }
