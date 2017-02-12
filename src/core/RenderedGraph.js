@@ -13,19 +13,21 @@ export default class RenderedGraph {
 
     for( let l in rawGraph.linkadj ) {
       const leftNode = this.nodes[l];
-      for( let r in rawGraph.linkadj[l]) {
+      const rights = rawGraph.linkadj[l];
+      for( let r in rights) {
         const rightNode = this.nodes[r];
         leftNode.right += 1;
         leftNode.rightNodes.push(rightNode);
         rightNode.left += 1;
         rightNode.leftNodes.push(leftNode);
-        this.links.push(new Link(
-          +l,
+        const link = new Link(
           leftNode,
-          +r,
           rightNode,
-          rawGraph.linkadj[l][r])
+          rights[r]
         );
+        this.links.push(link);
+        leftNode.rightLinks.push(link);
+        rightNode.leftLinks.push(link);
       }
     }
 
@@ -35,8 +37,8 @@ export default class RenderedGraph {
         type: 'alignment',
         axis: 'y',
         offsets: [
-          { node: link.source, offset: 0 },
-          { node: link.target, offset: 0 }
+          { node: link.source.data.id, offset: 0 },
+          { node: link.target.data.id, offset: 0 }
         ]
       }));
 

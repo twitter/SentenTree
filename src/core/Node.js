@@ -2,8 +2,10 @@ export default class Node {
   constructor(rawNode) {
     this.left = 0;
     this.leftNodes = [];
+    this.leftLinks = [];
     this.right = 0;
     this.rightNodes = [];
+    this.rightLinks = [];
     this.data = rawNode;
 
     this.x = 0;
