@@ -45,14 +45,6 @@ export const DATASETS = [
     terms: {'dan':2, 'brown':2, 'lost':2, 'symbol':2, 'book':1},
   },
   {
-    file: 'oscars2015.tsv',
-    terms: {'oscars':2},
-  },
-  {
-    file: 'samsung-tvs.tsv',
-    terms: {'tv':1, 'samsung':1},
-  },
-  {
     file: 'genesis-reviews.tsv',
     terms: {'car':1, 'genesis':1, 'direct':20, 'view':20, 'f12c019':20},
   },
