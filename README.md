@@ -16,11 +16,10 @@ Mengdie Hu, Krist Wongsuphasawat and John Stasko. [Visualizing Social Media Cont
 ## For developers
 
 ### Setup
-Install dependencies via npm and bower
+Install dependencies via npm
 
 ```
 $ npm install
-$ bower install
 ```
 
 Then run local instance via
