@@ -11,8 +11,8 @@ export default class RawGraph {
     this.freqMax = 2;
   }
 
-  generateNodeIds() {
-    this.nodes.forEach((n, i) => { n.nid = i; });
+  generateNodeIds(startIndex = 1) {
+    this.nodes.forEach((n, i) => { n.id = i + startIndex; });
     return this;
   }
 

@@ -10,7 +10,7 @@ class SentenTreeVis extends SvgChart {
     return helper.deepExtend(super.getDefaultOptions(), {
       initialWidth: 1200,
       initialHeight: 300,
-      fontSize: [10, 48],
+      fontSize: [10, 32],
     });
   }
 

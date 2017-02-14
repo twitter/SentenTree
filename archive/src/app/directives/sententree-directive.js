@@ -83,10 +83,10 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
         if(scope.colaAdaptor)
           scope.colaAdaptor.stop();
 
-        var colaAdaptor = cola.d3adaptor()
-          .flowLayout('x')
-          .avoidOverlaps(true);
-        //  .size([svgw, svgh]);
+        // var colaAdaptor = cola.d3adaptor()
+        //   .flowLayout('x')
+        //   .avoidOverlaps(true);
+        // //  .size([svgw, svgh]);
 
         console.log("nodes count: " + scope.graph.nodes.length);
         // // assign nodes and links data
@@ -111,18 +111,18 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
         //     });
         //   }
 
-        var freqMin = scope.graph.graphsFreqMin;
-        var freqMax = scope.graph.graphsFreqMax;
-        // update style functions
-        //var fontweight = scope.fontweight;
-        //if( !fontweight ) {
-          var fontweight = scope.fontweight = function(d) {
-            var contrast = Math.sqrt(freqMax/freqMin);
-            var alpha = 80/contrast >= 5 ? 80/contrast : 5;
-            return Math.sqrt(d.freq/freqMin)*alpha+'px';
-            //return Math.sqrt(d.freq/nodes[nodes.length-1].freq)*10+'px';
-          }
-        //}
+        // var freqMin = scope.graph.graphsFreqMin;
+        // var freqMax = scope.graph.graphsFreqMax;
+        // // update style functions
+        // //var fontweight = scope.fontweight;
+        // //if( !fontweight ) {
+        //   var fontweight = scope.fontweight = function(d) {
+        //     var contrast = Math.sqrt(freqMax/freqMin);
+        //     var alpha = 80/contrast >= 5 ? 80/contrast : 5;
+        //     return Math.sqrt(d.freq/freqMin)*alpha+'px';
+        //     //return Math.sqrt(d.freq/nodes[nodes.length-1].freq)*10+'px';
+        //   }
+        // //}
 
         //var linkweight = scope.linkweight;
         //if( !linkweight ) {
@@ -273,20 +273,20 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
         });
 
 
-        /* add constraints for direct left/right nodes to have same x positions */
-        var alignmentConstraints = applyConstraints();
+        // /* add constraints for direct left/right nodes to have same x positions */
+        // var alignmentConstraints = applyConstraints();
 
-        /* initialize force-layout adaptor */
-        colaAdaptor
-          .avoidOverlaps(true)
-          .nodes(nodes)
-          .links(links)
-          .linkDistance(5)
-          .constraints(links)
-          .constraints(alignmentConstraints.concat(links))
-          //.symmetricDiffLinkLengths()
-          .jaccardLinkLengths()
-          .start(10,10,10);
+        // /* initialize force-layout adaptor */
+        // colaAdaptor
+        //   .avoidOverlaps(true)
+        //   .nodes(nodes)
+        //   .links(links)
+        //   .linkDistance(5)
+        //   .constraints(links)
+        //   .constraints(alignmentConstraints.concat(links))
+        //   //.symmetricDiffLinkLengths()
+        //   .jaccardLinkLengths()
+        //   .start(10,10,10);
 
         box.call(colaAdaptor.drag);
         label.call(colaAdaptor.drag);
@@ -295,34 +295,34 @@ directives.directive('sententree', ['sstooltipManager', function (sstooltipManag
         var width = gbbox.width, height = gbbox.height;
 
         colaAdaptor.on("tick", function (event) {
-          // draw directed edges with proper padding from node centers
-          path.each(function (d) {
-            var deltaX = d.target.x - d.source.x;
-            var deltaY = d.target.y - d.source.y;
-            var dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            dist = dist===0 ? 1 : dist;
+          // // draw directed edges with proper padding from node centers
+          // path.each(function (d) {
+          //   var deltaX = d.target.x - d.source.x;
+          //   var deltaY = d.target.y - d.source.y;
+          //   var dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+          //   dist = dist===0 ? 1 : dist;
 
-            var normX = deltaX / dist,
-                normY = deltaY / dist;
+          //   var normX = deltaX / dist,
+          //       normY = deltaY / dist;
 
-            d.s = {'y':d.source.x + (d.source.bounds.width()/2 * normX),
-                   'x':d.source.y + (d.source.bounds.height()/2 * normY)};
-            d.t = {'y':d.target.x - (d.target.bounds.width()/2 * normX),
-                   'x':d.target.y - (d.target.bounds.height()/2 * normY)};
-          });
+          //   d.s = {'y':d.source.x + (d.source.bounds.width()/2 * normX),
+          //          'x':d.source.y + (d.source.bounds.height()/2 * normY)};
+          //   d.t = {'y':d.target.x - (d.target.bounds.width()/2 * normX),
+          //          'x':d.target.y - (d.target.bounds.height()/2 * normY)};
+          // });
 
-          path.attr('d', diagonal);
+          // path.attr('d', diagonal);
 
-          box
-            .attr("x", function (d) { return d.bounds.x; })
-            .attr("y", function (d) { return d.bounds.y; })
-            .attr("width", function (d) { return d.bounds.width(); })
-            .attr("height", function (d) { return d.bounds.height(); });
+          // box
+          //   .attr("x", function (d) { return d.bounds.x; })
+          //   .attr("y", function (d) { return d.bounds.y; })
+          //   .attr("width", function (d) { return d.bounds.width(); })
+          //   .attr("height", function (d) { return d.bounds.height(); });
 
-          label
-            .attr("x", function (d) { return d.x - d.bounds.width()/2; })
-            .attr('dy', '.28em')
-            .attr("y", function (d) { return d.y; });
+          // label
+          //   .attr("x", function (d) { return d.x - d.bounds.width()/2; })
+          //   .attr('dy', '.28em')
+          //   .attr("y", function (d) { return d.y; });
 
           // crop SVG
           var gbbox = nodeGroup.node().getBBox();
