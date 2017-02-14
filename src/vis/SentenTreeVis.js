@@ -10,16 +10,23 @@ class SentenTreeVis extends SvgChart {
     return helper.deepExtend(super.getDefaultOptions(), {
       initialWidth: 1200,
       initialHeight: 300,
+      margin: { left: 0, top: 0, bottom: 0, right: 0 },
       fontSize: [10, 32],
     });
   }
 
   static getCustomEventNames() {
-    return [];
+    return [
+      'layoutStart',
+      'layoutTick',
+      'layoutEnd',
+    ];
   }
 
   constructor(element, options) {
     super(element, options);
+
+    this.isRunning = false;
 
     this.layers.create(['link', 'node']);
 
@@ -31,8 +38,25 @@ class SentenTreeVis extends SvgChart {
     this.colaAdaptor = d3adaptor(d3)
       .flowLayout('x', 5)
       .avoidOverlaps(true)
-      .size([this.getInnerWidth(), this.getInnerHeight()])
+      // .symmetricDiffLinkLengths(5)
+      .jaccardLinkLengths(10)
       .linkDistance(5);
+
+    const dispatchLayoutStart = this.dispatchAs('layoutStart');
+    this.colaAdaptor.on('start', (...args) => {
+      this.isRunning = true;
+      dispatchLayoutStart(...args);
+    });
+
+    this.colaAdaptor.on('tick', this.dispatchAs('layoutTick'));
+
+    const dispatchLayoutEnd = this.dispatchAs('layoutEnd');
+    this.colaAdaptor.on('end', (...args) => {
+      if (this.isRunning) {
+        this.isRunning = false;
+        dispatchLayoutEnd(...args);
+      }
+    });
   }
 
   fontSize(node) {
@@ -161,18 +185,21 @@ class SentenTreeVis extends SvgChart {
       d.height = bbox.height + 4;
     });
 
+    const linkConstraints = graph.getLinkConstraints();
+
     this.colaAdaptor
+      .size([this.getInnerWidth(), this.getInnerHeight()])
       .nodes(graph.nodes)
       .links(graph.links)
+      // .constraints(linkConstraints)
+      // .start(10,20,50)
       .constraints(graph.getConstraints())
-      // .symmetricDiffLinkLengths(5)
-      .jaccardLinkLengths(10)
-      .start(10,20,50);
+      .start(20,40,40);
 
     this.placeNodes();
     this.placeLinks();
 
-    const colaAdaptor = this.colaAdaptor;
+    // const colaAdaptor = this.colaAdaptor;
 
     // this.sNodes.call(colaAdaptor.drag);
     // this.sLinks.call(colaAdaptor.drag);
@@ -189,10 +216,19 @@ class SentenTreeVis extends SvgChart {
     //   //   svg.attr("width", gbbox.width + 10);
     //   // }
     // });
+  }
 
-    // this.colaAdaptor.on("end", function (event) {
-    //   console.log("end");
-    // });
+  fitComponentToContent() {
+    const bbox = this.rootG.node().getBBox();
+    const { top, left, bottom, right } = this.options().margin;
+    const w = this.width();
+    const h = this.height();
+    const w2 = bbox.width + left + right;
+    const h2 = bbox.height + top + bottom;
+
+    if( Math.abs(w2 - w) > 10 || Math.abs(h2 - h) > 10 ) {
+      this.dimension([w2, h2]);
+    }
   }
 }
 

@@ -86,7 +86,9 @@ function loadFile(file) {
         const graph = rawGraph.toRenderedGraph();
         const div = document.createElement('div');
         container.appendChild(div);
-        new SentenTreeVis(div).data(graph);
+        new SentenTreeVis(div)
+          .data(graph);
+          // .fitComponentToContent();
       })
   });
 }
