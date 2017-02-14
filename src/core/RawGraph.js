@@ -16,6 +16,16 @@ export default class RawGraph {
     return this;
   }
 
+  getBounds() {
+    return this.nodes.reduce((acc, curr) => {
+
+      return acc;
+    }, {
+      topLeft: [0, 0],
+      bottomRight: [1, 1]
+    });
+  }
+
   clear() {
     this.nodes = [];
     this.linkadj = [];
@@ -24,5 +34,11 @@ export default class RawGraph {
 
   toRenderedGraph() {
     return new RenderedGraph(this);
+  }
+
+  toGroup() {
+    return {
+      leaves: this.nodes.map(n => n.id)
+    };
   }
 }

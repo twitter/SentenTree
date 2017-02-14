@@ -115,6 +115,10 @@ export default class RenderedGraph {
     return this;
   }
 
+  getLinkConstraints() {
+    return this.links.map(l => l.toConstraint());
+  }
+
   getConstraints() {
     return this.baseConstraints
       .concat(this.links.map(l => l.toConstraint()));

@@ -177,18 +177,18 @@ class SentenTreeVis extends SvgChart {
     // this.sNodes.call(colaAdaptor.drag);
     // this.sLinks.call(colaAdaptor.drag);
 
-    this.colaAdaptor.on('tick', event => {
-      this.placeNodes();
-      this.placeLinks();
+    // this.colaAdaptor.on('tick', event => {
+    //   this.placeNodes();
+    //   this.placeLinks();
 
-      // // crop SVG
-      // var gbbox = nodeGroup.node().getBBox();
-      // if( Math.abs(gbbox.width - width) > 5 || Math.abs(gbbox.height - height) > 5 ) {
-      //   zoom.translate([5 - gbbox.x, 5 - gbbox.y]).event(nodeGroup);
-      //   svg.attr("height", gbbox.height + 10);
-      //   svg.attr("width", gbbox.width + 10);
-      // }
-    });
+    //   // // crop SVG
+    //   // var gbbox = nodeGroup.node().getBBox();
+    //   // if( Math.abs(gbbox.width - width) > 5 || Math.abs(gbbox.height - height) > 5 ) {
+    //   //   zoom.translate([5 - gbbox.x, 5 - gbbox.y]).event(nodeGroup);
+    //   //   svg.attr("height", gbbox.height + 10);
+    //   //   svg.attr("width", gbbox.width + 10);
+    //   // }
+    // });
 
     // this.colaAdaptor.on("end", function (event) {
     //   console.log("end");
