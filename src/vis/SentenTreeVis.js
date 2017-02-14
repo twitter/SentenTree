@@ -28,7 +28,7 @@ class SentenTreeVis extends SvgChart {
 
     this.isRunning = false;
 
-    this.layers.create(['link', 'node']);
+    this.layers.create({root: ['link', 'node']});
 
     this.visualize = this.visualize.bind(this);
     this.on('data', this.visualize);
@@ -64,7 +64,7 @@ class SentenTreeVis extends SvgChart {
   }
 
   renderNodes(nodes) {
-    const sUpdate = this.layers.get('node').selectAll('g')
+    const sUpdate = this.layers.get('root/node').selectAll('g')
       .data(nodes, n => n.data.id);
 
     sUpdate.exit().remove();
@@ -101,7 +101,7 @@ class SentenTreeVis extends SvgChart {
       link.strokeWidth = Math.round(Math.sqrt(link.freq / graph.minSupport));
     });
 
-    const sUpdate = this.layers.get('link').selectAll('path')
+    const sUpdate = this.layers.get('root/link').selectAll('path')
       .data(links);
 
     sUpdate.exit().remove();
@@ -169,6 +169,8 @@ class SentenTreeVis extends SvgChart {
       .range(fontSize)
       .clamp(true);
 
+    this.layers.get('root')
+      .attr('transform', `translate(${this.getInnerWidth() / 2},${this.getInnerHeight() / 2})`);
     this.renderNodes(graph.nodes);
     this.renderLinks(graph.links);
 
@@ -188,7 +190,7 @@ class SentenTreeVis extends SvgChart {
     const linkConstraints = graph.getLinkConstraints();
 
     this.colaAdaptor
-      .size([this.getInnerWidth(), this.getInnerHeight()])
+      // .size([this.getInnerWidth(), this.getInnerHeight()])
       .nodes(graph.nodes)
       .links(graph.links)
       // .constraints(linkConstraints)
@@ -219,16 +221,15 @@ class SentenTreeVis extends SvgChart {
   }
 
   fitComponentToContent() {
-    const bbox = this.rootG.node().getBBox();
+    const bbox = this.layers.get('root').node().getBBox();
     const { top, left, bottom, right } = this.options().margin;
     const w = this.width();
     const h = this.height();
     const w2 = bbox.width + left + right;
     const h2 = bbox.height + top + bottom;
-
-    if( Math.abs(w2 - w) > 10 || Math.abs(h2 - h) > 10 ) {
-      this.dimension([w2, h2]);
-    }
+    this.dimension([w2, h2]);
+    this.layers.get('root')
+      .attr('transform', `translate(${-bbox.x},${-bbox.y})`);
   }
 }
 

@@ -17,7 +17,7 @@ export default class Link {
   }
 
   toConstraint() {
-    const gap = this.isTheOnlyBridge() ? 5 : 20;
+    const gap = this.isTheOnlyBridge() ? 5 : 15;
     return {
       axis: 'x',
       left: this.source.data.id,
