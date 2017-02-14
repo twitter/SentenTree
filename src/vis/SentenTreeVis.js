@@ -1,15 +1,15 @@
 import * as d3 from 'd3';
 
 import { SvgChart, helper } from 'd3kit/dist/d3kit-es.js';
+import { diagonal, line } from './shapeUtil.js';
 
 import { d3adaptor } from 'webcola/WebCola/cola.js';
-import { diagonal, line } from './shapeUtil.js';
 
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
     return helper.deepExtend(super.getDefaultOptions(), {
-      initialWidth: 1200,
-      initialHeight: 300,
+      initialWidth: 1,
+      initialHeight: 1,
       margin: { left: 0, top: 0, bottom: 0, right: 0 },
       fontSize: [10, 32],
     });
@@ -97,8 +97,14 @@ class SentenTreeVis extends SvgChart {
 
   renderLinks(links) {
     const graph = this.data();
+
+    const strokeSizeScale = d3.scaleSqrt()
+      .domain([1, 100])
+      .range([1, 7])
+      .clamp(true);
+
     links.forEach(link => {
-      link.strokeWidth = Math.round(Math.sqrt(link.freq / graph.minSupport));
+      link.strokeWidth = Math.round(strokeSizeScale(link.freq / graph.minSupport));
     });
 
     const sUpdate = this.layers.get('root/link').selectAll('path')
@@ -190,11 +196,8 @@ class SentenTreeVis extends SvgChart {
     const linkConstraints = graph.getLinkConstraints();
 
     this.colaAdaptor
-      // .size([this.getInnerWidth(), this.getInnerHeight()])
       .nodes(graph.nodes)
       .links(graph.links)
-      // .constraints(linkConstraints)
-      // .start(10,20,50)
       .constraints(graph.getConstraints())
       .start(20,40,40);
 
@@ -210,13 +213,6 @@ class SentenTreeVis extends SvgChart {
     //   this.placeNodes();
     //   this.placeLinks();
 
-    //   // // crop SVG
-    //   // var gbbox = nodeGroup.node().getBBox();
-    //   // if( Math.abs(gbbox.width - width) > 5 || Math.abs(gbbox.height - height) > 5 ) {
-    //   //   zoom.translate([5 - gbbox.x, 5 - gbbox.y]).event(nodeGroup);
-    //   //   svg.attr("height", gbbox.height + 10);
-    //   //   svg.attr("width", gbbox.width + 10);
-    //   // }
     // });
   }
 
