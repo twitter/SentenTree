@@ -47,7 +47,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
           freq:cnt,
           id:graph.totalNodeCnt++
         };
-        newWord.topTweet = s1.DBs[0].tweetId;
+        newWord.topEntry = s1.DBs[0];
         var newWords = s.words.slice();
         newWords.splice(pos, 0, newWord);
         newWord.seq = s1;
@@ -61,7 +61,6 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
 
     if(s1) {
       s1.graph.nodes.push(s1.newWord);
-      //console.log(s1.newWord.entity);
       expandCnt--;
     }
 
@@ -225,7 +224,7 @@ export default class SentenTreeModel {
       t.seqIndices = [];
       t.tokens.forEach(function(i) {return +i;});
     });
-    console.log('dbsize = ' + dbsize);
+    console.log('dbsize' + dbsize);
 
     this.tokenizedData = dataset;
     this.terms = terms;
