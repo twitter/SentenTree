@@ -37,7 +37,7 @@ class App extends React.Component {
 
     return (
       <div className={classes.join(' ')}>
-        <nav className="navbar navbar-default navbar-fixed-top">
+        <nav className="navbar navbar-default">
           <div className="container">
             <div className="navbar-header">
               <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">

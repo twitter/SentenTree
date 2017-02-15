@@ -22,9 +22,9 @@ body {
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
-body > #app .container.content {
+/*body > #app .container.content {
   padding: 60px 15px 0;
-}
+}*/
 .container .text-muted {
   margin: 20px 0;
 }
@@ -50,6 +50,7 @@ code {
   overflow-y: hidden;
   padding: 20px;
   border: 1px solid #eee;
+  margin-bottom: 60px;
 }
 
 .github-corner svg {
