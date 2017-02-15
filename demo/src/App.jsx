@@ -37,18 +37,64 @@ class App extends React.Component {
 
     return (
       <div className={classes.join(' ')}>
-        <select
-          className="form-control"
-          name="" id=""
-          value={this.state.dataset}
-          onChange={e => this.changeDataset(e.target.value)}
-        >
-          {DATASETS.map((dataset, i) =>
-            <option key={dataset.file} value={i}>
-              {dataset.file}
-            </option>
-          )}
-        </select>
+        <nav className="navbar navbar-default navbar-fixed-top">
+          <div className="container">
+            <div className="navbar-header">
+              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span className="sr-only">Toggle navigation</span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+              </button>
+              <a className="navbar-brand" href="#">SentenTree</a>
+            </div>
+            <div id="navbar" className="collapse navbar-collapse">
+              <ul className="nav navbar-nav">
+                <li className="active"><a href="#">Demo</a></li>
+                <li>
+                  <a href="http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf">Paper</a>
+                </li>
+                <li>
+                  <a href="https://github.com/twitter/sententree">Source Code</a>
+                </li>
+              </ul>
+              <div className="navbar-text navbar-star">
+                <iframe
+                  src="https://ghbtns.com/github-btn.html?user=twitter&repo=SentenTree&type=star&count=true"
+                  frameBorder="0"
+                  scrolling="0"
+                  width="100px"
+                  height="20px"
+                />
+              </div>
+            </div>
+          </div>
+        </nav>
+        <div className="container content">
+          <div className="page-header">
+            <h1>SentenTree</h1>
+          </div>
+          <p className="lead">
+            SentenTree is a novel text visualization technique for summarizing
+            a collection of social media text, i.e. take thousands or more Tweets
+            and summarize what the Tweets are about.
+          </p>
+          <p>
+            Choose from these example datasets and see the visualization below.
+          </p>
+          <select
+            className="form-control"
+            name="" id=""
+            value={this.state.dataset}
+            onChange={e => this.changeDataset(e.target.value)}
+          >
+            {DATASETS.map((dataset, i) =>
+              <option key={dataset.file} value={i}>
+                {dataset.name || dataset.file}
+              </option>
+            )}
+          </select>
+        </div>
       </div>
     );
   }
