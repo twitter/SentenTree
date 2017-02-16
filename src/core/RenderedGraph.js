@@ -31,14 +31,7 @@ export default class RenderedGraph {
 
     const onlyBridgeConstraints = this.links
       .filter(link => link.isTheOnlyBridge())
-      .map(link => ({
-        type: 'alignment',
-        axis: 'y',
-        offsets: [
-          { node: link.source.data.id, offset: 0 },
-          { node: link.target.data.id, offset: 0 }
-        ]
-      }));
+      .map(link => link.toOnlyBridgeConstraint());
 
     const alignmentConstraints = [];
 
@@ -50,7 +43,7 @@ export default class RenderedGraph {
         const nodeIndex = node.data.id;
         if(visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
-        const constraints = this.computeRightConstraints(node);
+        const constraints = node.computeRightConstraints();
         if(constraints){
           alignmentConstraints.push(constraints);
         }
@@ -69,7 +62,7 @@ export default class RenderedGraph {
         const nodeIndex = node.data.id;
         if(visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
-        const constraints = this.computeLeftConstraints(node);
+        const constraints = node.computeLeftConstraints();
         if(constraints){
           alignmentConstraints.push(constraints);
         }
@@ -80,30 +73,6 @@ export default class RenderedGraph {
     }
 
     this.baseConstraints = onlyBridgeConstraints.concat(alignmentConstraints);
-  }
-
-  computeLeftConstraints(node){
-    const leftNodes = node.leftNodes.filter(n => n.rightNodes.length === 1);
-    if(leftNodes.length > 1){
-      return this.createAlignmentConstraints('x', leftNodes);
-    }
-    return null;
-  }
-
-  computeRightConstraints(node){
-    const rightNodes = node.rightNodes.filter(n => n.leftNodes.length === 1);
-    if(rightNodes.length > 1){
-      return this.createAlignmentConstraints('x', rightNodes);
-    }
-    return null;
-  }
-
-  createAlignmentConstraints(axis, nodes) {
-    return {
-      type: 'alignment',
-      axis,
-      offsets: nodes.map(n => ({node: n.data.id, offset: 0}))
-    };
   }
 
   updateNodeSize(sizeFn) {

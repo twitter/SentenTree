@@ -25,4 +25,15 @@ export default class Link {
       gap: (this.source.width + this.target.width) / 2 + gap
     };
   }
+
+  toOnlyBridgeConstraint() {
+    return {
+      type: 'alignment',
+      axis: 'y',
+      offsets: [
+        { node: this.source.data.id, offset: 0 },
+        { node: this.target.data.id, offset: 0 }
+      ]
+    };
+  }
 }

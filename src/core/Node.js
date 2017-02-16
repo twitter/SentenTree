@@ -2,11 +2,11 @@ import { sum } from 'lodash-es';
 
 export default class Node {
   constructor(rawNode) {
+    this.data = rawNode;
     this.leftNodes = [];
     this.leftLinks = [];
     this.rightNodes = [];
     this.rightLinks = [];
-    this.data = rawNode;
 
     this.x = 0;
     this.y = 0;
@@ -32,6 +32,46 @@ export default class Node {
 
   rightEdge() {
     return this.x + this.width / 2;
+  }
+
+  static merge(nodes) {
+    const newNode = new Node({
+      entity: nodes[0].data.entity,
+      freq: sum(nodes.map(n => n.data.freq)),
+      originalData: nodes.map(n => n.data),
+      topEntries: nodes
+        .reduce(
+          (acc, curr) => acc.concat(curr.data.topEntries),
+          []
+        )
+        .slice(0,5)
+    });
+
+    // TBD
+  }
+
+  createAlignmentConstraints(axis, nodes) {
+    return {
+      type: 'alignment',
+      axis,
+      offsets: nodes.map(n => ({node: n.data.id, offset: 0}))
+    };
+  }
+
+  computeLeftConstraints(){
+    const leftNodes = this.leftNodes.filter(n => n.rightNodes.length === 1);
+    if(leftNodes.length > 1){
+      return this.createAlignmentConstraints('x', leftNodes);
+    }
+    return null;
+  }
+
+  computeRightConstraints(){
+    const rightNodes = this.rightNodes.filter(n => n.leftNodes.length === 1);
+    if(rightNodes.length > 1){
+      return this.createAlignmentConstraints('x', rightNodes);
+    }
+    return null;
   }
 
   updateAttachPoints() {

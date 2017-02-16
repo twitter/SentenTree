@@ -25,31 +25,28 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
 
     if( !s0 && !s1 ) {
       /* find the next frequent sequence */
-      var result = growSeq(s, terms, minSupport, maxSupport, itemset);
+      const result = growSeq(s, terms, minSupport, maxSupport, itemset);
       s0 = result.s0;
       s1 = result.s1;
-      var word = result.word;
-      var pos = result.pos;
-      var count = result.count;
+      const { word, pos, count } = result;
 
       if( count < minSupport ) {
         leafSeqs.push(s);
-      }
-      else{
+      } else{
         /* create new sequences and add new word */
         if(!graph) {
           graph = new RawGraph(minSupport, maxSupport);
           graphs.push(graph);
         }
-        var newWord = {
-          entity:itemset[word],
-          freq:count,
-          id:graph.totalNodeCnt++
+        const newWord = {
+          id: graph.totalNodeCnt++,
+          entity: itemset[word],
+          freq: count,
+          topEntries: s1.DBs.slice(0, 5),
+          seq: s1,
         };
-        newWord.topEntry = s1.DBs[0];
-        var newWords = s.words.slice();
+        const newWords = s.words.slice();
         newWords.splice(pos, 0, newWord);
-        newWord.seq = s1;
         s0.words = s.words;
         s1.words = newWords;
         s1.newWord = newWord;
@@ -58,7 +55,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
       }
     }
 
-    if(s1) {
+    if (s1) {
       s1.graph.nodes.push(s1.newWord);
       expandCnt--;
     }
