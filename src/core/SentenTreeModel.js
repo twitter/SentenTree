@@ -5,16 +5,21 @@ import { tokenize } from './tokenizer.js';
 const DEFAULT_NODE_COUNT = 150;
 
 function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms, itemset) {
-  if( rootSeq.words ) {
-    for( var i = 0; i < rootSeq.words.length; i++ ) {
-      rootSeq.graph.nodes.push(rootSeq.words[i]);
-      expandCnt--;
-    }
+  if (rootSeq.words && rootSeq.words.length > 0) {
+    rootSeq.graph.nodes = rootSeq.graph.nodes.concat(rootSeq.words);
+    expandCnt -= rootSeq.words.length;
+
+    // rootSeq.words.forEach(word => {
+    //   rootSeq.graph.nodes.push(word);
+    // })
+    // for( var i = 0; i < rootSeq.words.length; i++ ) {
+    //   rootSeq.graph.nodes.push(rootSeq.words[i]);
+    //   expandCnt--;
+    // }
   }
 
-  var seqs = [];
+  var seqs = [rootSeq];
   var leafSeqs = [];
-  seqs.push(rootSeq);
   while(seqs.length > 0 && expandCnt > 0) {
     /* find the candidate sequence with largest support DB */
     seqs.sort(function(a, b) {return a.size - b.size;}); // TODO: rewrite
@@ -76,8 +81,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
 
   }
 
-  leafSeqs = leafSeqs.concat(seqs);
-  return leafSeqs;
+  return leafSeqs.concat(seqs);
 }
 
 function growSeq(seq, terms, minSupport, maxSupport, itemset) {
@@ -122,7 +126,7 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
     }
   }
 
-  var s0 = null, s1 = null;
+  let s0 = null, s1 = null;
 
   /* split the current group in two */
   if( count >= minSupport ) {
@@ -131,15 +135,8 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
       var words = seq.words;
       for(var ti = 0; ti < seq.DBs.length; ti ++ ) {
         var t = seq.DBs[ti];
-        var l, r;
-        if( pos == 0 )
-          l = 0;
-        else
-          l = t.seqIndices[pos-1] + 1;
-        if( pos == words.length )
-          r = t.tokens.length;
-        else
-          r = t.seqIndices[pos];
+        const l = pos === 0 ? 0 : t.seqIndices[pos-1] + 1;
+        const r = pos === words.length ? t.tokens.length : t.seqIndices[pos];
         var i = t.tokens.slice(l, r).indexOf(word);
         if( i < 0 ) {
           s0.DBs.push(t);
@@ -154,46 +151,7 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
       }
   }
 
-  return { word, pos, count: count, s0, s1 };
-}
-
-function updateNodesEdges( graphs, leafSeqs ) {
-  var freqMax = 0, freqMin = 0;
-
-  leafSeqs
-    .filter(seq => graphs.indexOf(seq.graph) >= 0)
-    .forEach( function(seq) {
-      const words = seq.words;
-  //        printSeq(seq);
-      for( var i = 0; i < words.length - 1; i++ ) {
-        var linkadj = seq.graph.linkadj;
-        if( !(words[i].id in linkadj ) )
-          linkadj[words[i].id] = {};
-        if( words[i+1].id in linkadj[words[i].id] )
-          linkadj[words[i].id][words[i+1].id] += seq.size;
-        else
-          linkadj[words[i].id][words[i+1].id] = seq.size;
-
-        if (freqMax == 0 && freqMin == 0) {
-          freqMax = freqMin = words[i].freq;
-        } else if (words[i].freq > freqMax) {
-          freqMax = words[i].freq;
-        } else if (words[i].freq < freqMin) {
-          freqMin = words[i].freq;
-        }
-      }
-      for( var i = 0; i < words.length; i++ ) {
-        if( !words[i].leafSeq || words[i].leafSeq.size < seq.size )
-          words[i].leafSeq = seq;
-      }
-    });
-
-  graphs.forEach (function(graph){
-    graph.freqMin = freqMin;
-    graph.freqMax = freqMax;
-  });
-
-  return {graphsFreqMax: freqMax, graphsFreqMin: freqMin};
+  return { word, pos, count, s0, s1 };
 }
 
 function printSeq (words) {
@@ -251,9 +209,7 @@ export default class SentenTreeModel {
       .filter(g =>  g.nodes.length > 2)
       .slice(0, 10);
 
-    const graphsFreq = updateNodesEdges(this.graphs, visibleGroups);
-    this.graphsFreqMin = graphsFreq.graphsFreqMin;
-    this.graphsFreqMax = graphsFreq.graphsFreqMax;
+    this.updateNodesEdges(this.graphs, visibleGroups);
   }
 
   updateGraphs(newRootSeq) {
@@ -271,8 +227,51 @@ export default class SentenTreeModel {
       this.tokenizedData.itemset
     );
 
-    const graphsFreq = updateNodesEdges(this.graphs, visibleGroups);
-    this.graphsFreqMin = graphsFreq.graphsFreqMin;
-    this.graphsFreqMax = graphsFreq.graphsFreqMax;
+    this.updateNodesEdges(this.graphs, visibleGroups);
+
+    return this;
+  }
+
+  updateNodesEdges(graphs, leafSeqs) {
+    let freqMin = Number.MAX_SAFE_INTEGER;
+    let freqMax = 0;
+
+    leafSeqs
+      .filter(seq => graphs.indexOf(seq.graph) >= 0)
+      .forEach( function(seq) {
+        const words = seq.words;
+        const linkadj = seq.graph.linkadj;
+        // printSeq(seq);
+        for(let i = 0; i < words.length - 1; i++) {
+          const word = words[i];
+          const id = word.id;
+          const freq = word.freq;
+          const nextId = words[i+1].id;
+
+          if (!(id in linkadj)) linkadj[id] = {};
+
+          if(nextId in linkadj[id])
+            linkadj[id][nextId] += seq.size;
+          else
+            linkadj[id][nextId] = seq.size;
+
+          freqMin = Math.min(freq, freqMin);
+          freqMax = Math.max(freq, freqMax);
+        }
+
+        words
+          .filter(word => !word.leafSeq || word.leafSeq < seq.size)
+          .forEach(word => { word.leafSeq = seq; });
+      });
+
+    graphs.forEach (graph => {
+      graph.freqMin = freqMin;
+      graph.freqMax = freqMax;
+    });
+
+    this.freqMin = freqMin;
+    this.freqMax = freqMax;
+
+    return this;
   }
 }
