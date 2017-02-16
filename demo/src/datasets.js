@@ -1,7 +1,7 @@
 export const DATASETS = [
   {
     name: 'First goal of World Cup 2014',
-    file: 'test.tsv',
+    file: 'goal.tsv',
     terms: {'world':2, 'cup':2, 'brazil':1}
   },
   // {

@@ -1,9 +1,9 @@
+import * as DataService from './DataService.js';
+
 import React, { PropTypes } from 'react';
 import { SentenTreeModel, SentenTreeVis } from '../../src/main.js';
 
 import { DATASETS } from './datasets.js';
-import { text as d3Text } from 'd3-request';
-import { tsvParseRows } from 'd3-dsv';
 
 const propTypes = {
   className: PropTypes.string,
@@ -105,22 +105,12 @@ App.defaultProps = defaultProps;
 
 export default App;
 
-
-
 function loadFile(file) {
   const container = document.querySelector('#vis');
   container.innerHTML = 'Loading ...';
 
-  d3Text('data/' + file, (error, data) => {
-    const rows = tsvParseRows(data)
-      .map(([id, text, count]) => ({
-        id,
-        text: text.replace(/https?\:\/\/[A-Za-z0-9.\/]+/gi, '[url]'),
-        cnt: +count
-      }));
-    console.log('data', rows);
-
-    const model = new SentenTreeModel(rows);
+  DataService.loadFile('data/' + file, (error, data) => {
+    const model = new SentenTreeModel(data);
     console.log('model', model);
 
     const graph = model.graphs[0].toRenderedGraph();
