@@ -87,45 +87,29 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
     seq.DBs.forEach(function(t) {
       const l = s === 0 ? 0 : t.seqIndices[s-1] + 1;
       const r = s === seq.words.length ? t.tokens.length : t.seqIndices[s];
-      // const duplicate = {};
-      // for(var i = l; i < r; i++ ) {
-      //   const w = t.tokens[i];
+      const duplicate = {};
+      for(let i = l; i < r; i++ ) {
+        const w = t.tokens[i];
 
-      //   if(duplicate[w]) continue;
-      //   duplicate[w] = true;
+        if(duplicate[w]) continue;
+        duplicate[w] = true;
 
-      //   if( w in fdist) {
-      //     fdist[w] += t.count;
-      //   } else {
-      //     fdist[w] = t.count;
-      //   }
-      // }
-      var duplicate = [];
-      for(var i = l; i < r; i++ ) {
-        var w = t.tokens[i];
-        console.log('w', w);
-        if( w in duplicate )
-          continue;
-        else
-          duplicate.push(w);
-        if( w in fdist)
+        if( w in fdist) {
           fdist[w] += t.count;
-        else
+        } else {
           fdist[w] = t.count;
+        }
       }
-
     });
     var maxw = null, maxc = 0;
-    for(var w in fdist)
+    for(var w in fdist) {
       if( fdist[w] < maxSupport && fdist[w] > maxc &&
         (!itemset[w].startsWith('#') || seq.words.length > 0) // no hashtag as root of tree
       ) {
-
-//      if (fdist[w] > maxc && !itemset[w].startsWith('#') && (!(w in terms) || seq.words.length >= terms[w] ) ) {
-// console.log(itemset[w].startsWith('#'));
         maxw = +w;
         maxc = fdist[w];
       }
+    }
     if( maxc > count ) {
       pos = s;
       word = maxw;
