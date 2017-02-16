@@ -35,6 +35,6 @@ export default class TokenizedDataset {
   }
 
   computeSize() {
-    return sum(this.entries.map(e => e.cnt));
+    return sum(this.entries.map(e => e.count));
   }
 }

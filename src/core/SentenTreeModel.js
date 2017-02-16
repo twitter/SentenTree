@@ -31,9 +31,9 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
       s1 = result.s1;
       var word = result.word;
       var pos = result.pos;
-      var cnt = result.cnt;
+      var count = result.count;
 
-      if( cnt < minSupport ) {
+      if( count < minSupport ) {
         leafSeqs.push(s);
       }
       else{
@@ -44,7 +44,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
         }
         var newWord = {
           entity:itemset[word],
-          freq:cnt,
+          freq:count,
           id:graph.totalNodeCnt++
         };
         newWord.topEntry = s1.DBs[0];
@@ -84,19 +84,12 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
   /* find the next frequent sequence by inserting a new word to current sequence */
   var pos = -1;
   var word = null;
-  var cnt = 0;
+  var count = 0;
   for(var s = 0; s <= seq.words.length; s++ ) {
     var fdist = {};
     seq.DBs.forEach(function(t) {
-      var l, r;
-      if( s == 0 )
-        l = 0;
-      else
-        l = t.seqIndices[s-1] + 1;
-      if( s == seq.words.length )
-        r = t.tokens.length;
-      else
-        r = t.seqIndices[s];
+      const l = s === 0 ? 0 : t.seqIndices[s-1] + 1;
+      const r = s === seq.words.length ? t.tokens.length : t.seqIndices[s];
       var duplicate = [];
       for(var i = l; i < r; i++ ) {
         var w = t.tokens[i];
@@ -105,9 +98,9 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
         else
           duplicate.push(w);
         if( w in fdist)
-          fdist[w] += t.cnt;
+          fdist[w] += t.count;
         else
-          fdist[w] = t.cnt;
+          fdist[w] = t.count;
       }
 
     });
@@ -122,17 +115,17 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
         maxw = +w;
         maxc = fdist[w];
       }
-    if( maxc > cnt ) {
+    if( maxc > count ) {
       pos = s;
       word = maxw;
-      cnt = maxc;
+      count = maxc;
     }
   }
 
   var s0 = null, s1 = null;
 
   /* split the current group in two */
-  if( cnt >= minSupport ) {
+  if( count >= minSupport ) {
       s0 = {size:0, DBs:[]};
       s1 = {size:0, DBs:[]};
       var words = seq.words;
@@ -150,18 +143,18 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
         var i = t.tokens.slice(l, r).indexOf(word);
         if( i < 0 ) {
           s0.DBs.push(t);
-          s0.size += t.cnt;
+          s0.size += t.count;
         }
         else {
           i += l;
           t.seqIndices.splice(pos, 0, i);
           s1.DBs.push(t);
-          s1.size += t.cnt;
+          s1.size += t.count;
         }
       }
   }
 
-  return { word, pos, cnt, s0, s1 };
+  return { word, pos, count: count, s0, s1 };
 }
 
 function updateNodesEdges( graphs, leafSeqs ) {

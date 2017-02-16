@@ -28,7 +28,7 @@ export function tokenize(inputEntries){
       return {
         id: entry.id,
         tokens,
-        cnt: +entry.cnt,
+        count: entry.count,
         rawText: entry.text
       };
     });
