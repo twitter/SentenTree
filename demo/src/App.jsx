@@ -127,6 +127,9 @@ function loadFile(file) {
         container.appendChild(div);
         const chart = new SentenTreeVis(div)
           .data(graph)
+          .on('nodeClick', node => {
+            console.log('node', node);
+          })
           .on('layoutEnd', () => {
             chart.fitComponentToContent();
             console.timeEnd(`Render graph ${i}`);

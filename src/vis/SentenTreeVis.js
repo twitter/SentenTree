@@ -20,6 +20,14 @@ class SentenTreeVis extends SvgChart {
       'layoutStart',
       'layoutTick',
       'layoutEnd',
+      'nodeMouseenter',
+      'nodeMouseleave',
+      'nodeMousemove',
+      'nodeClick',
+      'linkMouseenter',
+      'linkMouseleave',
+      'linkMousemove',
+      'linkClick',
     ];
   }
 
@@ -43,15 +51,15 @@ class SentenTreeVis extends SvgChart {
       .linkDistance(5);
 
     const dispatchLayoutStart = this.dispatchAs('layoutStart');
-    this.colaAdaptor.on('start', (...args) => {
+    this.colaAdaptor.on('start.default', (...args) => {
       this.isRunning = true;
       dispatchLayoutStart(...args);
     });
 
-    this.colaAdaptor.on('tick', this.dispatchAs('layoutTick'));
+    this.colaAdaptor.on('tick.event', this.dispatchAs('layoutTick'));
 
     const dispatchLayoutEnd = this.dispatchAs('layoutEnd');
-    this.colaAdaptor.on('end', (...args) => {
+    this.colaAdaptor.on('end.default', (...args) => {
       if (this.isRunning) {
         this.isRunning = false;
         dispatchLayoutEnd(...args);
@@ -74,9 +82,10 @@ class SentenTreeVis extends SvgChart {
     sEnter.append('text')
       .attr('dy', '.28em')
       .text(d => d.data.entity)
-      .on('click', node => {
-        console.log(node);
-      })
+      .on('click.event', this.dispatchAs('nodeClick'))
+      .on('mouseenter.event', this.dispatchAs('nodeMouseenter'))
+      .on('mousemove.event', this.dispatchAs('nodeMousemove'))
+      .on('mouseleave.event', this.dispatchAs('nodeMouseleave'));
 
     const sMerge = sEnter.merge(sUpdate)
       .style('font-size', d => this.fontSize(d))
@@ -113,6 +122,10 @@ class SentenTreeVis extends SvgChart {
     sUpdate.exit().remove();
 
     const sEnter = sUpdate.enter().append('path')
+      .on('click.event', this.dispatchAs('linkClick'))
+      .on('mouseenter.event', this.dispatchAs('linkMouseenter'))
+      .on('mousemove.event', this.dispatchAs('linkMousemove'))
+      .on('mouseleave.event', this.dispatchAs('linkMouseleave'))
       .style('vector-effect', 'non-scaling-stroke')
       .style('opacity', 0.5)
       .style('stroke', '#222')
