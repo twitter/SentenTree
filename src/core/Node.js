@@ -3,9 +3,7 @@ import { sum } from 'lodash-es';
 export default class Node {
   constructor(rawNode) {
     this.data = rawNode;
-    this.leftNodes = [];
     this.leftLinks = [];
-    this.rightNodes = [];
     this.rightLinks = [];
 
     this.x = 0;
@@ -15,15 +13,15 @@ export default class Node {
   }
 
   isLeaf(){
-    return this.leftNodes.length === 0 || this.rightNodes.length === 0;
+    return this.leftLinks.length === 0 || this.rightLinks.length === 0;
   }
 
   isLeftLeaf() {
-    return this.leftNodes.length === 0;
+    return this.leftLinks.length === 0;
   }
 
   isRightLeaf() {
-    return this.rightNodes.length === 0;
+    return this.rightLinks.length === 0;
   }
 
   leftEdge() {
@@ -34,44 +32,34 @@ export default class Node {
     return this.x + this.width / 2;
   }
 
-  static merge(nodes) {
-    const newNode = new Node({
-      entity: nodes[0].data.entity,
-      freq: sum(nodes.map(n => n.data.freq)),
-      originalData: nodes.map(n => n.data),
-      topEntries: nodes
-        .reduce(
-          (acc, curr) => acc.concat(curr.data.topEntries),
-          []
-        )
-        .slice(0,5)
-    });
+  getLeftNodes() {
+    return this.leftLinks.map(l => l.source);
+  }
 
-    // TBD
+  getRightNodes() {
+    return this.rightLinks.map(l => l.target);
   }
 
   createAlignmentConstraints(axis, nodes) {
-    return {
+    return nodes.length > 1 ? {
       type: 'alignment',
       axis,
       offsets: nodes.map(n => ({node: n.data.id, offset: 0}))
-    };
+    } : null;
   }
 
   computeLeftConstraints(){
-    const leftNodes = this.leftNodes.filter(n => n.rightNodes.length === 1);
-    if(leftNodes.length > 1){
-      return this.createAlignmentConstraints('x', leftNodes);
-    }
-    return null;
+    const nodes = this.getLeftNodes()
+      .filter(n => n.rightLinks.length === 1);
+
+    return this.createAlignmentConstraints('x', nodes);
   }
 
   computeRightConstraints(){
-    const rightNodes = this.rightNodes.filter(n => n.leftNodes.length === 1);
-    if(rightNodes.length > 1){
-      return this.createAlignmentConstraints('x', rightNodes);
-    }
-    return null;
+    const nodes = this.getRightNodes()
+      .filter(n => n.leftLinks.length === 1);
+
+    return this.createAlignmentConstraints('x', nodes);
   }
 
   updateAttachPoints() {
@@ -101,5 +89,21 @@ export default class Node {
         });
     }
 
+  }
+
+  static merge(nodes) {
+    const newNode = new Node({
+      entity: nodes[0].data.entity,
+      freq: sum(nodes.map(n => n.data.freq)),
+      originalData: nodes.map(n => n.data),
+      topEntries: nodes
+        .reduce(
+          (acc, curr) => acc.concat(curr.data.topEntries),
+          []
+        )
+        .slice(0,5)
+    });
+
+    // TODO
   }
 }

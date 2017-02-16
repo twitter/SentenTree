@@ -16,8 +16,6 @@ export default class RenderedGraph {
       const rights = rawGraph.linkadj[l];
       for( let r in rights) {
         const rightNode = this.nodes[r];
-        leftNode.rightNodes.push(rightNode);
-        rightNode.leftNodes.push(leftNode);
         const link = new Link(
           leftNode,
           rightNode,
@@ -47,8 +45,9 @@ export default class RenderedGraph {
         if(constraints){
           alignmentConstraints.push(constraints);
         }
-        if(node.rightNodes){
-          queue = queue.concat(node.rightNodes);
+        const rNodes = node.getRightNodes();
+        if(rNodes.length > 0){
+          queue = queue.concat(rNodes);
         }
       }
 
@@ -66,8 +65,9 @@ export default class RenderedGraph {
         if(constraints){
           alignmentConstraints.push(constraints);
         }
-        if(node.leftNodes){
-          queue = queue.concat(node.leftNodes);
+        const lNodes = node.getLeftNodes();
+        if(lNodes.length > 0){
+          queue = queue.concat(lNodes);
         }
       }
     }

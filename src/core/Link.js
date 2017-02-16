@@ -12,8 +12,8 @@ export default class Link {
   }
 
   isTheOnlyBridge() {
-    return this.source.rightNodes.length === 1
-      && this.target.leftNodes.length === 1;
+    return this.source.rightLinks.length === 1
+      && this.target.leftLinks.length === 1;
   }
 
   toConstraint() {
