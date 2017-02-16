@@ -1,3 +1,4 @@
+import Heap from 'heap';
 import RawGraph from './RawGraph.js';
 import WordFilter from './WordFilter.js';
 import { tokenize } from './tokenizer.js';
@@ -10,16 +11,17 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
     expandCnt -= rootSeq.words.length;
   }
 
-  var seqs = [rootSeq];
-  var leafSeqs = [];
-  while(seqs.length > 0 && expandCnt > 0) {
+  /* Create a max heap */
+  const seqs = new Heap((a, b) => b.size - a.size);
+  seqs.push(rootSeq);
+  const leafSeqs = [];
+
+  while(!seqs.empty() && expandCnt > 0) {
     /* find the candidate sequence with largest support DB */
-    seqs.sort(function(a, b) {return a.size - b.size;}); // TODO: rewrite
-    var s = seqs.pop();
-
-    var graph = s.graph;
-
-    var s0 = s.r, s1 = s.l;
+    const s = seqs.pop();
+    let graph = s.graph;
+    let s0 = s.r;
+    let s1 = s.l;
 
     if( !s0 && !s1 ) {
       /* find the next frequent sequence */
@@ -70,10 +72,9 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
       seqs.push(s1);
     if(s0 && s0.size >= minSupport )
       seqs.push(s0);
-
   }
 
-  return leafSeqs.concat(seqs);
+  return leafSeqs.concat(seqs.toArray());
 }
 
 function growSeq(seq, terms, minSupport, maxSupport, itemset) {
@@ -82,13 +83,27 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
   var word = null;
   var count = 0;
   for(var s = 0; s <= seq.words.length; s++ ) {
-    var fdist = {};
+    const fdist = {};
     seq.DBs.forEach(function(t) {
       const l = s === 0 ? 0 : t.seqIndices[s-1] + 1;
       const r = s === seq.words.length ? t.tokens.length : t.seqIndices[s];
+      // const duplicate = {};
+      // for(var i = l; i < r; i++ ) {
+      //   const w = t.tokens[i];
+
+      //   if(duplicate[w]) continue;
+      //   duplicate[w] = true;
+
+      //   if( w in fdist) {
+      //     fdist[w] += t.count;
+      //   } else {
+      //     fdist[w] = t.count;
+      //   }
+      // }
       var duplicate = [];
       for(var i = l; i < r; i++ ) {
         var w = t.tokens[i];
+        console.log('w', w);
         if( w in duplicate )
           continue;
         else

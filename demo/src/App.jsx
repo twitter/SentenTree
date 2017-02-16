@@ -119,8 +119,10 @@ function loadFile(file) {
     model.graphs
       .slice(0,3)
       .forEach((rawGraph,i) => {
-        console.time(`Render graph ${i}`);
+        console.time(`Convert graph ${i}`);
         const graph = rawGraph.toRenderedGraph();
+        console.timeEnd(`Convert graph ${i}`);
+        console.time(`Render graph ${i}`);
         const div = document.createElement('div');
         container.appendChild(div);
         const chart = new SentenTreeVis(div)
