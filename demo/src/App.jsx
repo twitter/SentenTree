@@ -110,17 +110,16 @@ function loadFile(file) {
   container.innerHTML = 'Loading ...';
 
   DataService.loadFile('data/' + file, (error, data) => {
+    console.time('Build tree');
     const model = new SentenTreeModel(data);
-    console.log('model', model);
-
-    const graph = model.graphs[0].toRenderedGraph();
-    console.log('graph', graph);
+    console.timeEnd('Build tree');
 
     container.innerHTML = '';
 
     model.graphs
       .slice(0,3)
-      .forEach(rawGraph => {
+      .forEach((rawGraph,i) => {
+        console.time(`Render graph ${i}`);
         const graph = rawGraph.toRenderedGraph();
         const div = document.createElement('div');
         container.appendChild(div);
@@ -128,6 +127,7 @@ function loadFile(file) {
           .data(graph)
           .on('layoutEnd', () => {
             chart.fitComponentToContent();
+            console.timeEnd(`Render graph ${i}`);
           });
       })
   });

@@ -8,14 +8,6 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
   if (rootSeq.words && rootSeq.words.length > 0) {
     rootSeq.graph.nodes = rootSeq.graph.nodes.concat(rootSeq.words);
     expandCnt -= rootSeq.words.length;
-
-    // rootSeq.words.forEach(word => {
-    //   rootSeq.graph.nodes.push(word);
-    // })
-    // for( var i = 0; i < rootSeq.words.length; i++ ) {
-    //   rootSeq.graph.nodes.push(rootSeq.words[i]);
-    //   expandCnt--;
-    // }
   }
 
   var seqs = [rootSeq];
@@ -175,7 +167,7 @@ export default class SentenTreeModel {
       t.seqIndices = [];
       t.tokens.forEach(function(i) {return +i;});
     });
-    console.log('dbsize' + dbsize);
+    console.log('dbsize', dbsize);
 
     this.tokenizedData = dataset;
     this.terms = terms;
