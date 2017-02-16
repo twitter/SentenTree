@@ -32,7 +32,7 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
 
       if( count < minSupport ) {
         leafSeqs.push(s);
-      } else{
+      } else {
         /* create new sequences and add new word */
         if(!graph) {
           graph = new RawGraph(minSupport, maxSupport);

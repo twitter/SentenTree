@@ -35,10 +35,4 @@ export default class RawGraph {
   toRenderedGraph() {
     return new RenderedGraph(this);
   }
-
-  toGroup() {
-    return {
-      leaves: this.nodes.map(n => n.id)
-    };
-  }
 }

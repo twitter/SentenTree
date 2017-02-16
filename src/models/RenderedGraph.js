@@ -11,10 +11,10 @@ export default class RenderedGraph {
     this.minSupport = rawGraph.minSupport;
     this.maxSupport = rawGraph.maxSupport;
 
-    for( let l in rawGraph.linkadj ) {
+    for(let l in rawGraph.linkadj) {
       const leftNode = this.nodes[l];
       const rights = rawGraph.linkadj[l];
-      for( let r in rights) {
+      for(let r in rights) {
         const rightNode = this.nodes[r];
         const link = new Link(
           leftNode,
@@ -31,6 +31,20 @@ export default class RenderedGraph {
       .filter(link => link.isTheOnlyBridge())
       .map(link => link.toOnlyBridgeConstraint());
 
+    this.baseConstraints = onlyBridgeConstraints
+      .concat(this.getAlignmentConstraints());
+  }
+
+  updateNodeSize(sizeFn) {
+    this.nodes.forEach(node => {
+      const {width, height} = sizeFn(node);
+      node.width = width;
+      node.height = height;
+    });
+    return this;
+  }
+
+  getAlignmentConstraints() {
     const alignmentConstraints = [];
 
     if(this.nodes.length > 0) {
@@ -72,16 +86,7 @@ export default class RenderedGraph {
       }
     }
 
-    this.baseConstraints = onlyBridgeConstraints.concat(alignmentConstraints);
-  }
-
-  updateNodeSize(sizeFn) {
-    this.nodes.forEach(node => {
-      const {width, height} = sizeFn(node);
-      node.width = width;
-      node.height = height;
-    });
-    return this;
+    return alignmentConstraints;
   }
 
   getLinkConstraints() {
@@ -91,5 +96,11 @@ export default class RenderedGraph {
   getConstraints() {
     return this.baseConstraints
       .concat(this.links.map(l => l.toConstraint()));
+  }
+
+  toGroup() {
+    return {
+      leaves: this.nodes.map(n => n.id)
+    };
   }
 }

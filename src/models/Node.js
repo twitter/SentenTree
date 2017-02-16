@@ -91,6 +91,10 @@ export default class Node {
 
   }
 
+  canMerge(node) {
+    return this.data.entity === node.data.entity;
+  }
+
   static merge(nodes) {
     const newNode = new Node({
       entity: nodes[0].data.entity,
