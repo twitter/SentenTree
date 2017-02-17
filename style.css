@@ -1,0 +1,101 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+/*body > #app .container.content {
+  padding: 60px 15px 0;
+}*/
+.container .text-muted {
+  margin: 20px 0;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+code {
+  font-size: 80%;
+}
+
+/* SentenTree CSS */
+
+.navbar-text.navbar-star {
+  margin-top 15px;
+  margin-bottom: 10px;
+}
+
+.vis-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px;
+  border: 1px solid #eee;
+  margin-bottom: 60px;
+}
+
+.github-corner svg {
+  z-index: 1040;
+}
+
+.popover-container {
+  position: relative;
+}
+
+.popover-content {
+  position: absolute;
+  margin-left: -135px;
+  z-index: 100;
+}
+
+.popover-inner {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  background-color: rgba(250,250,250, 0.9);
+}
+
+.popover-inner h4 {
+  text-align: center;
+  margin-top: 5px;
+}
+
+.mock-tweet {
+  display: inline-block;
+  width: 250px;
+  border-left: 2px solid #29B6F6;
+  background-color: #E1F5FE;
+  font-weight: 700;
+  font-size: 0.9em;
+  padding: 10px 12px 12px;
+  margin-bottom: 10px;
+  color: #01579B;
+}
+
+.mock-tweet .top-remark {
+  font-weight: 400;
+  font-size: 0.9em;
+}
+
+.mock-tweet .word-count {
+  font-weight: 400;
+  font-size: 0.9em;
+}
