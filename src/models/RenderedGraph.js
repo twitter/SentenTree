@@ -8,11 +8,6 @@ export default class RenderedGraph {
     this.nodes = rawGraph.nodes.map(n => new Node(n));
     this.links = [];
 
-    this.freqRange = [
-      min(rawGraph.nodes.map(n => n.freq)),
-      max(rawGraph.nodes.map(n => n.freq))
-    ];
-    this.globalFreqRange = this.freqRange;
     this.minSupport = rawGraph.minSupport;
     this.maxSupport = rawGraph.maxSupport;
 
@@ -31,6 +26,12 @@ export default class RenderedGraph {
         rightNode.leftLinks.push(link);
       }
     }
+
+    this.freqRange = [
+      min(rawGraph.nodes.map(n => n.freq)),
+      max(rawGraph.nodes.map(n => n.freq))
+    ];
+    this.globalFreqRange = this.freqRange;
 
     const onlyBridgeConstraints = this.links
       .filter(link => link.isTheOnlyBridge())
