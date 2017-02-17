@@ -1,32 +1,120 @@
 import * as DataService from './DataService.js';
+import * as d3 from 'd3-selection';
 
 import React, { PropTypes } from 'react';
 import { SentenTreeModel, SentenTreeVis } from '../../src/main.js';
 
 import { DATASETS } from './datasets.js';
+import { format } from 'd3-format';
 
 const propTypes = {
   className: PropTypes.string,
 };
 const defaultProps = {};
 
+const formatNumber = format(',d');
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       dataset: 0,
+      selectedNode: null,
     };
   }
 
   componentDidMount() {
-    loadFile(DATASETS[this.state.dataset].file);
+    this.loadFile(DATASETS[this.state.dataset].file);
   }
 
   changeDataset(value) {
     this.setState({
-      dataset: value
+      dataset: value,
+      selectedNode: null
     });
-    loadFile(DATASETS[value].file);
+    this.loadFile(DATASETS[value].file);
+  }
+
+  selectNode(node) {
+    const [x, y] = d3.mouse(this.c);
+    this.setState({
+      selectedNode: node,
+      nodeY: y,
+      nodeX: x,
+    });
+  }
+
+  clearNode() {
+    this.setState({ selectedNode: null });
+  }
+
+  loadFile(file) {
+    const container = document.querySelector('#vis');
+    container.innerHTML = 'Loading ...';
+
+    DataService.loadFile('data/' + file, (error, data) => {
+      console.time('Build tree');
+      const model = new SentenTreeModel(data);
+      console.timeEnd('Build tree');
+
+      container.innerHTML = '';
+
+      model.getRenderedGraphs(3)
+        .forEach((graph, i) => {
+          console.time(`Render graph ${i}`);
+          const div = document.createElement('div');
+          container.appendChild(div);
+          const chart = new SentenTreeVis(div)
+            .data(graph)
+            .on('nodeClick', node => {
+              console.log('node', node);
+            })
+            .on('nodeMouseenter', node => {
+              this.selectNode(node);
+            })
+            .on('nodeMousemove', node => {
+              this.selectNode(node);
+            })
+            .on('nodeMouseleave', node => {
+              this.clearNode();
+            })
+            .on('layoutEnd', () => {
+              chart.fitComponentToContent();
+              console.timeEnd(`Render graph ${i}`);
+            });
+        });
+    });
+  }
+
+  renderSelectedNode() {
+    const { selectedNode: node, nodeX, nodeY } = this.state;
+    if (node) {
+      return (
+        <div
+          className="popover-content"
+          style={{
+            top: `${nodeY + 10}px`,
+            left: `${nodeX}px`,
+          }}
+        >
+          <div className="popover-inner">
+          <div className="content-center">
+            <h4>
+              {node.data.entity}
+              &nbsp;
+              <small>({formatNumber(node.data.freq)})</small>
+            </h4>
+          </div>
+          {node.data.topEntries.slice(0,1).map(entry =>
+            <div className="mock-tweet">
+              {entry.rawText}
+            </div>
+          )}
+          </div>
+        </div>
+      );
+    }
+    return null;
   }
 
   render() {
@@ -70,6 +158,12 @@ class App extends React.Component {
             </div>
           </div>
         </nav>
+        <div
+          className="popover-container"
+          ref={c => {this.c = c;}}
+        >
+          {this.renderSelectedNode()}
+        </div>
         <div className="container content">
           <div className="page-header">
             <h1>SentenTree</h1>
@@ -95,6 +189,11 @@ class App extends React.Component {
             )}
           </select>
         </div>
+        <div className="container">
+          <div className="vis-container">
+            <div id="vis"></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -104,33 +203,3 @@ App.propTypes = propTypes;
 App.defaultProps = defaultProps;
 
 export default App;
-
-function loadFile(file) {
-  const container = document.querySelector('#vis');
-  container.innerHTML = 'Loading ...';
-
-  DataService.loadFile('data/' + file, (error, data) => {
-    console.time('Build tree');
-    const model = new SentenTreeModel(data);
-    console.timeEnd('Build tree');
-
-    container.innerHTML = '';
-
-    model.getRenderedGraphs(3)
-      .forEach((graph, i) => {
-        console.time(`Render graph ${i}`);
-        const div = document.createElement('div');
-        container.appendChild(div);
-        const chart = new SentenTreeVis(div)
-          .data(graph)
-          .on('nodeClick', node => {
-            console.log('node', node);
-          })
-          .on('layoutEnd', () => {
-            chart.fitComponentToContent();
-            console.timeEnd(`Render graph ${i}`);
-          });
-      });
-  });
-}
-

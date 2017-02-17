@@ -82,6 +82,7 @@ class SentenTreeVis extends SvgChart {
     sEnter.append('text')
       .attr('dy', '.28em')
       .text(d => d.data.entity)
+      .style('cursor', 'pointer')
       .on('click.event', this.dispatchAs('nodeClick'))
       .on('mouseenter.event', this.dispatchAs('nodeMouseenter'))
       .on('mousemove.event', this.dispatchAs('nodeMousemove'))
@@ -133,7 +134,7 @@ class SentenTreeVis extends SvgChart {
 
     this.sLinks = sEnter.merge(sUpdate)
       .style('stroke-width', d => `${d.strokeWidth}px`)
-      .style('stroke', l => l.isTheOnlyBridge() ? '#777' : '#55acee');
+      .style('stroke', l => l.isTheOnlyBridge() ? '#777' : '#FF9800');
   }
 
   placeLinks() {
