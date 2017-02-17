@@ -1,3 +1,5 @@
+import { max, min } from 'lodash-es';
+
 import Link from './Link.js';
 import Node from './Node.js';
 
@@ -6,8 +8,11 @@ export default class RenderedGraph {
     this.nodes = rawGraph.nodes.map(n => new Node(n));
     this.links = [];
 
-    this.freqMin = rawGraph.freqMin;
-    this.freqMax = rawGraph.freqMax;
+    this.freqRange = [
+      min(rawGraph.nodes.map(n => n.freq)),
+      max(rawGraph.nodes.map(n => n.freq))
+    ];
+    this.globalFreqRange = this.freqRange;
     this.minSupport = rawGraph.minSupport;
     this.maxSupport = rawGraph.maxSupport;
 

@@ -1,3 +1,5 @@
+import { max, min } from 'lodash-es';
+
 import Heap from 'heap';
 import RawGraph from './RawGraph.js';
 import WordFilter from './WordFilter.js';
@@ -142,17 +144,43 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
   return { word, pos, count, s0, s1 };
 }
 
+function updateNodesEdges(graphs, leafSeqs) {
+  leafSeqs
+    .filter(seq => graphs.indexOf(seq.graph) >= 0)
+    .forEach(function(seq) {
+      const words = seq.words;
+      const linkadj = seq.graph.linkadj;
+      // printSeq(seq);
+      for(let i = 0; i < words.length - 1; i++) {
+        const word = words[i];
+        const id = word.id;
+        const freq = word.freq;
+        const nextId = words[i+1].id;
+
+        if (!(id in linkadj)) linkadj[id] = {};
+
+        if(nextId in linkadj[id])
+          linkadj[id][nextId] += seq.size;
+        else
+          linkadj[id][nextId] = seq.size;
+      }
+
+      words
+        .filter(word => !word.leafSeq || word.leafSeq < seq.size)
+        .forEach(word => { word.leafSeq = seq; });
+    });
+}
+
 function printSeq (words) {
   const str = words.map(w => w.entity).join(' ');
   console.log(str);
 }
 
 export default class SentenTreeModel {
-  constructor(
-    inputEntries,
+  constructor(inputEntries, {
     wordFilter = WordFilter.DEFAULT,
     termWeights = {}
-  ) {
+  } = {}) {
     const dataset = tokenize(inputEntries).filter(wordFilter);
     const terms = dataset.encodeTermWeights(termWeights);
 
@@ -197,7 +225,7 @@ export default class SentenTreeModel {
       .filter(g =>  g.nodes.length > 2)
       .slice(0, 10);
 
-    this.updateNodesEdges(this.graphs, visibleGroups);
+    updateNodesEdges(this.graphs, visibleGroups);
   }
 
   updateGraphs(newRootSeq) {
@@ -215,51 +243,21 @@ export default class SentenTreeModel {
       this.tokenizedData.itemset
     );
 
-    this.updateNodesEdges(this.graphs, visibleGroups);
-
+    updateNodesEdges(this.graphs, visibleGroups);
     return this;
   }
 
-  updateNodesEdges(graphs, leafSeqs) {
-    let freqMin = Number.MAX_SAFE_INTEGER;
-    let freqMax = 0;
-
-    leafSeqs
-      .filter(seq => graphs.indexOf(seq.graph) >= 0)
-      .forEach( function(seq) {
-        const words = seq.words;
-        const linkadj = seq.graph.linkadj;
-        // printSeq(seq);
-        for(let i = 0; i < words.length - 1; i++) {
-          const word = words[i];
-          const id = word.id;
-          const freq = word.freq;
-          const nextId = words[i+1].id;
-
-          if (!(id in linkadj)) linkadj[id] = {};
-
-          if(nextId in linkadj[id])
-            linkadj[id][nextId] += seq.size;
-          else
-            linkadj[id][nextId] = seq.size;
-
-          freqMin = Math.min(freq, freqMin);
-          freqMax = Math.max(freq, freqMax);
-        }
-
-        words
-          .filter(word => !word.leafSeq || word.leafSeq < seq.size)
-          .forEach(word => { word.leafSeq = seq; });
-      });
-
-    graphs.forEach (graph => {
-      graph.freqMin = freqMin;
-      graph.freqMax = freqMax;
-    });
-
-    this.freqMin = freqMin;
-    this.freqMax = freqMax;
-
-    return this;
+  getRenderedGraphs(limit) {
+    const graphs = arguments.length === 1
+      ? this.graphs.slice(0, limit)
+      : this.graphs;
+    const renderedGraphs = graphs.map(g => g.toRenderedGraph());
+    const globalFreqRange = [
+      min(renderedGraphs.map(g => g.freqRange[0])),
+      max(renderedGraphs.map(g => g.freqRange[1]))
+    ];
+    renderedGraphs.forEach(g => { g.globalFreqRange = globalFreqRange; });
+    return renderedGraphs;
   }
+
 }

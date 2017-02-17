@@ -184,7 +184,7 @@ class SentenTreeVis extends SvgChart {
     const { fontSize } = this.options();
 
     this.fontSizeScale = d3.scaleSqrt()
-      .domain([graph.freqMin, graph.freqMax])
+      .domain(graph.globalFreqRange)
       .range(fontSize)
       .clamp(true);
 

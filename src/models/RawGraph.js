@@ -7,8 +7,6 @@ export default class RawGraph {
     this.minSupport = minSupport;
     this.maxSupport = maxSupport;
     this.totalNodeCnt = 0;
-    this.freqMin = 1;
-    this.freqMax = 2;
   }
 
   generateNodeIds(startIndex = 1) {
@@ -18,7 +16,7 @@ export default class RawGraph {
 
   getBounds() {
     return this.nodes.reduce((acc, curr) => {
-
+      // TODO
       return acc;
     }, {
       topLeft: [0, 0],

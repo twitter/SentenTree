@@ -116,12 +116,8 @@ function loadFile(file) {
 
     container.innerHTML = '';
 
-    model.graphs
-      .slice(0,3)
-      .forEach((rawGraph,i) => {
-        console.time(`Convert graph ${i}`);
-        const graph = rawGraph.toRenderedGraph();
-        console.timeEnd(`Convert graph ${i}`);
+    model.getRenderedGraphs(3)
+      .forEach((graph, i) => {
         console.time(`Render graph ${i}`);
         const div = document.createElement('div');
         container.appendChild(div);
@@ -134,7 +130,7 @@ function loadFile(file) {
             chart.fitComponentToContent();
             console.timeEnd(`Render graph ${i}`);
           });
-      })
+      });
   });
 }
 
