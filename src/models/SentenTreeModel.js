@@ -247,6 +247,10 @@ export default class SentenTreeModel {
     return this;
   }
 
+  size() {
+    return this.rootSeq.size;
+  }
+
   getRenderedGraphs(limit) {
     const graphs = arguments.length === 1
       ? this.graphs.slice(0, limit)

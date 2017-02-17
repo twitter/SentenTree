@@ -107,7 +107,13 @@ class App extends React.Component {
           </div>
           {node.data.topEntries.slice(0,1).map(entry =>
             <div className="mock-tweet">
+              <div className="top-remark">
+                <i className="glyphicon glyphicon-star"></i> Top entry
+              </div>
               {entry.rawText}
+              <div className="word-count">
+                {formatNumber(entry.count)} occurrences
+              </div>
             </div>
           )}
           </div>
