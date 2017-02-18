@@ -2,6 +2,7 @@
 
 const path = require('path');
 const gulp = require('gulp');
+const sass = require('gulp-sass');
 const browserSync = require('browser-sync');
 
 // -------------------------------------------
@@ -9,31 +10,37 @@ const browserSync = require('browser-sync');
 // -------------------------------------------
 
 const paths = {
-  src: path.join(__dirname, 'src'),
-  dist: path.join(__dirname, 'dist'),
-  examples: path.join(__dirname, 'examples')
+  src: path.join(__dirname, 'demo/src'),
+  dist: path.join(__dirname, 'demo/dist'),
 };
 
 const patterns = {
-  js: path.join(paths.dist, '**/*.js')
+  sass: path.join(paths.src, '**/*.scss')
 };
 
-gulp.task('copy', () =>
-  gulp.src(patterns.js)
-    .pipe(gulp.dest(path.join(paths.examples, 'dist')))
-);
+gulp.task('sass', function () {
+  return gulp.src('./demo/src/**/*.scss')
+    .pipe(sass({
+      outputStyle: 'compressed',
+      sourceMap: true
+    }).on('error', sass.logError))
+    .pipe(gulp.dest('./demo/dist'));
+});
 
-gulp.task('browser-sync', ['copy'], () => {
+gulp.task('browser-sync', () => {
   browserSync.init({
-    server: './examples',
-    files: ['examples/**/*.*'],
+    server: './demo',
+    files: [
+      'demo/dist/**/*.*',
+      'demo/index.html'
+    ],
     browser: 'google chrome',
-    port: 7000
+    port: 3003
   });
 });
 
-gulp.task('watch', ['copy'], () => {
-  gulp.watch(patterns.js, ['copy']);
+gulp.task('watch', () => {
+  gulp.watch(patterns.sass, ['sass']);
 });
 
-gulp.task('default', ['watch', 'browser-sync']);
+gulp.task('server', ['watch', 'browser-sync']);

@@ -26,9 +26,9 @@
     "version": "npm run build && git add -A dist",
     "postversion": "git push ; git push --tags; pkgfiles",
     "prepublish": "pkgfiles",
-    "server": "browser-sync start --server 'demo' --browser \"Google Chrome\" --files \"demo/dist/**/*.*\" --port 3003",
+    "server": "gulp server",
     "start": "webpack --watch --config webpack.config.demo.js & npm run server",
-    "build-demo": "NODE_ENV=production webpack --config webpack.config.demo.js",
+    "build-demo": "NODE_ENV=production webpack --config webpack.config.demo.js && gulp sass",
     "gh-pages": "npm run build-demo && gh-pages -d demo"
   },
   "repository": {
@@ -53,6 +53,8 @@
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-react": "^5.0.1",
     "gh-pages": "^0.11.0",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.1.0",
     "karma": "~0.13.15",
     "karma-chai": "^0.1.0",
     "karma-coverage": "~0.5.3",
@@ -62,6 +64,7 @@
     "karma-webpack": "^2.0.2",
     "lodash-es": "^4.17.4",
     "mocha": "^3.0.2",
+    "node-sass": "^4.5.0",
     "pkgfiles": "^2.3.0",
     "uglifyjs": "^2.4.10",
     "webpack": "^2.2.1"
