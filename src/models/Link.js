@@ -11,6 +11,10 @@ export default class Link {
     };
   }
 
+  getKey() {
+    return [this.source.id, this.target.id].join(',');
+  }
+
   isTheOnlyBridge() {
     return this.source.rightLinks.length === 1
       && this.target.leftLinks.length === 1;

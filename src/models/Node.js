@@ -1,4 +1,4 @@
-import { sum } from 'lodash-es';
+import { min, sum } from 'lodash-es';
 
 export default class Node {
   constructor(rawNode) {
@@ -97,10 +97,11 @@ export default class Node {
   }
 
   static merge(nodes) {
-    const newNode = new Node({
+    return new Node({
+      id: min(nodes.map(n => n.data.id)),
       entity: nodes[0].data.entity,
       freq: sum(nodes.map(n => n.data.freq)),
-      originalData: nodes.map(n => n.data),
+      mergedData: nodes.map(n => n.data),
       topEntries: nodes
         .reduce(
           (acc, curr) => acc.concat(curr.data.topEntries),
@@ -108,7 +109,5 @@ export default class Node {
         )
         .slice(0,5)
     });
-
-    // TODO
   }
 }

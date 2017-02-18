@@ -5,6 +5,9 @@ SentenTree is a novel text visualization technique for summarizing a collection 
 
 ![SentenTree example](https://raw.githubusercontent.com/twitter/SentenTree/master/images/SentenTree.png)
 
+
+[Demo](https://twitter.github.io/SentenTree/)
+
 ## Author
 - Mengdie Hu / [@mengdieh](https://twitter.com/mengdieh)
 - Krist Wongsuphasawat [@kristw](https://twitter.com/kristw)

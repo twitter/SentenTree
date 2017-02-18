@@ -1,40 +1,49 @@
 import { max, min } from 'lodash-es';
 
+import GraphBundler from './GraphBundler.js';
 import Link from './Link.js';
 import Node from './Node.js';
 
 export default class RenderedGraph {
-  constructor(rawGraph) {
-    this.nodes = rawGraph.nodes.map(n => new Node(n));
-    this.links = [];
-
+  constructor(rawGraph, {
+    bundle = true
+  } = {}) {
     this.minSupport = rawGraph.minSupport;
     this.maxSupport = rawGraph.maxSupport;
 
+    const nodes = rawGraph.nodes.map(n => new Node(n));
+    const links = [];
+
     for(let l in rawGraph.linkadj) {
-      const leftNode = this.nodes[l];
+      const leftNode = nodes[l];
       const rights = rawGraph.linkadj[l];
       for(let r in rights) {
-        const rightNode = this.nodes[r];
+        const rightNode = nodes[r];
         const link = new Link(
           leftNode,
           rightNode,
           rights[r]
         );
-        this.links.push(link);
+        links.push(link);
         leftNode.rightLinks.push(link);
         rightNode.leftLinks.push(link);
       }
     }
 
-    this.assignNodeIds();
+    this.assignNodeIds(nodes);
 
-    // bundle
+    if (bundle) {
+      const bundled = new GraphBundler(nodes, links).bundle();
+      this.nodes = bundled.nodes;
+      this.links = bundled.links;
+      this.assignNodeIds(this.nodes);
+    } else {
+      this.nodes = nodes;
+      this.links = links;
+    }
 
-    this.freqRange = [
-      min(rawGraph.nodes.map(n => n.freq)),
-      max(rawGraph.nodes.map(n => n.freq))
-    ];
+    const frequencies = this.nodes.map(n => n.data.freq);
+    this.freqRange = [min(frequencies), max(frequencies)];
     this.globalFreqRange = this.freqRange;
 
     const onlyBridgeConstraints = this.links
@@ -54,8 +63,8 @@ export default class RenderedGraph {
     return this;
   }
 
-  assignNodeIds(startIndex = 0) {
-    this.nodes.forEach((n, i) => { n.id = i + startIndex; });
+  assignNodeIds(nodes, startIndex = 0) {
+    nodes.forEach((n, i) => { n.id = i + startIndex; });
     return this;
   }
 
@@ -113,7 +122,7 @@ export default class RenderedGraph {
       .concat(this.links.map(l => l.toConstraint()));
   }
 
-  toGroup() {
+  toGroupConstraint() {
     return {
       leaves: this.nodes.map(n => n.id)
     };
