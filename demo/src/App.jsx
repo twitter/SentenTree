@@ -173,6 +173,10 @@ class App extends React.Component {
         <div className="container content">
           <div className="page-header">
             <h1>SentenTree</h1>
+            <div className="pull-right">
+
+
+            </div>
           </div>
           <p className="lead">
             SentenTree is a novel text visualization technique for summarizing
