@@ -73,7 +73,7 @@ class SentenTreeVis extends SvgChart {
 
   renderNodes(nodes) {
     const sUpdate = this.layers.get('root/node').selectAll('g')
-      .data(nodes, n => n.data.id);
+      .data(nodes, n => n.id);
 
     sUpdate.exit().remove();
 

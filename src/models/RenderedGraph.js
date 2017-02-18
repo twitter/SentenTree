@@ -27,6 +27,10 @@ export default class RenderedGraph {
       }
     }
 
+    this.assignNodeIds();
+
+    // bundle
+
     this.freqRange = [
       min(rawGraph.nodes.map(n => n.freq)),
       max(rawGraph.nodes.map(n => n.freq))
@@ -50,6 +54,11 @@ export default class RenderedGraph {
     return this;
   }
 
+  assignNodeIds(startIndex = 0) {
+    this.nodes.forEach((n, i) => { n.id = i + startIndex; });
+    return this;
+  }
+
   getAlignmentConstraints() {
     const alignmentConstraints = [];
 
@@ -58,7 +67,7 @@ export default class RenderedGraph {
       let queue = [this.nodes[0]];
       while(queue.length > 0){
         const node = queue.shift();
-        const nodeIndex = node.data.id;
+        const nodeIndex = node.id;
         if(visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
         const constraints = node.computeRightConstraints();
@@ -78,7 +87,7 @@ export default class RenderedGraph {
 
       while(queue.length>0){
         const node = queue.shift();
-        const nodeIndex = node.data.id;
+        const nodeIndex = node.id;
         if(visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
         const constraints = node.computeLeftConstraints();

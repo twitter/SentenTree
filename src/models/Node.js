@@ -6,6 +6,7 @@ export default class Node {
     this.leftLinks = [];
     this.rightLinks = [];
 
+    this.id = -1;
     this.x = 0;
     this.y = 0;
     this.width = 50;
@@ -44,7 +45,7 @@ export default class Node {
     return nodes.length > 1 ? {
       type: 'alignment',
       axis,
-      offsets: nodes.map(n => ({node: n.data.id, offset: 0}))
+      offsets: nodes.map(n => ({node: n.id, offset: 0}))
     } : null;
   }
 

@@ -9,11 +9,6 @@ export default class RawGraph {
     this.totalNodeCnt = 0;
   }
 
-  generateNodeIds(startIndex = 1) {
-    this.nodes.forEach((n, i) => { n.id = i + startIndex; });
-    return this;
-  }
-
   getBounds() {
     return this.nodes.reduce((acc, curr) => {
       // TODO

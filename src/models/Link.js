@@ -20,8 +20,8 @@ export default class Link {
     const gap = this.isTheOnlyBridge() ? 5 : 15;
     return {
       axis: 'x',
-      left: this.source.data.id,
-      right: this.target.data.id,
+      left: this.source.id,
+      right: this.target.id,
       gap: (this.source.width + this.target.width) / 2 + gap
     };
   }
@@ -31,8 +31,8 @@ export default class Link {
       type: 'alignment',
       axis: 'y',
       offsets: [
-        { node: this.source.data.id, offset: 0 },
-        { node: this.target.data.id, offset: 0 }
+        { node: this.source.id, offset: 0 },
+        { node: this.target.id, offset: 0 }
       ]
     };
   }
