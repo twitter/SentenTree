@@ -1,0 +1,21 @@
+.mock-tweet {
+  display: inline-block;
+  width: 250px;
+  border-left: 2px solid #29B6F6;
+  background-color: #E1F5FE;
+  font-weight: 700;
+  font-size: 0.9em;
+  padding: 10px 12px 12px;
+  margin-bottom: 10px;
+  color: #01579B;
+
+  .top-remark {
+    font-weight: 400;
+    font-size: 0.9em;
+  }
+
+  .word-count {
+    font-weight: 400;
+    font-size: 0.9em;
+  }
+}
