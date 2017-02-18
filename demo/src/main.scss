@@ -1,8 +1,10 @@
 @import './_stickyFooter';
 
-.navbar-text.navbar-star {
-  margin-top: 15px;
+.star-block {
+  display: inline-block;
+  margin-top: 10px;
   margin-bottom: 10px;
+  margin-left: 15px;
 }
 
 .vis-container {
@@ -11,10 +13,6 @@
   padding: 20px;
   border: 1px solid #eee;
   margin-bottom: 60px;
-}
-
-.github-corner svg {
-  z-index: 1040;
 }
 
 .popover-container {
@@ -58,4 +56,12 @@
 .mock-tweet .word-count {
   font-weight: 400;
   font-size: 0.9em;
+}
+
+.floater-links {
+  float: left;
+  vertical-align: bottom;
+  li {
+    font-weight: 500;
+  }
 }
