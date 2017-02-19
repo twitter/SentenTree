@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 
 import { SvgChart, helper } from 'd3kit/dist/d3kit-es.js';
 
-import { d3adaptor } from 'webcola/WebCola/cola.js';
+import Layout from './Layout.js';
 import { diagonal } from './shapeUtil.js';
 
 class SentenTreeVis extends SvgChart {
@@ -34,8 +34,6 @@ class SentenTreeVis extends SvgChart {
   constructor(element, options) {
     super(element, options);
 
-    this.isRunning = false;
-
     this.layers.create({ root: ['link', 'node'] });
 
     this.visualize = this.visualize.bind(this);
@@ -43,28 +41,10 @@ class SentenTreeVis extends SvgChart {
     this.on('options', this.visualize);
     // this.on('resize', this.visualize);
 
-    this.colaAdaptor = d3adaptor(d3)
-      .flowLayout('x', 5)
-      .avoidOverlaps(true)
-      // .symmetricDiffLinkLengths(5)
-      .jaccardLinkLengths(10)
-      .linkDistance(5);
-
-    const dispatchLayoutStart = this.dispatchAs('layoutStart');
-    this.colaAdaptor.on('start.default', (...args) => {
-      this.isRunning = true;
-      dispatchLayoutStart(...args);
-    });
-
-    this.colaAdaptor.on('tick.event', this.dispatchAs('layoutTick'));
-
-    const dispatchLayoutEnd = this.dispatchAs('layoutEnd');
-    this.colaAdaptor.on('end.default', (...args) => {
-      if (this.isRunning) {
-        this.isRunning = false;
-        dispatchLayoutEnd(...args);
-      }
-    });
+    this.layout = new Layout();
+    this.layout.on('start.default', this.dispatchAs('layoutStart'));
+    this.layout.on('tick.event', this.dispatchAs('layoutTick'));
+    this.layout.on('end.default', this.dispatchAs('layoutEnd'));
   }
 
   fontSize(node) {
@@ -190,11 +170,7 @@ class SentenTreeVis extends SvgChart {
       d.height = bbox.height + 4;
     });
 
-    this.colaAdaptor
-      .nodes(graph.nodes)
-      .links(graph.links)
-      .constraints(graph.getConstraints())
-      .start(10, 10, 10);
+    this.layout.setGraph(graph).start();
 
     this.placeNodes();
     this.placeLinks();

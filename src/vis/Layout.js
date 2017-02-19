@@ -31,6 +31,11 @@ export default class Layout {
     });
   }
 
+  on(...args) {
+    this.dispatcher.on(...args);
+    return this;
+  }
+
   setGraph(graph) {
     this.simulation
       .nodes(graph.nodes)
@@ -42,9 +47,11 @@ export default class Layout {
 
   start() {
     this.simulation.start(10, 10, 10);
+    return this;
   }
 
   stop() {
     this.simulation.stop();
+    return this;
   }
 }

@@ -75,7 +75,7 @@ class App extends React.Component {
             .on('nodeMousemove', node => {
               this.selectNode(node);
             })
-            .on('nodeMouseleave', node => {
+            .on('nodeMouseleave', () => {
               this.clearNode();
             })
             .on('layoutEnd', () => {
@@ -98,24 +98,24 @@ class App extends React.Component {
           }}
         >
           <div className="popover-inner">
-          <div className="content-center">
-            <h4>
-              {node.data.entity}
-              &nbsp;
-              <small>({formatNumber(node.data.freq)})</small>
-            </h4>
-          </div>
-          {node.data.topEntries.slice(0,1).map(entry =>
-            <div className="mock-tweet">
-              <div className="top-remark">
-                <i className="glyphicon glyphicon-star"></i> Top entry
-              </div>
-              {entry.rawText}
-              <div className="word-count">
-                {formatNumber(entry.count)} occurrences
-              </div>
+            <div className="content-center">
+              <h4>
+                {node.data.entity}
+                &nbsp;
+                <small>({formatNumber(node.data.freq)})</small>
+              </h4>
             </div>
-          )}
+            {node.data.topEntries.slice(0, 1).map(entry =>
+              <div key={entry.id} className="mock-tweet">
+                <div className="top-remark">
+                  <i className="glyphicon glyphicon-star"></i> Top entry
+                </div>
+                {entry.rawText}
+                <div className="word-count">
+                  {formatNumber(entry.count)} occurrences
+                </div>
+              </div>
+            )}
           </div>
         </div>
       );
