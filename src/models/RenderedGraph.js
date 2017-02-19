@@ -47,8 +47,8 @@ export default class RenderedGraph {
 
     if (highFrequencyOnTop) {
       this.nodes.forEach(n => {
-        n.rightLinks.sort((a, b) => b.target.data.freq - a.target.data.freq);
-        n.leftLinks.sort((a, b) => b.source.data.freq - a.source.data.freq);
+        n.rightLinks.sort((a, b) => b.freq - a.freq);
+        n.leftLinks.sort((a, b) => b.freq - a.freq);
       });
     }
 
