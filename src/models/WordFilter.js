@@ -17,7 +17,7 @@ export default class WordFilter {
       const exclusionLookup = keyBy(excludeWords, w => w);
       this.stopWords = this.stopWords.filter(w => !exclusionLookup[w]);
     }
-    this.regex = new RegExp('^(' + this.stopWords.join('|') + ')$');
+    this.regex = new RegExp(`^(${this.stopWords.join('|')})$`);
   }
 
   test(word) {
@@ -26,7 +26,7 @@ export default class WordFilter {
 }
 
 let defaultFilter = null;
-WordFilter.getDefault = function () {
+WordFilter.getDefault = () => {
   if (!defaultFilter) {
     defaultFilter = new WordFilter();
   }

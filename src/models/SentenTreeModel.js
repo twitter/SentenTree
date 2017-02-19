@@ -7,6 +7,83 @@ import { tokenize } from './tokenizer.js';
 
 const DEFAULT_NODE_COUNT = 150;
 
+function growSeq(seq, terms, minSupport, maxSupport, itemset) {
+  /* find the next frequent sequence by inserting a new word to current sequence */
+  let pos = -1;
+  let word = null;
+  let count = 0;
+  const len = seq.words.length;
+  for (let s = 0; s <= len; s++) {
+    const fdist = {};
+    seq.DBs.forEach(t => {
+      const l = s === 0 ? 0 : t.seqIndices[s - 1] + 1;
+      const r = s === len ? t.tokens.length : t.seqIndices[s];
+      const duplicate = {};
+      for (let i = l; i < r; i++) {
+        const w = t.tokens[i];
+
+        if (duplicate[w]) continue;
+        duplicate[w] = true;
+
+        if (w in fdist) {
+          fdist[w] += t.count;
+        } else {
+          fdist[w] = t.count;
+        }
+      }
+    });
+
+    let maxw = null;
+    let maxc = 0;
+
+    const isNotRoot = len > 0;
+    const words = isNotRoot
+      ? Object.keys(fdist)
+      : Object.keys(fdist).filter(w => !itemset[w].startsWith('#'));
+
+    words.forEach(w => {
+      const value = fdist[w];
+      if (value < maxSupport && value > maxc) {
+        maxw = +w;
+        maxc = value;
+      }
+    });
+
+    if (maxc > count) {
+      pos = s;
+      word = maxw;
+      count = maxc;
+    }
+  }
+
+  let s0 = null;
+  let s1 = null;
+
+  /* split the current group in two */
+  if (count >= minSupport) {
+    s0 = { size: 0, DBs: [] };
+    s1 = { size: 0, DBs: [] };
+    const words = seq.words;
+    for (let ti = 0; ti < seq.DBs.length; ti ++) {
+      const t = seq.DBs[ti];
+      const l = pos === 0 ? 0 : t.seqIndices[pos - 1] + 1;
+      const r = pos === words.length ? t.tokens.length : t.seqIndices[pos];
+      let i = t.tokens.slice(l, r).indexOf(word);
+      if (i < 0) {
+        s0.DBs.push(t);
+        s0.size += t.count;
+      } else {
+        i += l;
+        t.seqIndices.splice(pos, 0, i);
+        s1.DBs.push(t);
+        s1.size += t.count;
+      }
+    }
+  }
+
+  return { word, pos, count, s0, s1 };
+}
+
 function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms, itemset) {
   if (rootSeq.words && rootSeq.words.length > 0) {
     rootSeq.graph.nodes = rootSeq.graph.nodes.concat(rootSeq.words);
@@ -67,102 +144,36 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
     s.r = s0;
 
     /* add new sequences to candidates */
-    if (s1)
+    if (s1) {
       seqs.push(s1);
-    if (s0 && s0.size >= minSupport)
+    }
+    if (s0 && s0.size >= minSupport) {
       seqs.push(s0);
+    }
   }
 
   return leafSeqs.concat(seqs.toArray());
 }
 
-function growSeq(seq, terms, minSupport, maxSupport, itemset) {
-  /* find the next frequent sequence by inserting a new word to current sequence */
-  var pos = -1;
-  var word = null;
-  var count = 0;
-  for (var s = 0; s <= seq.words.length; s++) {
-    const fdist = {};
-    seq.DBs.forEach(function (t) {
-      const l = s === 0 ? 0 : t.seqIndices[s - 1] + 1;
-      const r = s === seq.words.length ? t.tokens.length : t.seqIndices[s];
-      const duplicate = {};
-      for (let i = l; i < r; i++) {
-        const w = t.tokens[i];
-
-        if (duplicate[w]) continue;
-        duplicate[w] = true;
-
-        if (w in fdist) {
-          fdist[w] += t.count;
-        } else {
-          fdist[w] = t.count;
-        }
-      }
-    });
-    var maxw = null, maxc = 0;
-    for (var w in fdist) {
-      if (fdist[w] < maxSupport && fdist[w] > maxc &&
-        (!itemset[w].startsWith('#') || seq.words.length > 0) // no hashtag as root of tree
-      ) {
-        maxw = +w;
-        maxc = fdist[w];
-      }
-    }
-    if (maxc > count) {
-      pos = s;
-      word = maxw;
-      count = maxc;
-    }
-  }
-
-  let s0 = null, s1 = null;
-
-  /* split the current group in two */
-  if (count >= minSupport) {
-    s0 = { size: 0, DBs: [] };
-    s1 = { size: 0, DBs: [] };
-    var words = seq.words;
-    for (var ti = 0; ti < seq.DBs.length; ti ++) {
-      var t = seq.DBs[ti];
-      const l = pos === 0 ? 0 : t.seqIndices[pos - 1] + 1;
-      const r = pos === words.length ? t.tokens.length : t.seqIndices[pos];
-      var i = t.tokens.slice(l, r).indexOf(word);
-      if (i < 0) {
-        s0.DBs.push(t);
-        s0.size += t.count;
-      }
-      else {
-        i += l;
-        t.seqIndices.splice(pos, 0, i);
-        s1.DBs.push(t);
-        s1.size += t.count;
-      }
-    }
-  }
-
-  return { word, pos, count, s0, s1 };
-}
-
 function updateNodesEdges(graphs, leafSeqs) {
   leafSeqs
     .filter(seq => graphs.indexOf(seq.graph) >= 0)
-    .forEach(function (seq) {
+    .forEach(seq => {
       const words = seq.words;
       const linkadj = seq.graph.linkadj;
       // printSeq(seq);
       for (let i = 0; i < words.length - 1; i++) {
         const word = words[i];
         const id = word.id;
-        const freq = word.freq;
         const nextId = words[i + 1].id;
 
         if (!(id in linkadj)) linkadj[id] = {};
 
-        if (nextId in linkadj[id])
+        if (nextId in linkadj[id]) {
           linkadj[id][nextId] += seq.size;
-        else
+        } else {
           linkadj[id][nextId] = seq.size;
+        }
       }
 
       words
@@ -187,7 +198,7 @@ export default class SentenTreeModel {
     // Revised from initGraphs
     const entries = dataset.entries;
     const dbsize = dataset.computeSize();
-    entries.forEach(function (t) {
+    entries.forEach(t => {
       t.seqIndices = [];
       t.tokens.forEach(function (i) { return +i; });
     });
@@ -209,7 +220,7 @@ export default class SentenTreeModel {
       DBs: entries,
     };
 
-    let graphs = [];
+    const graphs = [];
     const visibleGroups = expandSeqTree(
       this.rootSeq,
       graphs,
@@ -233,7 +244,7 @@ export default class SentenTreeModel {
     const [minSupport, maxSupport] = this.supportRange;
 
     const visibleGroups = expandSeqTree(
-      visRootSeq,
+      rootSeq,
       this.graphs,
       DEFAULT_NODE_COUNT,
       minSupport,

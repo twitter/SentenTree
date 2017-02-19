@@ -17,10 +17,10 @@ export default class RenderedGraph {
     const nodes = rawGraph.nodes.map(n => new Node(n));
     const links = [];
 
-    for (let l in rawGraph.linkadj) {
+    Object.keys(rawGraph.linkadj).forEach(l => {
       const leftNode = nodes[l];
       const rights = rawGraph.linkadj[l];
-      for (let r in rights) {
+      Object.keys(rights).forEach(r => {
         const rightNode = nodes[r];
         const link = new Link(
           leftNode,
@@ -30,8 +30,8 @@ export default class RenderedGraph {
         links.push(link);
         leftNode.rightLinks.push(link);
         rightNode.leftLinks.push(link);
-      }
-    }
+      });
+    });
 
     this.assignNodeIds(nodes);
 

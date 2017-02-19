@@ -15,7 +15,7 @@ export function tokenize(inputEntries) {
       while ((tokenResult = PATTERN.exec(entry.text)) != null) {
         let t = tokenResult[0].trim();
         // HACK
-        if (t == 'scores' || t == 'scored') {
+        if (t === 'scores' || t === 'scored') {
           t = 'score';
         }
         if (!(t in vocabularies)) {
