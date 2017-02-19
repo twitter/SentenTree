@@ -13,7 +13,7 @@ export default class Node {
     this.height = 18;
   }
 
-  isLeaf(){
+  isLeaf() {
     return this.leftLinks.length === 0 || this.rightLinks.length === 0;
   }
 
@@ -45,7 +45,7 @@ export default class Node {
     return nodes.length > 1 ? {
       type: 'alignment',
       axis,
-      offsets: nodes.map(n => ({node: n.id, offset: 0}))
+      offsets: nodes.map(n => ({ node: n.id, offset: 0 })),
     } : null;
   }
 
@@ -71,9 +71,9 @@ export default class Node {
       for (let i = 1; i < nodes.length; i++) {
         rules.push({
           axis: 'y',
-          left: nodes[i-1].id,
+          left: nodes[i - 1].id,
           right: nodes[i].id,
-          gap: 5
+          gap: 5,
         });
       }
     }
@@ -82,9 +82,9 @@ export default class Node {
       for (let i = 1; i < nodes.length; i++) {
         rules.push({
           axis: 'y',
-          left: nodes[i-1].id,
+          left: nodes[i - 1].id,
           right: nodes[i].id,
-          gap: 5
+          gap: 5,
         });
       }
     }
@@ -93,34 +93,33 @@ export default class Node {
   }
 
   updateAttachPoints() {
-    if(this.leftLinks.length === 1) {
+    if (this.leftLinks.length === 1) {
       this.leftLinks[0].attachPoints.y2 = this.y;
-    } else if(this.leftLinks.length > 1){
+    } else if (this.leftLinks.length > 1) {
       const totalLeft = sum(this.leftLinks.map(l => l.strokeWidth));
-      let startPos = this.y - (totalLeft + (this.leftLinks.length-1)*2) / 2 ;
+      let startPos = this.y - (totalLeft + (this.leftLinks.length - 1) * 2) / 2;
       this.leftLinks
         .concat()
-        .sort((a,b) => a.source.y - b.source.y)
+        .sort((a, b) => a.source.y - b.source.y)
         .forEach(link => {
           link.attachPoints.y2 = startPos + link.strokeWidth / 2;
           startPos += link.strokeWidth + 2;
         });
     }
 
-    if(this.rightLinks.length === 1) {
+    if (this.rightLinks.length === 1) {
       this.rightLinks[0].attachPoints.y1 = this.y;
-    } else if(this.rightLinks.length > 1){
+    } else if (this.rightLinks.length > 1) {
       const totalRight = sum(this.rightLinks.map(l => l.strokeWidth));
-      let startPos = this.y - (totalRight + (this.rightLinks.length-1)*2) / 2 ;
+      let startPos = this.y - (totalRight + (this.rightLinks.length - 1) * 2) / 2;
       this.rightLinks
         .concat()
-        .sort((a,b) => a.target.y - b.target.y)
+        .sort((a, b) => a.target.y - b.target.y)
         .forEach(link => {
           link.attachPoints.y1 = startPos + link.strokeWidth / 2;
           startPos += link.strokeWidth + 2;
         });
     }
-
   }
 
   canMerge(node) {
@@ -138,7 +137,7 @@ export default class Node {
           (acc, curr) => acc.concat(curr.data.topEntries),
           []
         )
-        .slice(0,5)
+        .slice(0, 5),
     });
   }
 }

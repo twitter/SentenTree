@@ -21,23 +21,24 @@ export default class GraphBundler {
   bundle() {
     const heap = new Heap((a, b) => a.data.id - b.data.id);
 
-    const candidateParents = this.nodes
+    // Add candidate parents to heap
+    this.nodes
       .filter(n => this.hasPotential(n))
       .forEach(n => { heap.push(n); });
 
-    while(heap.size() > 0) {
+    while (heap.size() > 0) {
       const parent = heap.pop();
-      if(parent.merged) {
+      if (parent.merged) {
         continue;
       }
 
       let groups = [];
-      if(parent.leftLinks.length > 1) {
+      if (parent.leftLinks.length > 1) {
         const lNodes = parent.leftLinks.map(l => l.source);
         groups = groups.concat(this.groupMergeableNodes(lNodes));
       }
 
-      if(parent.rightLinks.length > 1) {
+      if (parent.rightLinks.length > 1) {
         const rNodes = parent.rightLinks.map(l => l.target);
         groups = groups.concat(this.groupMergeableNodes(rNodes));
       }
@@ -52,7 +53,7 @@ export default class GraphBundler {
     return {
       nodes: this.nodes.filter(n => !n.merged),
       links: this.links.filter(l =>
-        !l.source.merged && !l.target.merged)
+        !l.source.merged && !l.target.merged),
     };
   }
 
@@ -68,17 +69,17 @@ export default class GraphBundler {
           const node = g[i];
           for (let j = 0; j < subgroups.length; j++) {
             const subgroup = subgroups[j];
-            if(subgroup.every(n =>
+            if (subgroup.every(n =>
               !linkLookup[[n.id, node.id].join(',')]
               && !linkLookup[[n.id, node.id].join(',')])
             ) {
               subgroup.push(node);
               continue;
             }
-            subgroups.push([n]);
+            subgroups.push([node]);
           }
         }
-        return subgroups.filter(g => g.length > 1);
+        return subgroups.filter(subgroup => subgroup.length > 1);
       })
       .value();
   }
@@ -99,7 +100,7 @@ export default class GraphBundler {
       .mapValues(links => {
         const target = links[0].target;
         target.leftLinks = target.leftLinks
-          .filter(l => !l.source.merged)
+          .filter(l => !l.source.merged);
         const link = new Link(
           newNode,
           links[0].target,
@@ -119,7 +120,7 @@ export default class GraphBundler {
       .mapValues(links => {
         const source = links[0].source;
         source.rightLinks = source.rightLinks
-          .filter(l => !l.target.merged)
+          .filter(l => !l.target.merged);
         const link = new Link(
           links[0].source,
           newNode,

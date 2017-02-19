@@ -7,7 +7,7 @@ export default class Link {
       x1: 0,
       y1: 0,
       x2: 1,
-      y2: 1
+      y2: 1,
     };
   }
 
@@ -26,7 +26,7 @@ export default class Link {
       axis: 'x',
       left: this.source.id,
       right: this.target.id,
-      gap: (this.source.width + this.target.width) / 2 + gap
+      gap: (this.source.width + this.target.width) / 2 + gap,
     };
   }
 
@@ -36,8 +36,8 @@ export default class Link {
       axis: 'y',
       offsets: [
         { node: this.source.id, offset: 0 },
-        { node: this.target.id, offset: 0 }
-      ]
+        { node: this.target.id, offset: 0 },
+      ],
     };
   }
 }

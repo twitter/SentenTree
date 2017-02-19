@@ -18,25 +18,25 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
   seqs.push(rootSeq);
   const leafSeqs = [];
 
-  while(!seqs.empty() && expandCnt > 0) {
+  while (!seqs.empty() && expandCnt > 0) {
     /* find the candidate sequence with largest support DB */
     const s = seqs.pop();
     let graph = s.graph;
     let s0 = s.r;
     let s1 = s.l;
 
-    if( !s0 && !s1 ) {
+    if (!s0 && !s1) {
       /* find the next frequent sequence */
       const result = growSeq(s, terms, minSupport, maxSupport, itemset);
       s0 = result.s0;
       s1 = result.s1;
       const { word, pos, count } = result;
 
-      if( count < minSupport ) {
+      if (count < minSupport) {
         leafSeqs.push(s);
       } else {
         /* create new sequences and add new word */
-        if(!graph) {
+        if (!graph) {
           graph = new RawGraph(minSupport, maxSupport);
           graphs.push(graph);
         }
@@ -67,9 +67,9 @@ function expandSeqTree(rootSeq, graphs, expandCnt, minSupport, maxSupport, terms
     s.r = s0;
 
     /* add new sequences to candidates */
-    if(s1)
+    if (s1)
       seqs.push(s1);
-    if(s0 && s0.size >= minSupport )
+    if (s0 && s0.size >= minSupport)
       seqs.push(s0);
   }
 
@@ -81,19 +81,19 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
   var pos = -1;
   var word = null;
   var count = 0;
-  for(var s = 0; s <= seq.words.length; s++ ) {
+  for (var s = 0; s <= seq.words.length; s++) {
     const fdist = {};
-    seq.DBs.forEach(function(t) {
-      const l = s === 0 ? 0 : t.seqIndices[s-1] + 1;
+    seq.DBs.forEach(function (t) {
+      const l = s === 0 ? 0 : t.seqIndices[s - 1] + 1;
       const r = s === seq.words.length ? t.tokens.length : t.seqIndices[s];
       const duplicate = {};
-      for(let i = l; i < r; i++ ) {
+      for (let i = l; i < r; i++) {
         const w = t.tokens[i];
 
-        if(duplicate[w]) continue;
+        if (duplicate[w]) continue;
         duplicate[w] = true;
 
-        if( w in fdist) {
+        if (w in fdist) {
           fdist[w] += t.count;
         } else {
           fdist[w] = t.count;
@@ -101,15 +101,15 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
       }
     });
     var maxw = null, maxc = 0;
-    for(var w in fdist) {
-      if( fdist[w] < maxSupport && fdist[w] > maxc &&
+    for (var w in fdist) {
+      if (fdist[w] < maxSupport && fdist[w] > maxc &&
         (!itemset[w].startsWith('#') || seq.words.length > 0) // no hashtag as root of tree
       ) {
         maxw = +w;
         maxc = fdist[w];
       }
     }
-    if( maxc > count ) {
+    if (maxc > count) {
       pos = s;
       word = maxw;
       count = maxc;
@@ -119,26 +119,26 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
   let s0 = null, s1 = null;
 
   /* split the current group in two */
-  if( count >= minSupport ) {
-      s0 = {size:0, DBs:[]};
-      s1 = {size:0, DBs:[]};
-      var words = seq.words;
-      for(var ti = 0; ti < seq.DBs.length; ti ++ ) {
-        var t = seq.DBs[ti];
-        const l = pos === 0 ? 0 : t.seqIndices[pos-1] + 1;
-        const r = pos === words.length ? t.tokens.length : t.seqIndices[pos];
-        var i = t.tokens.slice(l, r).indexOf(word);
-        if( i < 0 ) {
-          s0.DBs.push(t);
-          s0.size += t.count;
-        }
-        else {
-          i += l;
-          t.seqIndices.splice(pos, 0, i);
-          s1.DBs.push(t);
-          s1.size += t.count;
-        }
+  if (count >= minSupport) {
+    s0 = { size: 0, DBs: [] };
+    s1 = { size: 0, DBs: [] };
+    var words = seq.words;
+    for (var ti = 0; ti < seq.DBs.length; ti ++) {
+      var t = seq.DBs[ti];
+      const l = pos === 0 ? 0 : t.seqIndices[pos - 1] + 1;
+      const r = pos === words.length ? t.tokens.length : t.seqIndices[pos];
+      var i = t.tokens.slice(l, r).indexOf(word);
+      if (i < 0) {
+        s0.DBs.push(t);
+        s0.size += t.count;
       }
+      else {
+        i += l;
+        t.seqIndices.splice(pos, 0, i);
+        s1.DBs.push(t);
+        s1.size += t.count;
+      }
+    }
   }
 
   return { word, pos, count, s0, s1 };
@@ -147,19 +147,19 @@ function growSeq(seq, terms, minSupport, maxSupport, itemset) {
 function updateNodesEdges(graphs, leafSeqs) {
   leafSeqs
     .filter(seq => graphs.indexOf(seq.graph) >= 0)
-    .forEach(function(seq) {
+    .forEach(function (seq) {
       const words = seq.words;
       const linkadj = seq.graph.linkadj;
       // printSeq(seq);
-      for(let i = 0; i < words.length - 1; i++) {
+      for (let i = 0; i < words.length - 1; i++) {
         const word = words[i];
         const id = word.id;
         const freq = word.freq;
-        const nextId = words[i+1].id;
+        const nextId = words[i + 1].id;
 
         if (!(id in linkadj)) linkadj[id] = {};
 
-        if(nextId in linkadj[id])
+        if (nextId in linkadj[id])
           linkadj[id][nextId] += seq.size;
         else
           linkadj[id][nextId] = seq.size;
@@ -171,7 +171,7 @@ function updateNodesEdges(graphs, leafSeqs) {
     });
 }
 
-function printSeq (words) {
+function printSeq(words) {
   const str = words.map(w => w.entity).join(' ');
   console.log(str);
 }
@@ -179,7 +179,7 @@ function printSeq (words) {
 export default class SentenTreeModel {
   constructor(inputEntries, {
     wordFilter = WordFilter.getDefault(),
-    termWeights = {}
+    termWeights = {},
   } = {}) {
     const dataset = tokenize(inputEntries).filter(wordFilter);
     const terms = dataset.encodeTermWeights(termWeights);
@@ -187,9 +187,9 @@ export default class SentenTreeModel {
     // Revised from initGraphs
     const entries = dataset.entries;
     const dbsize = dataset.computeSize();
-    entries.forEach(function(t) {
+    entries.forEach(function (t) {
       t.seqIndices = [];
-      t.tokens.forEach(function(i) {return +i;});
+      t.tokens.forEach(function (i) { return +i; });
     });
 
     this.tokenizedData = dataset;
@@ -197,7 +197,7 @@ export default class SentenTreeModel {
 
     this.supportRange = [
       Math.max(dbsize * 0.001, 2),
-      dbsize / 3
+      dbsize / 3,
     ];
     const [minSupport, maxSupport] = this.supportRange;
 
@@ -206,7 +206,7 @@ export default class SentenTreeModel {
       newWord: null,
       graph: null,
       size: dbsize,
-      DBs: entries
+      DBs: entries,
     };
 
     let graphs = [];
@@ -221,7 +221,7 @@ export default class SentenTreeModel {
     );
 
     this.graphs = graphs
-      .filter(g =>  g.nodes.length > 2)
+      .filter(g => g.nodes.length > 2)
       .slice(0, 10);
 
     updateNodesEdges(this.graphs, visibleGroups);
@@ -257,7 +257,7 @@ export default class SentenTreeModel {
     const renderedGraphs = graphs.map(g => g.toRenderedGraph());
     const globalFreqRange = [
       min(renderedGraphs.map(g => g.freqRange[0])),
-      max(renderedGraphs.map(g => g.freqRange[1]))
+      max(renderedGraphs.map(g => g.freqRange[1])),
     ];
     renderedGraphs.forEach(g => { g.globalFreqRange = globalFreqRange; });
     return renderedGraphs;

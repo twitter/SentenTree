@@ -17,10 +17,10 @@ export default class RenderedGraph {
     const nodes = rawGraph.nodes.map(n => new Node(n));
     const links = [];
 
-    for(let l in rawGraph.linkadj) {
+    for (let l in rawGraph.linkadj) {
       const leftNode = nodes[l];
       const rights = rawGraph.linkadj[l];
-      for(let r in rights) {
+      for (let r in rights) {
         const rightNode = nodes[r];
         const link = new Link(
           leftNode,
@@ -66,7 +66,7 @@ export default class RenderedGraph {
 
   updateNodeSize(sizeFn) {
     this.nodes.forEach(node => {
-      const {width, height} = sizeFn(node);
+      const { width, height } = sizeFn(node);
       node.width = width;
       node.height = height;
     });
@@ -81,40 +81,40 @@ export default class RenderedGraph {
   getAlignmentConstraints() {
     const alignmentConstraints = [];
 
-    if(this.nodes.length > 0) {
+    if (this.nodes.length > 0) {
       const visitedNodes = this.nodes.map(() => false);
       let queue = [this.nodes[0]];
-      while(queue.length > 0){
+      while (queue.length > 0) {
         const node = queue.shift();
         const nodeIndex = node.id;
-        if(visitedNodes[nodeIndex]) continue;
+        if (visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
         const constraints = node.computeRightConstraints();
-        if(constraints){
+        if (constraints) {
           alignmentConstraints.push(constraints);
         }
         const rNodes = node.getRightNodes();
-        if(rNodes.length > 0){
+        if (rNodes.length > 0) {
           queue = queue.concat(rNodes);
         }
       }
 
-      for (let i=0;i<this.nodes.length;i++){
+      for (let i = 0; i < this.nodes.length; i++) {
         visitedNodes[i] = false;
       }
       queue = [this.nodes[0]];
 
-      while(queue.length>0){
+      while (queue.length > 0) {
         const node = queue.shift();
         const nodeIndex = node.id;
-        if(visitedNodes[nodeIndex]) continue;
+        if (visitedNodes[nodeIndex]) continue;
         visitedNodes[nodeIndex] = true;
         const constraints = node.computeLeftConstraints();
-        if(constraints){
+        if (constraints) {
           alignmentConstraints.push(constraints);
         }
         const lNodes = node.getLeftNodes();
-        if(lNodes.length > 0){
+        if (lNodes.length > 0) {
           queue = queue.concat(lNodes);
         }
       }
@@ -128,7 +128,7 @@ export default class RenderedGraph {
   }
 
   getConstraints() {
-    const constraints =  this.baseConstraints
+    const constraints = this.baseConstraints
       .concat(this.links.map(l => l.toConstraint()));
 
     return this.options.highFrequencyOnTop
@@ -138,7 +138,7 @@ export default class RenderedGraph {
 
   toGroupConstraint() {
     return {
-      leaves: this.nodes.map(n => n.id)
+      leaves: this.nodes.map(n => n.id),
     };
   }
 }

@@ -9,16 +9,6 @@ export default class RawGraph {
     this.totalNodeCnt = 0;
   }
 
-  getBounds() {
-    return this.nodes.reduce((acc, curr) => {
-      // TODO
-      return acc;
-    }, {
-      topLeft: [0, 0],
-      bottomRight: [1, 1]
-    });
-  }
-
   clear() {
     this.nodes = [];
     this.linkadj = [];

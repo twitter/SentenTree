@@ -36,7 +36,7 @@ class SentenTreeVis extends SvgChart {
 
     this.isRunning = false;
 
-    this.layers.create({root: ['link', 'node']});
+    this.layers.create({ root: ['link', 'node'] });
 
     this.visualize = this.visualize.bind(this);
     this.on('data', this.visualize);
@@ -90,7 +90,7 @@ class SentenTreeVis extends SvgChart {
 
     const sMerge = sEnter.merge(sUpdate)
       .style('font-size', d => this.fontSize(d))
-      .style('text-anchor', 'middle')
+      .style('text-anchor', 'middle');
       // .style('text-anchor', d => {
       //   if(d.isLeftLeaf()) return 'end';
       //   else if(d.isRightLeaf()) return 'start';
@@ -102,7 +102,7 @@ class SentenTreeVis extends SvgChart {
 
   placeNodes() {
     this.sNodes
-      .attr('transform', d => `translate(${d.x}, ${d.y})`)
+      .attr('transform', d => `translate(${d.x}, ${d.y})`);
   }
 
   renderLinks(links) {
@@ -151,7 +151,7 @@ class SentenTreeVis extends SvgChart {
           link.source.rightEdge(),
           link.attachPoints.y1,
           link.target.leftEdge(),
-          link.attachPoints.y2
+          link.attachPoints.y2,
         ];
         // const xGap = link.target.leftEdge() - link.source.rightEdge();
         // if (xGap > 30) {
@@ -184,7 +184,7 @@ class SentenTreeVis extends SvgChart {
     //   }
     // });
 
-    this.sNodes.each(function(d) {
+    this.sNodes.each(function (d) {
       const bbox = this.getBBox();
       d.width = bbox.width + 4;
       d.height = bbox.height + 4;
