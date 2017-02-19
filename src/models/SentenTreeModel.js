@@ -270,7 +270,14 @@ export default class SentenTreeModel {
       min(renderedGraphs.map(g => g.freqRange[0])),
       max(renderedGraphs.map(g => g.freqRange[1])),
     ];
-    renderedGraphs.forEach(g => { g.globalFreqRange = globalFreqRange; });
+    let idPool = 0;
+    renderedGraphs.forEach(g => {
+      g.globalFreqRange = globalFreqRange;
+      g.nodes.forEach(n => {
+        n.gid = idPool;
+        idPool++;
+      });
+    });
     return renderedGraphs;
   }
 

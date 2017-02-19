@@ -184,7 +184,7 @@ class SentenTreeVis extends SvgChart {
     //   }
     // });
 
-    this.sNodes.each(function (d) {
+    this.sNodes.each(function fn(d) {
       const bbox = this.getBBox();
       d.width = bbox.width + 4;
       d.height = bbox.height + 4;
@@ -213,8 +213,6 @@ class SentenTreeVis extends SvgChart {
   fitComponentToContent() {
     const bbox = this.layers.get('root').node().getBBox();
     const { top, left, bottom, right } = this.options().margin;
-    const w = this.width();
-    const h = this.height();
     const w2 = bbox.width + left + right;
     const h2 = bbox.height + top + bottom;
     this.dimension([w2, h2]);
