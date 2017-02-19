@@ -1,4 +1,4 @@
-import { max, min } from 'lodash-es';
+import { flatMap, max, min } from 'lodash-es';
 
 import GraphBundler from './GraphBundler.js';
 import Link from './Link.js';
@@ -6,8 +6,11 @@ import Node from './Node.js';
 
 export default class RenderedGraph {
   constructor(rawGraph, {
-    bundle = true
-  } = {}) {
+      bundle = true,
+      highFrequencyOnTop = true,
+    } = {}) {
+    this.options = { bundle, highFrequencyOnTop };
+
     this.minSupport = rawGraph.minSupport;
     this.maxSupport = rawGraph.maxSupport;
 
@@ -40,6 +43,13 @@ export default class RenderedGraph {
     } else {
       this.nodes = nodes;
       this.links = links;
+    }
+
+    if (highFrequencyOnTop) {
+      this.nodes.forEach(n => {
+        n.rightLinks.sort((a, b) => b.target.data.freq - a.target.data.freq);
+        n.leftLinks.sort((a, b) => b.source.data.freq - a.source.data.freq);
+      });
     }
 
     const frequencies = this.nodes.map(n => n.data.freq);
@@ -118,8 +128,12 @@ export default class RenderedGraph {
   }
 
   getConstraints() {
-    return this.baseConstraints
+    const constraints =  this.baseConstraints
       .concat(this.links.map(l => l.toConstraint()));
+
+    return this.options.highFrequencyOnTop
+      ? constraints.concat(flatMap(this.nodes, n => n.computeOrderConstraints()))
+      : constraints;
   }
 
   toGroupConstraint() {

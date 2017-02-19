@@ -49,18 +49,47 @@ export default class Node {
     } : null;
   }
 
-  computeLeftConstraints(){
+  computeLeftConstraints() {
     const nodes = this.getLeftNodes()
       .filter(n => n.rightLinks.length === 1);
 
     return this.createAlignmentConstraints('x', nodes);
   }
 
-  computeRightConstraints(){
+  computeRightConstraints() {
     const nodes = this.getRightNodes()
       .filter(n => n.leftLinks.length === 1);
 
     return this.createAlignmentConstraints('x', nodes);
+  }
+
+  computeOrderConstraints() {
+    const rules = [];
+
+    if (this.getRightNodes().length > 1) {
+      const nodes = this.getRightNodes();
+      for (let i = 1; i < nodes.length; i++) {
+        rules.push({
+          axis: 'y',
+          left: nodes[i-1].id,
+          right: nodes[i].id,
+          gap: 5
+        });
+      }
+    }
+    if (this.getLeftNodes().length > 1) {
+      const nodes = this.getLeftNodes();
+      for (let i = 1; i < nodes.length; i++) {
+        rules.push({
+          axis: 'y',
+          left: nodes[i-1].id,
+          right: nodes[i].id,
+          gap: 5
+        });
+      }
+    }
+
+    return rules;
   }
 
   updateAttachPoints() {
@@ -70,6 +99,7 @@ export default class Node {
       const totalLeft = sum(this.leftLinks.map(l => l.strokeWidth));
       let startPos = this.y - (totalLeft + (this.leftLinks.length-1)*2) / 2 ;
       this.leftLinks
+        .concat()
         .sort((a,b) => a.source.y - b.source.y)
         .forEach(link => {
           link.attachPoints.y2 = startPos + link.strokeWidth / 2;
@@ -83,6 +113,7 @@ export default class Node {
       const totalRight = sum(this.rightLinks.map(l => l.strokeWidth));
       let startPos = this.y - (totalRight + (this.rightLinks.length-1)*2) / 2 ;
       this.rightLinks
+        .concat()
         .sort((a,b) => a.target.y - b.target.y)
         .forEach(link => {
           link.attachPoints.y1 = startPos + link.strokeWidth / 2;

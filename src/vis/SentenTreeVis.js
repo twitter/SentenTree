@@ -110,7 +110,7 @@ class SentenTreeVis extends SvgChart {
 
     const strokeSizeScale = d3.scaleSqrt()
       .domain([1, 100])
-      .range([1, 7])
+      .range([1, 6])
       .clamp(true);
 
     links.forEach(link => {
@@ -144,23 +144,6 @@ class SentenTreeVis extends SvgChart {
     graph.nodes.forEach(node => {
       node.updateAttachPoints();
     });
-
-    // graph.links.forEach(d => {
-    //   const deltaX = d.target.x - d.source.x;
-    //   const deltaY = d.target.y - d.source.y;
-    //   const dist = Math.max(1, Math.sqrt(deltaX * deltaX + deltaY * deltaY));
-    //   const normX = deltaX / dist;
-    //   const normY = deltaY / dist;
-
-    //   d.points = {
-    //     x1: d.source.rightEdge(),
-    //     // x1: d.source.x + (d.source.bounds.width()/2 * normX),
-    //     y1: d.source.y + (d.source.bounds.height()/2 * normY),
-    //     x2: d.target.leftEdge(),
-    //     // x2: d.target.x - (d.target.bounds.width()/2 * normX),
-    //     y2: d.target.y - (d.target.bounds.height()/2 * normY),
-    //   };
-    // });
 
     this.sLinks
       .attr('d', link => {
@@ -207,13 +190,11 @@ class SentenTreeVis extends SvgChart {
       d.height = bbox.height + 4;
     });
 
-    const linkConstraints = graph.getLinkConstraints();
-
     this.colaAdaptor
       .nodes(graph.nodes)
       .links(graph.links)
       .constraints(graph.getConstraints())
-      .start(20,40,40);
+      .start(10, 10, 10);
 
     this.placeNodes();
     this.placeLinks();
