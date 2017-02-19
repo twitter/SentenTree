@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 
 import { SvgChart, helper } from 'd3kit/dist/d3kit-es.js';
-import { diagonal, line } from './shapeUtil.js';
 
 import { d3adaptor } from 'webcola/WebCola/cola.js';
+import { diagonal } from './shapeUtil.js';
 
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
