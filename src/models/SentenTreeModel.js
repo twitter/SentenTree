@@ -178,7 +178,7 @@ function printSeq (words) {
 
 export default class SentenTreeModel {
   constructor(inputEntries, {
-    wordFilter = WordFilter.DEFAULT,
+    wordFilter = WordFilter.getDefault(),
     termWeights = {}
   } = {}) {
     const dataset = tokenize(inputEntries).filter(wordFilter);
@@ -191,7 +191,6 @@ export default class SentenTreeModel {
       t.seqIndices = [];
       t.tokens.forEach(function(i) {return +i;});
     });
-    console.log('dbsize', dbsize);
 
     this.tokenizedData = dataset;
     this.terms = terms;

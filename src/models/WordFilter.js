@@ -25,5 +25,10 @@ export default class WordFilter {
   }
 }
 
-WordFilter.DEFAULT = new WordFilter();
-
+let defaultFilter = null;
+WordFilter.getDefault = function() {
+  if (!defaultFilter) {
+    defaultFilter = new WordFilter();
+  }
+  return defaultFilter;
+}

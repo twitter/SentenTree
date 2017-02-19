@@ -207,7 +207,6 @@ class SentenTreeVis extends SvgChart {
     // this.colaAdaptor.on('tick', event => {
     //   this.placeNodes();
     //   this.placeLinks();
-
     // });
   }
 
