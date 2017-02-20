@@ -133,7 +133,7 @@ class App extends React.Component {
       <div className={classes.join(' ')}>
         <div
           className="popover-container"
-          ref={c => {this.c = c;}}
+          ref={c => { this.c = c; }}
         >
           {this.renderSelectedNode()}
         </div>
@@ -142,10 +142,10 @@ class App extends React.Component {
             <div className="pull-right">
               <ul className="nav nav-pills floater-links">
                 <li role="presentation">
-                  <a href="http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf">Publication</a>
+                  <a target="_blank" href="http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf">Publication</a>
                 </li>
                 <li role="presentation">
-                  <a href="https://github.com/twitter/sententree">Source Code</a>
+                  <a target="_blank" href="https://github.com/twitter/sententree">Source Code</a>
                 </li>
               </ul>
               <div className="star-block">
@@ -170,7 +170,6 @@ class App extends React.Component {
           </p>
           <select
             className="form-control"
-            name="" id=""
             value={this.state.dataset}
             onChange={e => this.changeDataset(e.target.value)}
           >

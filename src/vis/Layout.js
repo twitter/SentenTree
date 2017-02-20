@@ -54,4 +54,14 @@ export default class Layout {
     this.simulation.stop();
     return this;
   }
+
+  destroy() {
+    this.dispatcher.on('start', null);
+    this.dispatcher.on('tick', null);
+    this.dispatcher.on('end', null);
+    this.simulation.on('start', null);
+    this.simulation.on('tick', null);
+    this.simulation.on('end', null);
+    return this;
+  }
 }
