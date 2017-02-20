@@ -75,7 +75,7 @@ class App extends React.Component {
             .on('nodeMousemove', node => {
               this.selectNode(node);
             })
-            .on('nodeMouseleave', node => {
+            .on('nodeMouseleave', () => {
               this.clearNode();
             })
             .on('layoutEnd', () => {
@@ -98,24 +98,24 @@ class App extends React.Component {
           }}
         >
           <div className="popover-inner">
-          <div className="content-center">
-            <h4>
-              {node.data.entity}
-              &nbsp;
-              <small>({formatNumber(node.data.freq)})</small>
-            </h4>
-          </div>
-          {node.data.topEntries.slice(0,1).map(entry =>
-            <div className="mock-tweet">
-              <div className="top-remark">
-                <i className="glyphicon glyphicon-star"></i> Top entry
-              </div>
-              {entry.rawText}
-              <div className="word-count">
-                {formatNumber(entry.count)} occurrences
-              </div>
+            <div className="content-center">
+              <h4>
+                {node.data.entity}
+                &nbsp;
+                <small>({formatNumber(node.data.freq)})</small>
+              </h4>
             </div>
-          )}
+            {node.data.topEntries.slice(0, 1).map(entry =>
+              <div key={entry.id} className="mock-tweet">
+                <div className="top-remark">
+                  <i className="glyphicon glyphicon-star"></i> Top entry
+                </div>
+                {entry.rawText}
+                <div className="word-count">
+                  {formatNumber(entry.count)} occurrences
+                </div>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -131,28 +131,24 @@ class App extends React.Component {
 
     return (
       <div className={classes.join(' ')}>
-        <nav className="navbar navbar-default">
-          <div className="container">
-            <div className="navbar-header">
-              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-              </button>
-              <a className="navbar-brand" href="#">SentenTree</a>
-            </div>
-            <div id="navbar" className="collapse navbar-collapse">
-              <ul className="nav navbar-nav">
-                <li className="active"><a href="#">Demo</a></li>
-                <li>
-                  <a href="http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf">Paper</a>
+        <div
+          className="popover-container"
+          ref={c => {this.c = c;}}
+        >
+          {this.renderSelectedNode()}
+        </div>
+        <div className="container content">
+          <div className="page-header">
+            <div className="pull-right">
+              <ul className="nav nav-pills floater-links">
+                <li role="presentation">
+                  <a href="http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf">Publication</a>
                 </li>
-                <li>
+                <li role="presentation">
                   <a href="https://github.com/twitter/sententree">Source Code</a>
                 </li>
               </ul>
-              <div className="navbar-text navbar-star">
+              <div className="star-block">
                 <iframe
                   src="https://ghbtns.com/github-btn.html?user=twitter&repo=SentenTree&type=star&count=true"
                   frameBorder="0"
@@ -162,16 +158,6 @@ class App extends React.Component {
                 />
               </div>
             </div>
-          </div>
-        </nav>
-        <div
-          className="popover-container"
-          ref={c => {this.c = c;}}
-        >
-          {this.renderSelectedNode()}
-        </div>
-        <div className="container content">
-          <div className="page-header">
             <h1>SentenTree</h1>
           </div>
           <p className="lead">
