@@ -2,10 +2,13 @@ import * as DataService from './DataService.js';
 import * as d3 from 'd3-selection';
 
 import React, { PropTypes } from 'react';
-import { SentenTreeModel, SentenTreeVis } from '../../src/main.js';
+import { SentenTreeModel, SentenTreeVis as _SentenTreeVis } from '../../src/main.js';
 
 import { DATASETS } from './datasets.js';
+import { createComponent } from 'react-d3kit';
 import { format } from 'd3-format';
+
+const SentenTreeVis = createComponent(_SentenTreeVis);
 
 const propTypes = {
   className: PropTypes.string,
@@ -20,6 +23,7 @@ class App extends React.Component {
     this.state = {
       dataset: 0,
       selectedNode: null,
+      renderedGraphs: [],
     };
   }
 
@@ -30,7 +34,8 @@ class App extends React.Component {
   changeDataset(value) {
     this.setState({
       dataset: value,
-      selectedNode: null
+      selectedNode: null,
+      renderedGraphs: [],
     });
     this.loadFile(DATASETS[value].file);
   }
@@ -49,40 +54,18 @@ class App extends React.Component {
   }
 
   loadFile(file) {
-    const container = document.querySelector('#vis');
-    container.innerHTML = 'Loading ...';
-
-    DataService.loadFile('data/' + file, (error, data) => {
-      console.time('Build tree');
+    DataService.loadFile(`data/${file}`, (error, data) => {
+      console.time('Build model');
       const model = new SentenTreeModel(data);
-      console.timeEnd('Build tree');
+      console.timeEnd('Build model');
+      console.time('Build rendered graphs');
+      const renderedGraphs = model.getRenderedGraphs(3);
+      console.timeEnd('Build rendered graphs');
 
-      container.innerHTML = '';
-
-      model.getRenderedGraphs(3)
-        .forEach((graph, i) => {
-          console.time(`Render graph ${i}`);
-          const div = document.createElement('div');
-          container.appendChild(div);
-          const chart = new SentenTreeVis(div)
-            .data(graph)
-            .on('nodeClick', node => {
-              console.log('node', node);
-            })
-            .on('nodeMouseenter', node => {
-              this.selectNode(node);
-            })
-            .on('nodeMousemove', node => {
-              this.selectNode(node);
-            })
-            .on('nodeMouseleave', () => {
-              this.clearNode();
-            })
-            .on('layoutEnd', () => {
-              chart.fitComponentToContent();
-              console.timeEnd(`Render graph ${i}`);
-            });
-        });
+      this.setState({
+        model,
+        renderedGraphs,
+      });
     });
   }
 
@@ -129,6 +112,8 @@ class App extends React.Component {
       classes.push(this.props.className);
     }
 
+    const { renderedGraphs } = this.state;
+
     return (
       <div className={classes.join(' ')}>
         <div
@@ -137,34 +122,7 @@ class App extends React.Component {
         >
           {this.renderSelectedNode()}
         </div>
-        <div className="container content">
-          <div className="page-header">
-            <div className="pull-right">
-              <ul className="nav nav-pills floater-links">
-                <li role="presentation">
-                  <a target="_blank" href="http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf">Publication</a>
-                </li>
-                <li role="presentation">
-                  <a target="_blank" href="https://github.com/twitter/sententree">Source Code</a>
-                </li>
-              </ul>
-              <div className="star-block">
-                <iframe
-                  src="https://ghbtns.com/github-btn.html?user=twitter&repo=SentenTree&type=star&count=true"
-                  frameBorder="0"
-                  scrolling="0"
-                  width="100px"
-                  height="20px"
-                />
-              </div>
-            </div>
-            <h1>SentenTree</h1>
-          </div>
-          <p className="lead">
-            SentenTree is a novel text visualization technique for summarizing
-            a collection of social media text, i.e. take thousands or more Tweets
-            and summarize what the Tweets are about.
-          </p>
+        <div className="container">
           <p>
             Choose from these example datasets and see the visualization below.
           </p>
@@ -182,7 +140,13 @@ class App extends React.Component {
         </div>
         <div className="container">
           <div className="vis-container">
-            <div id="vis"></div>
+            <SentenTreeVis
+              data={renderedGraphs}
+              onNodeClick={node => { console.log(node); }}
+              onNodeMouseenter={node => { this.selectNode(node); }}
+              onNodeMousemove={node => { this.selectNode(node); }}
+              onNodeMouseleave={() => { this.clearNode(); }}
+            />
           </div>
         </div>
       </div>
