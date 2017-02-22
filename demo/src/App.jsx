@@ -122,35 +122,6 @@ class App extends React.Component {
         >
           {this.renderSelectedNode()}
         </div>
-        <div className="container content">
-          <div className="page-header">
-            <div className="pull-right">
-              <ul className="nav nav-pills floater-links">
-                <li role="presentation">
-                  <a target="_blank" href="http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf">Publication</a>
-                </li>
-                <li role="presentation">
-                  <a target="_blank" href="https://github.com/twitter/sententree">Source Code</a>
-                </li>
-              </ul>
-              <div className="star-block">
-                <iframe
-                  src="https://ghbtns.com/github-btn.html?user=twitter&repo=SentenTree&type=star&count=true"
-                  frameBorder="0"
-                  scrolling="0"
-                  width="100px"
-                  height="20px"
-                />
-              </div>
-            </div>
-            <h1>SentenTree</h1>
-          </div>
-          <p className="lead">
-            SentenTree is a novel text visualization technique for summarizing
-            a collection of social media text, i.e. take thousands or more Tweets
-            and summarize what the Tweets are about.
-          </p>
-        </div>
         <div className="container">
           <p>
             Choose from these example datasets and see the visualization below.
