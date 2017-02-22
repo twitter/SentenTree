@@ -157,7 +157,7 @@ class SentenTreeVis extends SvgChart {
     // Update component size to fit all content
     this.dimension([
       maxw + left + right,
-      yPos + top + bottom - gapBetweenGraph,
+      Math.max(0, yPos - gapBetweenGraph) + top + bottom,
     ]);
 
     this.placeNodes();
@@ -195,7 +195,7 @@ class SentenTreeVis extends SvgChart {
   }
 
   visualize() {
-    if (!this.hasData() || !this.hasNonZeroArea()) return;
+    if (!this.hasData()) return;
 
     const graphs = this.data();
 
@@ -229,6 +229,7 @@ class SentenTreeVis extends SvgChart {
         continue;
       }
       this.layouts[i]
+        .stop()
         .setGraph(graphs[i])
         .start();
     }

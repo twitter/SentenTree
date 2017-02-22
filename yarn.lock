@@ -4335,6 +4335,10 @@ rc@~1.1.6:
     minimist "^1.2.0"
     strip-json-comments "~1.0.4"
 
+react-d3kit@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/react-d3kit/-/react-d3kit-1.2.4.tgz#041eb5fcc48f72b187b8c57ce372b8c9b5f53402"
+
 react-dom@^15.4.2:
   version "15.4.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.2.tgz#015363f05b0a1fd52ae9efdd3a0060d90695208f"
