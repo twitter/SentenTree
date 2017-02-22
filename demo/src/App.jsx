@@ -52,36 +52,26 @@ class App extends React.Component {
     const container = document.querySelector('#vis');
     container.innerHTML = 'Loading ...';
 
-    DataService.loadFile('data/' + file, (error, data) => {
+    DataService.loadFile(`data/${file}`, (error, data) => {
       console.time('Build tree');
       const model = new SentenTreeModel(data);
       console.timeEnd('Build tree');
 
       container.innerHTML = '';
 
-      model.getRenderedGraphs(3)
-        .forEach((graph, i) => {
-          console.time(`Render graph ${i}`);
-          const div = document.createElement('div');
-          container.appendChild(div);
-          const chart = new SentenTreeVis(div)
-            .data(graph)
-            .on('nodeClick', node => {
-              console.log('node', node);
-            })
-            .on('nodeMouseenter', node => {
-              this.selectNode(node);
-            })
-            .on('nodeMousemove', node => {
-              this.selectNode(node);
-            })
-            .on('nodeMouseleave', () => {
-              this.clearNode();
-            })
-            .on('layoutEnd', () => {
-              chart.fitComponentToContent();
-              console.timeEnd(`Render graph ${i}`);
-            });
+      new SentenTreeVis(container)
+        .data(model.getRenderedGraphs(3))
+        .on('nodeClick', node => {
+          console.log('node', node);
+        })
+        .on('nodeMouseenter', node => {
+          this.selectNode(node);
+        })
+        .on('nodeMousemove', node => {
+          this.selectNode(node);
+        })
+        .on('nodeMouseleave', () => {
+          this.clearNode();
         });
     });
   }
