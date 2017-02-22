@@ -8,10 +8,11 @@ import { diagonal } from './shapeUtil.js';
 class SentenTreeVis extends SvgChart {
   static getDefaultOptions() {
     return helper.deepExtend(super.getDefaultOptions(), {
-      initialWidth: 1,
-      initialHeight: 1,
+      initialWidth: 800,
+      initialHeight: 200,
       margin: { left: 0, top: 0, bottom: 0, right: 0 },
       fontSize: [10, 32],
+      gapBetweenGraph: 10,
     });
   }
 
@@ -34,32 +35,47 @@ class SentenTreeVis extends SvgChart {
   constructor(element, options) {
     super(element, options);
 
-    this.layers.create({ root: ['link', 'node'] });
+    this.layers.create(['link', 'node']);
 
+    this.fontSizeScale = d3.scaleSqrt().clamp(true);
+    this.strokeSizeScale = d3.scaleSqrt()
+      .domain([1, 100])
+      .range([1, 6])
+      .clamp(true);
+
+    this.layouts = [];
+
+    this.updatePosition = this.updatePosition.bind(this);
     this.visualize = this.visualize.bind(this);
     this.on('data', this.visualize);
     this.on('options', this.visualize);
     // this.on('resize', this.visualize);
-
-    this.layout = new Layout();
-    this.layout.on('start.default', this.dispatchAs('layoutStart'));
-    this.layout.on('tick.event', this.dispatchAs('layoutTick'));
-    this.layout.on('end.default', this.dispatchAs('layoutEnd'));
   }
 
   fontSize(node) {
     return `${Math.round(this.fontSizeScale(node.data.freq))}px`;
   }
 
-  renderNodes(nodes) {
-    const sUpdate = this.layers.get('root/node').selectAll('g')
-      .data(nodes, n => n.id);
+  renderNodes(graphs) {
+    const sUpdate = this.layers.get('node').selectAll('g.graph')
+      .data(graphs);
 
     sUpdate.exit().remove();
 
-    const sEnter = sUpdate.enter().append('g');
+    const sEnter = sUpdate.enter().append('g')
+      .classed('graph', true);
 
-    sEnter.append('text')
+    this.sNodeGraphs = sUpdate.merge(sEnter)
+      .attr('transform', `translate(${this.getInnerWidth() / 2},${this.getInnerHeight() / 2})`);
+
+    const sUpdateNode = sEnter.selectAll('g')
+      .data(d => d.nodes, n => n.id);
+
+    sUpdateNode.exit().remove();
+
+    sUpdateNode.enter().append('g')
+      .classed('node', true)
+    .append('text')
       .attr('dy', '.28em')
       .text(d => d.data.entity)
       .style('cursor', 'pointer')
@@ -68,41 +84,32 @@ class SentenTreeVis extends SvgChart {
       .on('mousemove.event', this.dispatchAs('nodeMousemove'))
       .on('mouseleave.event', this.dispatchAs('nodeMouseleave'));
 
-    const sMerge = sEnter.merge(sUpdate)
+    this.sNodes = this.layers.get('node').selectAll('g.node');
+
+    this.sNodes.select('text')
       .style('font-size', d => this.fontSize(d))
       .style('text-anchor', 'middle');
-      // .style('text-anchor', d => {
-      //   if(d.isLeftLeaf()) return 'end';
-      //   else if(d.isRightLeaf()) return 'start';
-      //   else return 'middle';
-      // });
-
-    this.sNodes = sMerge;
   }
 
-  placeNodes() {
-    this.sNodes
-      .attr('transform', d => `translate(${d.x}, ${d.y})`);
-  }
-
-  renderLinks(links) {
-    const graph = this.data();
-
-    const strokeSizeScale = d3.scaleSqrt()
-      .domain([1, 100])
-      .range([1, 6])
-      .clamp(true);
-
-    links.forEach(link => {
-      link.strokeWidth = Math.round(strokeSizeScale(link.freq / graph.minSupport));
-    });
-
-    const sUpdate = this.layers.get('root/link').selectAll('path')
-      .data(links);
+  renderLinks(graphs) {
+    const sUpdate = this.layers.get('link').selectAll('g.graph')
+      .data(graphs);
 
     sUpdate.exit().remove();
 
-    const sEnter = sUpdate.enter().append('path')
+    const sEnter = sUpdate.enter().append('g')
+      .classed('graph', true);
+
+    this.sLinkGraphs = sUpdate.merge(sEnter)
+      .attr('transform', `translate(${this.getInnerWidth() / 2},${this.getInnerHeight() / 2})`);
+
+    const sUpdateLink = sEnter.selectAll('path.link')
+      .data(d => d.links, l => l.getKey());
+
+    sUpdateLink.exit().remove();
+
+    sUpdateLink.enter().append('path')
+      .classed('link', true)
       .on('click.event', this.dispatchAs('linkClick'))
       .on('mouseenter.event', this.dispatchAs('linkMouseenter'))
       .on('mousemove.event', this.dispatchAs('linkMousemove'))
@@ -112,17 +119,63 @@ class SentenTreeVis extends SvgChart {
       .style('stroke', '#222')
       .style('fill', 'none');
 
-    this.sLinks = sEnter.merge(sUpdate)
+    graphs.forEach(graph => {
+      graph.links.forEach(link => {
+        link.strokeWidth = Math.round(this.strokeSizeScale(link.freq / graph.minSupport));
+      });
+    });
+
+    this.sLinks = this.layers.get('link').selectAll('path.link')
       .style('stroke-width', d => `${d.strokeWidth}px`)
-      .style('stroke', l => l.isTheOnlyBridge() ? '#777' : '#FF9800');
+      .style('stroke', l => (l.isTheOnlyBridge() ? '#777' : '#FF9800'));
+  }
+
+  updatePosition() {
+    let yPos = 0;
+    let maxw = 0;
+    const { margin, gapBetweenGraph } = this.options();
+    const { top, left, bottom, right } = margin;
+
+    // Get bbox of <g> for each graph to compute total dimension
+    // and stack each graph on top of each other
+    this.sNodeGraphs.each(function fn(graph) {
+      const bbox = this.getBBox();
+      const w = bbox.width;
+      const h = bbox.height;
+      maxw = Math.max(w, maxw);
+      graph.x = -bbox.x;
+      graph.y = -bbox.y + yPos;
+      yPos += h + gapBetweenGraph;
+    });
+
+    this.sNodeGraphs
+      .attr('transform', graph => `translate(${graph.x},${graph.y})`);
+
+    this.sLinkGraphs
+      .attr('transform', graph => `translate(${graph.x},${graph.y})`);
+
+    // Update component size to fit all content
+    this.dimension([
+      maxw + left + right,
+      yPos + top + bottom - gapBetweenGraph,
+    ]);
+
+    this.placeNodes();
+    this.placeLinks();
+  }
+
+  placeNodes() {
+    this.sNodes.attr('transform', d => `translate(${d.x}, ${d.y})`);
   }
 
   placeLinks() {
     // draw directed edges with proper padding from node centers
-    const graph = this.data();
+    const graphs = this.data();
 
-    graph.nodes.forEach(node => {
-      node.updateAttachPoints();
+    graphs.forEach(graph => {
+      graph.nodes.forEach(node => {
+        node.updateAttachPoints();
+      });
     });
 
     this.sLinks
@@ -144,36 +197,44 @@ class SentenTreeVis extends SvgChart {
   visualize() {
     if (!this.hasData() || !this.hasNonZeroArea()) return;
 
-    const graph = this.data();
-    const { fontSize } = this.options();
+    const graphs = this.data();
 
-    this.fontSizeScale = d3.scaleSqrt()
-      .domain(graph.globalFreqRange)
-      .range(fontSize)
-      .clamp(true);
+    if (graphs.length > 0) {
+      const { fontSize } = this.options();
+      this.fontSizeScale
+        .domain(graphs[0].globalFreqRange)
+        .range(fontSize);
+    }
 
-    this.layers.get('root')
-      .attr('transform', `translate(${this.getInnerWidth() / 2},${this.getInnerHeight() / 2})`);
-    this.renderNodes(graph.nodes);
-    this.renderLinks(graph.links);
+    this.renderNodes(graphs);
+    this.renderLinks(graphs);
 
-    // graph.nodes.forEach(n => {
-    //   if(!n.x) {
-    //     n.x = Math.random() * this.getInnerWidth();
-    //     n.y = Math.random() * this.getInnerHeight();
-    //   }
-    // });
-
-    this.sNodes.each(function fn(d) {
+    // Update node position for layout computation
+    this.sNodes.each(function fn(node) {
       const bbox = this.getBBox();
-      d.width = bbox.width + 4;
-      d.height = bbox.height + 4;
+      node.width = bbox.width + 4;
+      node.height = bbox.height + 4;
     });
 
-    this.layout.setGraph(graph).start();
+    // Update layout pool
+    const len = Math.max(graphs.length, this.layouts.length);
+    for (let i = 0; i < len; i++) {
+      if (i >= this.layouts.length) {
+        this.layouts.push(new Layout().on('tick', this.updatePosition));
+      }
+      if (i >= graphs.length) {
+        this.layouts[i]
+          .stop()
+          .destroy();
+        continue;
+      }
+      this.layouts[i]
+        .setGraph(graphs[i])
+        .start();
+    }
+    this.layouts = this.layouts.slice(0, graphs.length);
 
-    this.placeNodes();
-    this.placeLinks();
+    this.updatePosition();
 
     // const colaAdaptor = this.colaAdaptor;
 
@@ -184,16 +245,6 @@ class SentenTreeVis extends SvgChart {
     //   this.placeNodes();
     //   this.placeLinks();
     // });
-  }
-
-  fitComponentToContent() {
-    const bbox = this.layers.get('root').node().getBBox();
-    const { top, left, bottom, right } = this.options().margin;
-    const w2 = bbox.width + left + right;
-    const h2 = bbox.height + top + bottom;
-    this.dimension([w2, h2]);
-    this.layers.get('root')
-      .attr('transform', `translate(${-bbox.x},${-bbox.y})`);
   }
 }
 

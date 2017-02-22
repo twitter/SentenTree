@@ -7,7 +7,8 @@ var isProduction = process.env.NODE_ENV === 'production';
 // Create config
 var config = {
   entry: {
-    'demo/dist/main.js': './demo/src/main.js'
+    'demo/dist/main.js': './demo/src/main.js',
+    'demo/dist/main-simple.js': './demo/src/main-simple.js'
   },
   output: {
     path: __dirname,
