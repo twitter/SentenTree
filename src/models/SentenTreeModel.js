@@ -200,7 +200,6 @@ export default class SentenTreeModel {
     const dbsize = dataset.computeSize();
     entries.forEach(t => {
       t.seqIndices = [];
-      t.tokens.forEach(function (i) { return +i; });
     });
 
     this.tokenizedData = dataset;
