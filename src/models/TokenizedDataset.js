@@ -1,4 +1,4 @@
-import { sum } from 'lodash-es';
+import { sum } from 'lodash';
 
 export default class TokenizedDataset {
   constructor(vocabularies = {}, itemset = [], entries = []) {

@@ -1,4 +1,4 @@
-import { max, min } from 'lodash-es';
+import { max, min } from 'lodash';
 
 import Heap from 'heap';
 import RawGraph from './RawGraph.js';

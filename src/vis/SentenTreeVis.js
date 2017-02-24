@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { SvgChart, helper } from 'd3kit/dist/d3kit-es.js';
+import { SvgChart, helper } from 'd3kit';
 
 import Layout from './Layout.js';
 import { diagonal } from './shapeUtil.js';

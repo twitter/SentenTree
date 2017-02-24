@@ -1,4 +1,4 @@
-import { min, sum } from 'lodash-es';
+import { min, sum } from 'lodash';
 
 export default class Node {
   constructor(rawNode) {

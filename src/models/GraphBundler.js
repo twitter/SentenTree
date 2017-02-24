@@ -1,4 +1,4 @@
-import { chain, keyBy, sum } from 'lodash-es';
+import { chain, keyBy, sum } from 'lodash';
 
 import Heap from 'heap';
 import Link from './Link.js';

@@ -17,7 +17,8 @@
     "visualization"
   ],
   "scripts": {
-    "build": "webpack && uglifyjs dist/sententree.js -m -c > dist/sententree.min.js",
+    "clean": "rm -rf dist",
+    "build": "NODE_ENV=production webpack && uglifyjs dist/sententree.js -m -c > dist/sententree.min.js",
     "test": "NODE_ENV=test karma start --single-run",
     "tdd": "NODE_ENV=test karma start",
     "eslint": "eslint --ignore-path .gitignore \"src/**/*.@(js|jsx)\"",
@@ -62,7 +63,6 @@
     "karma-mocha-reporter": "^2.1.0",
     "karma-phantomjs-launcher": "^1.0.1",
     "karma-webpack": "^2.0.2",
-    "lodash-es": "^4.17.4",
     "mocha": "^3.0.2",
     "node-sass": "^4.5.0",
     "pkgfiles": "^2.3.0",
@@ -76,6 +76,7 @@
     "d3": "^4.4.1",
     "d3kit": "^3.2.0",
     "heap": "^0.2.6",
+    "lodash": "^4.17.4",
     "webcola": "^3.3.0"
   }
 }

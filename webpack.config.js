@@ -15,6 +15,28 @@ var config = {
     path: __dirname,
     filename: '[name]'
   },
+  externals: [{
+    'd3': true,
+    'd3kit': {
+      amd: 'd3kit',
+      commonjs: 'd3kit',
+      commonjs2: 'd3kit',
+      root: 'd3Kit',
+    },
+    'heap': true,
+    'lodash': {
+      amd: 'lodash',
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      root: '_',
+    },
+    'webcola/WebCola/cola.js': {
+      amd: 'webcola/WebCola/cola.js',
+      commonjs: 'webcola/WebCola/cola.js',
+      commonjs2: 'webcola/WebCola/cola.js',
+      root: 'cola',
+    },
+  }],
   module: {
     loaders: [
       {

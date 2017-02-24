@@ -1,4 +1,4 @@
-import { flatMap, max, min } from 'lodash-es';
+import { flatMap, max, min } from 'lodash';
 
 import GraphBundler from './GraphBundler.js';
 import Link from './Link.js';
