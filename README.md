@@ -5,7 +5,6 @@ SentenTree is a novel text visualization technique for summarizing a collection 
 
 ![SentenTree example](https://raw.githubusercontent.com/twitter/SentenTree/master/images/SentenTree.png)
 
-
 [Demo](https://twitter.github.io/SentenTree/)
 
 ## Author
@@ -16,9 +15,27 @@ SentenTree is a novel text visualization technique for summarizing a collection 
 
 Mengdie Hu, Krist Wongsuphasawat and John Stasko. [Visualizing Social Media Content with SentenTree](http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf), in IEEE Transactions on Visualization and Computer Graphics 2016.
 
+## Example usage
+
+```js
+d3.tsv('data/goal.tsv', (error, data) => {
+  // data format is [{ id, text, count }]
+
+  const model = new SentenTreeBuilder()
+    .buildModel(data);
+
+  container = document.getElementById('vis');
+
+  new SentenTreeVis(container)
+    // change the number to limit number of output
+    .data(model.getRenderedGraphs(3))
+    .on('nodeClick', node => {
+      console.log('node', node);
+    });
+```
+
 ## For developers
 
-### Setup
 Install dependencies via npm
 
 ```
