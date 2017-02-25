@@ -7,7 +7,9 @@ container.innerHTML = 'Loading ...';
 
 DataService.loadFile('data/goal.tsv', (error, data) => {
   console.time('Build model');
-  const model = new SentenTreeBuilder().buildModel(data);
+  const model = new SentenTreeBuilder()
+    .transformToken(token => (/score(d|s)?/.test(token) ? 'score' : token))
+    .buildModel(data);
   console.timeEnd('Build model');
 
   container.innerHTML = '';
