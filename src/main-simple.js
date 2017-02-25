@@ -1,14 +1,16 @@
 import * as DataService from './DataService.js';
 
-import { SentenTreeModel, SentenTreeVis } from '../../src/main.js';
+import { SentenTreeBuilder, SentenTreeVis } from '../../src/main.js';
 
 const container = document.querySelector('#vis');
 container.innerHTML = 'Loading ...';
 
 DataService.loadFile('data/goal.tsv', (error, data) => {
-  console.time('Build tree');
-  const model = new SentenTreeModel(data);
-  console.timeEnd('Build tree');
+  console.time('Build model');
+  const model = new SentenTreeBuilder()
+    .transformToken(token => (/score(d|s)?/.test(token) ? 'score' : token))
+    .buildModel(data);
+  console.timeEnd('Build model');
 
   container.innerHTML = '';
 
