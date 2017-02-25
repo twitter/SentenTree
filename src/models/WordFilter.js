@@ -7,11 +7,14 @@ const TWEET_STOP_WORDS = ['rt', 'via', 'amp', 'http', 'https', 'm', 're', 'co'];
 const DEFAULT_STOP_WORDS = uniq(NLTK_STOP_WORDS.concat(CUSTOM_STOP_WORDS).concat(TWEET_STOP_WORDS));
 
 export default class WordFilter {
-  constructor(includeWords = [], excludeWords = []) {
+  constructor({
+    includeWords = [],
+    excludeWords = [],
+    includeDefault = true,
+  } = {}) {
+    this.stopWords = includeDefault ? DEFAULT_STOP_WORDS : [];
     if (includeWords && includeWords.length > 0) {
-      this.stopWords = uniq(DEFAULT_STOP_WORDS.concat(includeWords));
-    } else {
-      this.stopWords = DEFAULT_STOP_WORDS;
+      this.stopWords = uniq(this.stopWords.concat(includeWords));
     }
     if (excludeWords && excludeWords.length > 0) {
       const exclusionLookup = keyBy(excludeWords, w => w);

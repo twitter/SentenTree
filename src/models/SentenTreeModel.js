@@ -2,8 +2,6 @@ import { max, min } from 'lodash';
 
 import Heap from 'heap';
 import RawGraph from './RawGraph.js';
-import WordFilter from './WordFilter.js';
-import { tokenize } from './tokenizer.js';
 
 const DEFAULT_NODE_COUNT = 150;
 
@@ -188,26 +186,17 @@ function printSeq(words) {
 }
 
 export default class SentenTreeModel {
-  constructor(inputEntries, {
-    wordFilter = WordFilter.getDefault(),
-    termWeights = {},
-  } = {}) {
-    const dataset = tokenize(inputEntries).filter(wordFilter);
-    const terms = dataset.encodeTermWeights(termWeights);
-
+  constructor(tokenizedData, termWeights = {}) {
     // Revised from initGraphs
-    const entries = dataset.entries;
-    const dbsize = dataset.computeSize();
-    entries.forEach(t => {
-      t.seqIndices = [];
-    });
-
-    this.tokenizedData = dataset;
-    this.terms = terms;
+    const { itemset, entries } = tokenizedData;
+    this.tokenizedData = tokenizedData;
+    this.terms = tokenizedData.encodeTermWeights(termWeights);
+    const size = tokenizedData.computeSize();
+    console.log('size', size);
 
     this.supportRange = [
-      Math.max(dbsize * 0.001, 2),
-      dbsize / 3,
+      Math.max(size * 0.001, 2),
+      size / 3,
     ];
     const [minSupport, maxSupport] = this.supportRange;
 
@@ -215,7 +204,7 @@ export default class SentenTreeModel {
       words: [],
       newWord: null,
       graph: null,
-      size: dbsize,
+      size,
       DBs: entries,
     };
 
@@ -227,7 +216,7 @@ export default class SentenTreeModel {
       minSupport,
       maxSupport,
       this.terms,
-      dataset.itemset
+      itemset
     );
 
     this.graphs = graphs

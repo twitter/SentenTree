@@ -1,29 +1,62 @@
 import { sum } from 'lodash';
 
 export default class TokenizedDataset {
-  constructor(vocabularies = {}, itemset = [], entries = []) {
-    this.vocabularies = vocabularies;
-    this.itemset = itemset;
-    this.entries = entries;
+  constructor(entries = []) {
+    this.vocabularies = {};
+    this.itemset = [];
+    this.entries = entries
+      .map(({ id, count, tokens, rawText }) => ({
+        id,
+        count,
+        tokens: tokens.map(t => this.encode(t)),
+        rawText,
+        seqIndices: [],
+      }));
   }
 
-  filter(wordFilter) {
-    const stopwordLookup = this.itemset.map(w => wordFilter.test(w));
-    const newEntries = this.entries
-      .map(entry => {
-        const tokens = entry.tokens.filter(w => !stopwordLookup[w]);
-        return tokens.length > 0
-          ? Object.assign({}, entry, { tokens })
-          : null;
-      })
-      .filter(x => x);
-
-    return new TokenizedDataset(
-      this.vocabularies,
-      this.itemset,
-      newEntries
-    );
+  hasToken(token) {
+    return this.vocabularies.hasOwnProperty(token);
   }
+
+  hasCode(code) {
+    return code >= 0 && code < this.itemset.length;
+  }
+
+  getCode(token) {
+    return this.vocabularies[token];
+  }
+
+  encode(token) {
+    if (this.vocabularies.hasOwnProperty(token)) {
+      return this.vocabularies[token];
+    }
+    const code = this.itemset.length;
+    this.itemset.push(token);
+    this.vocabularies[token] = code;
+    return code;
+  }
+
+  decode(code) {
+    return this.itemset[code];
+  }
+
+  // filter(wordFilter) {
+  //   const stopwordLookup = this.itemset.map(w => wordFilter.test(w));
+  //   const newEntries = this.entries
+  //     .map(entry => {
+  //       const tokens = entry.tokens.filter(w => !stopwordLookup[w]);
+  //       return tokens.length > 0
+  //         ? Object.assign({}, entry, { tokens })
+  //         : null;
+  //     })
+  //     .filter(x => x);
+
+  //   return new TokenizedDataset(
+  //     this.vocabularies,
+  //     this.itemset,
+  //     newEntries
+  //   );
+  // }
 
   encodeTermWeights(termWeights = {}) {
     return Object.keys(termWeights)

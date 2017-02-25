@@ -2,7 +2,7 @@ import * as DataService from './DataService.js';
 import * as d3 from 'd3-selection';
 
 import React, { PropTypes } from 'react';
-import { SentenTreeModel, SentenTreeVis as _SentenTreeVis } from '../../src/main.js';
+import { SentenTreeBuilder, SentenTreeVis as _SentenTreeVis } from '../../src/main.js';
 
 import { DATASETS } from './datasets.js';
 import { createComponent } from 'react-d3kit';
@@ -56,7 +56,9 @@ class App extends React.Component {
   loadFile(file) {
     DataService.loadFile(`data/${file}`, (error, data) => {
       console.time('Build model');
-      const model = new SentenTreeModel(data);
+      const model = new SentenTreeBuilder()
+        .transformToken(token => (/score(d|s)?/.test(token) ? 'score' : token))
+        .buildModel(data);
       console.timeEnd('Build model');
       console.time('Build rendered graphs');
       const renderedGraphs = model.getRenderedGraphs(3);

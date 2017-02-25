@@ -39,7 +39,7 @@ gulp.task('browser-sync', () => {
   });
 });
 
-gulp.task('watch', () => {
+gulp.task('watch', ['sass'], () => {
   gulp.watch(patterns.sass, ['sass']);
 });
 
