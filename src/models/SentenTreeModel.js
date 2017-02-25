@@ -192,7 +192,6 @@ export default class SentenTreeModel {
     this.tokenizedData = tokenizedData;
     this.terms = tokenizedData.encodeTermWeights(termWeights);
     const size = tokenizedData.computeSize();
-    console.log('size', size, itemset.length);
 
     this.supportRange = [
       Math.max(size * 0.001, 2),

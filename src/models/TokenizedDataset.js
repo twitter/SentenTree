@@ -40,29 +40,11 @@ export default class TokenizedDataset {
     return this.itemset[code];
   }
 
-  // filter(wordFilter) {
-  //   const stopwordLookup = this.itemset.map(w => wordFilter.test(w));
-  //   const newEntries = this.entries
-  //     .map(entry => {
-  //       const tokens = entry.tokens.filter(w => !stopwordLookup[w]);
-  //       return tokens.length > 0
-  //         ? Object.assign({}, entry, { tokens })
-  //         : null;
-  //     })
-  //     .filter(x => x);
-
-  //   return new TokenizedDataset(
-  //     this.vocabularies,
-  //     this.itemset,
-  //     newEntries
-  //   );
-  // }
-
   encodeTermWeights(termWeights = {}) {
     return Object.keys(termWeights)
-      .map(key => key in this.vocabularies)
+      .filter(key => this.hasToken(key))
       .reduce((acc, key) => {
-        acc[this.vocabularies[key]] = termWeights[key];
+        acc[this.getCode(key)] = termWeights[key];
         return acc;
       }, {});
   }
