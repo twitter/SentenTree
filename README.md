@@ -5,17 +5,22 @@ SentenTree is a novel text visualization technique for summarizing a collection 
 
 ![SentenTree example](https://raw.githubusercontent.com/twitter/SentenTree/master/images/SentenTree.png)
 
-[Demo](https://twitter.github.io/SentenTree/)
+[See DEMO](https://twitter.github.io/SentenTree/)
 
 ## Author
 - Mengdie Hu / [@mengdieh](https://twitter.com/mengdieh)
-- Krist Wongsuphasawat [@kristw](https://twitter.com/kristw)
+- Krist Wongsuphasawat / [@kristw](https://twitter.com/kristw)
 
 ## Publication
 
 Mengdie Hu, Krist Wongsuphasawat and John Stasko. [Visualizing Social Media Content with SentenTree](http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf), in IEEE Transactions on Visualization and Computer Graphics 2016.
 
 ## Example usage
+
+
+```html
+<div id="vis"></div>
+```
 
 ```js
 d3.tsv('data/goal.tsv', (error, data) => {
@@ -24,9 +29,7 @@ d3.tsv('data/goal.tsv', (error, data) => {
   const model = new SentenTreeBuilder()
     .buildModel(data);
 
-  container = document.getElementById('vis');
-
-  new SentenTreeVis(container)
+  new SentenTreeVis('#vis')
     // change the number to limit number of output
     .data(model.getRenderedGraphs(3))
     .on('nodeClick', node => {
