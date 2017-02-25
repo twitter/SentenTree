@@ -1,4 +1,4 @@
-import { flatMap, max, min } from 'lodash';
+import { flatMap, keyBy, max, min } from 'lodash';
 
 import GraphBundler from './GraphBundler.js';
 import Link from './Link.js';
@@ -44,6 +44,7 @@ export default class RenderedGraph {
       this.nodes = nodes;
       this.links = links;
     }
+    this.linkLookup = keyBy(this.links, l => l.getKey());
 
     if (highFrequencyOnTop) {
       this.nodes.forEach(n => {
