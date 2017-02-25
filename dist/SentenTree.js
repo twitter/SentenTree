@@ -7,7 +7,7 @@
 		exports["SentenTree"] = factory(require("lodash"), require("d3"), require("heap"), require("d3kit"), require("webcola/WebCola/cola.js"));
 	else
 		root["SentenTree"] = factory(root["_"], root["d3"], root["heap"], root["d3Kit"], root["cola"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_15__, __WEBPACK_EXTERNAL_MODULE_16__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_16__, __WEBPACK_EXTERNAL_MODULE_17__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,429 +93,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _lodash = __webpack_require__(0);
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var NLTK_STOP_WORDS = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'nor', 'only', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now']; // removed 'own', 'not', 'no' from stopwords
-
-var CUSTOM_STOP_WORDS = ['de', 'la', 'y', 'un', 'que', 'en', 'el', 'shit', 'fuck', 'fucking']; // spanish
-var TWEET_STOP_WORDS = ['rt', 'via', 'amp', 'http', 'https', 'm', 're', 'co'];
-var DEFAULT_STOP_WORDS = (0, _lodash.uniq)(NLTK_STOP_WORDS.concat(CUSTOM_STOP_WORDS).concat(TWEET_STOP_WORDS));
-
-var WordFilter = function () {
-  function WordFilter() {
-    var _this = this;
-
-    var includeWords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    var excludeWords = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-    _classCallCheck(this, WordFilter);
-
-    if (includeWords && includeWords.length > 0) {
-      this.stopWords = (0, _lodash.uniq)(DEFAULT_STOP_WORDS.concat(includeWords));
-    } else {
-      this.stopWords = DEFAULT_STOP_WORDS;
-    }
-    if (excludeWords && excludeWords.length > 0) {
-      (function () {
-        var exclusionLookup = (0, _lodash.keyBy)(excludeWords, function (w) {
-          return w;
-        });
-        _this.stopWords = _this.stopWords.filter(function (w) {
-          return !exclusionLookup[w];
-        });
-      })();
-    }
-    this.regex = new RegExp('^(' + this.stopWords.join('|') + ')$');
-  }
-
-  _createClass(WordFilter, [{
-    key: 'test',
-    value: function test(word) {
-      return this.regex.test(word);
-    }
-  }]);
-
-  return WordFilter;
-}();
-
-exports.default = WordFilter;
-
-
-var defaultFilter = null;
-WordFilter.getDefault = function () {
-  if (!defaultFilter) {
-    defaultFilter = new WordFilter();
-  }
-  return defaultFilter;
-};
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.tokenize = tokenize;
-
-var _TokenizedDataset = __webpack_require__(12);
-
-var _TokenizedDataset2 = _interopRequireDefault(_TokenizedDataset);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var PATTERN = /http:\/\/t\.co\/\w+|http:\/\/vine\.co\/\w+|http:\/\/t\.co\w+|http:\/\/vine\.co\w+|http:\/\/t\.\w+|http:\/\/vine\.\w+|http:\/\/\w+|\@\w+|\#\w+|\d+(,\d+)+|\w+(-\w+)*|\$?\d+(\.\d+)?\%?|([A-Z]\.)+/g;
-
-// tweets follow this format: tweetId, tweetText, # of retweets
-function tokenize(inputEntries) {
-  var vocabularies = {};
-  var itemset = [];
-  var entries = inputEntries.filter(function (entry) {
-    return PATTERN.exec(entry[1]);
-  }).map(function (entry) {
-    var tokens = [];
-    PATTERN.lastIndex = 0;
-    var tokenResult = void 0;
-    while ((tokenResult = PATTERN.exec(entry.text)) != null) {
-      var t = tokenResult[0].trim();
-      // HACK
-      if (t === 'scores' || t === 'scored') {
-        t = 'score';
-      }
-      if (!(t in vocabularies)) {
-        vocabularies[t] = itemset.length;
-        itemset.push(t);
-      }
-      tokens.push(vocabularies[t]);
-    }
-
-    return {
-      id: entry.id,
-      tokens: tokens,
-      count: entry.count || 1,
-      rawText: entry.text
-    };
-  });
-
-  return new _TokenizedDataset2.default(vocabularies, itemset, entries);
-}
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Link = function () {
-  function Link(sourceNode, targetNode, freq) {
-    _classCallCheck(this, Link);
-
-    this.source = sourceNode;
-    this.target = targetNode;
-    this.freq = freq;
-    this.attachPoints = {
-      x1: 0,
-      y1: 0,
-      x2: 1,
-      y2: 1
-    };
-  }
-
-  _createClass(Link, [{
-    key: 'getKey',
-    value: function getKey() {
-      return [this.source.id, this.target.id].join(',');
-    }
-  }, {
-    key: 'isTheOnlyBridge',
-    value: function isTheOnlyBridge() {
-      return this.source.rightLinks.length === 1 && this.target.leftLinks.length === 1;
-    }
-  }, {
-    key: 'toConstraint',
-    value: function toConstraint() {
-      var gap = this.isTheOnlyBridge() ? 5 : 15;
-      return {
-        axis: 'x',
-        left: this.source.id,
-        right: this.target.id,
-        gap: (this.source.width + this.target.width) / 2 + gap
-      };
-    }
-  }, {
-    key: 'toOnlyBridgeConstraint',
-    value: function toOnlyBridgeConstraint() {
-      return {
-        type: 'alignment',
-        axis: 'y',
-        offsets: [{ node: this.source.id, offset: 0 }, { node: this.target.id, offset: 0 }]
-      };
-    }
-  }]);
-
-  return Link;
-}();
-
-exports.default = Link;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _lodash = __webpack_require__(0);
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Node = function () {
-  function Node(rawNode) {
-    _classCallCheck(this, Node);
-
-    this.data = rawNode;
-    this.leftLinks = [];
-    this.rightLinks = [];
-
-    this.id = -1;
-    this.x = 0;
-    this.y = 0;
-    this.width = 50;
-    this.height = 18;
-  }
-
-  _createClass(Node, [{
-    key: 'isLeaf',
-    value: function isLeaf() {
-      return this.leftLinks.length === 0 || this.rightLinks.length === 0;
-    }
-  }, {
-    key: 'isLeftLeaf',
-    value: function isLeftLeaf() {
-      return this.leftLinks.length === 0;
-    }
-  }, {
-    key: 'isRightLeaf',
-    value: function isRightLeaf() {
-      return this.rightLinks.length === 0;
-    }
-  }, {
-    key: 'leftEdge',
-    value: function leftEdge() {
-      return this.x - this.width / 2;
-    }
-  }, {
-    key: 'rightEdge',
-    value: function rightEdge() {
-      return this.x + this.width / 2;
-    }
-  }, {
-    key: 'getLeftNodes',
-    value: function getLeftNodes() {
-      return this.leftLinks.map(function (l) {
-        return l.source;
-      });
-    }
-  }, {
-    key: 'getRightNodes',
-    value: function getRightNodes() {
-      return this.rightLinks.map(function (l) {
-        return l.target;
-      });
-    }
-  }, {
-    key: 'createAlignmentConstraints',
-    value: function createAlignmentConstraints(axis, nodes) {
-      return nodes.length > 1 ? {
-        type: 'alignment',
-        axis: axis,
-        offsets: nodes.map(function (n) {
-          return { node: n.id, offset: 0 };
-        })
-      } : null;
-    }
-  }, {
-    key: 'computeLeftConstraints',
-    value: function computeLeftConstraints() {
-      var nodes = this.getLeftNodes().filter(function (n) {
-        return n.rightLinks.length === 1;
-      });
-
-      return this.createAlignmentConstraints('x', nodes);
-    }
-  }, {
-    key: 'computeRightConstraints',
-    value: function computeRightConstraints() {
-      var nodes = this.getRightNodes().filter(function (n) {
-        return n.leftLinks.length === 1;
-      });
-
-      return this.createAlignmentConstraints('x', nodes);
-    }
-  }, {
-    key: 'computeOrderConstraints',
-    value: function computeOrderConstraints() {
-      var rules = [];
-
-      if (this.getRightNodes().length > 1) {
-        var nodes = this.getRightNodes();
-        for (var i = 1; i < nodes.length; i++) {
-          rules.push({
-            axis: 'y',
-            left: nodes[i - 1].id,
-            right: nodes[i].id,
-            gap: 5
-          });
-        }
-      }
-      if (this.getLeftNodes().length > 1) {
-        var _nodes = this.getLeftNodes();
-        for (var _i = 1; _i < _nodes.length; _i++) {
-          rules.push({
-            axis: 'y',
-            left: _nodes[_i - 1].id,
-            right: _nodes[_i].id,
-            gap: 5
-          });
-        }
-      }
-
-      return rules;
-    }
-  }, {
-    key: 'updateAttachPoints',
-    value: function updateAttachPoints() {
-      var _this = this;
-
-      if (this.leftLinks.length === 1) {
-        this.leftLinks[0].attachPoints.y2 = this.y;
-      } else if (this.leftLinks.length > 1) {
-        (function () {
-          var totalLeft = (0, _lodash.sum)(_this.leftLinks.map(function (l) {
-            return l.strokeWidth;
-          }));
-          var startPos = _this.y - (totalLeft + (_this.leftLinks.length - 1) * 2) / 2;
-          _this.leftLinks.concat().sort(function (a, b) {
-            return a.source.y - b.source.y;
-          }).forEach(function (link) {
-            link.attachPoints.y2 = startPos + link.strokeWidth / 2;
-            startPos += link.strokeWidth + 2;
-          });
-        })();
-      }
-
-      if (this.rightLinks.length === 1) {
-        this.rightLinks[0].attachPoints.y1 = this.y;
-      } else if (this.rightLinks.length > 1) {
-        (function () {
-          var totalRight = (0, _lodash.sum)(_this.rightLinks.map(function (l) {
-            return l.strokeWidth;
-          }));
-          var startPos = _this.y - (totalRight + (_this.rightLinks.length - 1) * 2) / 2;
-          _this.rightLinks.concat().sort(function (a, b) {
-            return a.target.y - b.target.y;
-          }).forEach(function (link) {
-            link.attachPoints.y1 = startPos + link.strokeWidth / 2;
-            startPos += link.strokeWidth + 2;
-          });
-        })();
-      }
-    }
-  }, {
-    key: 'canMerge',
-    value: function canMerge(node) {
-      return this.data.entity === node.data.entity;
-    }
-  }], [{
-    key: 'merge',
-    value: function merge(nodes) {
-      return new Node({
-        id: (0, _lodash.min)(nodes.map(function (n) {
-          return n.data.id;
-        })),
-        entity: nodes[0].data.entity,
-        freq: (0, _lodash.sum)(nodes.map(function (n) {
-          return n.data.freq;
-        })),
-        mergedData: nodes.map(function (n) {
-          return n.data;
-        }),
-        topEntries: nodes.reduce(function (acc, curr) {
-          return acc.concat(curr.data.topEntries);
-        }, []).slice(0, 5)
-      });
-    }
-  }]);
-
-  return Node;
-}();
-
-exports.default = Node;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _lodash = __webpack_require__(0);
 
-var _heap = __webpack_require__(6);
+var _heap = __webpack_require__(7);
 
 var _heap2 = _interopRequireDefault(_heap);
 
-var _RawGraph = __webpack_require__(10);
+var _RawGraph = __webpack_require__(11);
 
 var _RawGraph2 = _interopRequireDefault(_RawGraph);
-
-var _WordFilter = __webpack_require__(1);
-
-var _WordFilter2 = _interopRequireDefault(_WordFilter);
-
-var _tokenizer = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -718,32 +308,20 @@ function printSeq(words) {
 }
 
 var SentenTreeModel = function () {
-  function SentenTreeModel(inputEntries) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$wordFilter = _ref.wordFilter,
-        wordFilter = _ref$wordFilter === undefined ? _WordFilter2.default.getDefault() : _ref$wordFilter,
-        _ref$termWeights = _ref.termWeights,
-        termWeights = _ref$termWeights === undefined ? {} : _ref$termWeights;
+  function SentenTreeModel(tokenizedData) {
+    var termWeights = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, SentenTreeModel);
 
-    var dataset = (0, _tokenizer.tokenize)(inputEntries).filter(wordFilter);
-    var terms = dataset.encodeTermWeights(termWeights);
-
     // Revised from initGraphs
-    var entries = dataset.entries;
-    var dbsize = dataset.computeSize();
-    entries.forEach(function (t) {
-      t.seqIndices = [];
-      t.tokens.forEach(function (i) {
-        return +i;
-      });
-    });
+    var itemset = tokenizedData.itemset,
+        entries = tokenizedData.entries;
 
-    this.tokenizedData = dataset;
-    this.terms = terms;
+    this.tokenizedData = tokenizedData;
+    this.terms = tokenizedData.encodeTermWeights(termWeights);
+    var size = tokenizedData.computeSize();
 
-    this.supportRange = [Math.max(dbsize * 0.001, 2), dbsize / 3];
+    this.supportRange = [Math.max(size * 0.001, 2), size / 3];
 
     var _supportRange = _slicedToArray(this.supportRange, 2),
         minSupport = _supportRange[0],
@@ -753,12 +331,12 @@ var SentenTreeModel = function () {
       words: [],
       newWord: null,
       graph: null,
-      size: dbsize,
+      size: size,
       DBs: entries
     };
 
     var graphs = [];
-    var visibleGroups = expandSeqTree(this.rootSeq, graphs, DEFAULT_NODE_COUNT, minSupport, maxSupport, this.terms, dataset.itemset);
+    var visibleGroups = expandSeqTree(this.rootSeq, graphs, DEFAULT_NODE_COUNT, minSupport, maxSupport, this.terms, itemset);
 
     this.graphs = graphs.filter(function (g) {
       return g.nodes.length > 2;
@@ -819,7 +397,487 @@ var SentenTreeModel = function () {
 exports.default = SentenTreeModel;
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _lodash = __webpack_require__(0);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var NLTK_STOP_WORDS = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'nor', 'only', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now']; // removed 'own', 'not', 'no' from stopwords
+
+var CUSTOM_STOP_WORDS = ['de', 'la', 'y', 'un', 'que', 'en', 'el', 'shit', 'fuck', 'fucking']; // spanish
+var TWEET_STOP_WORDS = ['rt', 'via', 'amp', 'http', 'https', 'm', 're', 'co'];
+var DEFAULT_STOP_WORDS = (0, _lodash.uniq)(NLTK_STOP_WORDS.concat(CUSTOM_STOP_WORDS).concat(TWEET_STOP_WORDS));
+
+var WordFilter = function () {
+  function WordFilter() {
+    var _this = this;
+
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$includeWords = _ref.includeWords,
+        includeWords = _ref$includeWords === undefined ? [] : _ref$includeWords,
+        _ref$excludeWords = _ref.excludeWords,
+        excludeWords = _ref$excludeWords === undefined ? [] : _ref$excludeWords,
+        _ref$includeDefault = _ref.includeDefault,
+        includeDefault = _ref$includeDefault === undefined ? true : _ref$includeDefault;
+
+    _classCallCheck(this, WordFilter);
+
+    this.stopWords = includeDefault ? DEFAULT_STOP_WORDS : [];
+    if (includeWords && includeWords.length > 0) {
+      this.stopWords = (0, _lodash.uniq)(this.stopWords.concat(includeWords));
+    }
+    if (excludeWords && excludeWords.length > 0) {
+      (function () {
+        var exclusionLookup = (0, _lodash.keyBy)(excludeWords, function (w) {
+          return w;
+        });
+        _this.stopWords = _this.stopWords.filter(function (w) {
+          return !exclusionLookup[w];
+        });
+      })();
+    }
+    this.regex = new RegExp('^(' + this.stopWords.join('|') + ')$');
+  }
+
+  _createClass(WordFilter, [{
+    key: 'test',
+    value: function test(word) {
+      return this.regex.test(word);
+    }
+  }]);
+
+  return WordFilter;
+}();
+
+exports.default = WordFilter;
+
+
+var defaultFilter = null;
+WordFilter.getDefault = function () {
+  if (!defaultFilter) {
+    defaultFilter = new WordFilter();
+  }
+  return defaultFilter;
+};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = tokenize;
+var PATTERN = /http:\/\/t\.co\/\w+|http:\/\/vine\.co\/\w+|http:\/\/t\.co\w+|http:\/\/vine\.co\w+|http:\/\/t\.\w+|http:\/\/vine\.\w+|http:\/\/\w+|\@\w+|\#\w+|\d+(,\d+)+|\w+(-\w+)*|\$?\d+(\.\d+)?\%?|([A-Z]\.)+/g;
+
+function tokenize(text) {
+  var tokens = [];
+  PATTERN.lastIndex = 0;
+  var tokenResult = PATTERN.exec(text);
+  while (tokenResult != null) {
+    tokens.push(tokenResult[0].trim());
+    tokenResult = PATTERN.exec(text);
+  }
+  return tokens;
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Link = function () {
+  function Link(sourceNode, targetNode, freq) {
+    _classCallCheck(this, Link);
+
+    this.source = sourceNode;
+    this.target = targetNode;
+    this.freq = freq;
+    this.attachPoints = {
+      x1: 0,
+      y1: 0,
+      x2: 1,
+      y2: 1
+    };
+  }
+
+  _createClass(Link, [{
+    key: 'getKey',
+    value: function getKey() {
+      return [this.source.id, this.target.id].join(',');
+    }
+  }, {
+    key: 'isTheOnlyBridge',
+    value: function isTheOnlyBridge() {
+      return this.source.rightLinks.length === 1 && this.target.leftLinks.length === 1;
+    }
+  }, {
+    key: 'toConstraint',
+    value: function toConstraint() {
+      var gap = this.isTheOnlyBridge() ? 5 : 15;
+      return {
+        axis: 'x',
+        left: this.source.id,
+        right: this.target.id,
+        gap: (this.source.width + this.target.width) / 2 + gap
+      };
+    }
+  }, {
+    key: 'toOnlyBridgeConstraint',
+    value: function toOnlyBridgeConstraint() {
+      return {
+        type: 'alignment',
+        axis: 'y',
+        offsets: [{ node: this.source.id, offset: 0 }, { node: this.target.id, offset: 0 }]
+      };
+    }
+  }]);
+
+  return Link;
+}();
+
+exports.default = Link;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _lodash = __webpack_require__(0);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Node = function () {
+  function Node(rawNode) {
+    _classCallCheck(this, Node);
+
+    this.data = rawNode;
+    this.leftLinks = [];
+    this.rightLinks = [];
+
+    this.id = -1;
+    this.x = 0;
+    this.y = 0;
+    this.width = 50;
+    this.height = 18;
+  }
+
+  _createClass(Node, [{
+    key: 'isLeaf',
+    value: function isLeaf() {
+      return this.leftLinks.length === 0 || this.rightLinks.length === 0;
+    }
+  }, {
+    key: 'isLeftLeaf',
+    value: function isLeftLeaf() {
+      return this.leftLinks.length === 0;
+    }
+  }, {
+    key: 'isRightLeaf',
+    value: function isRightLeaf() {
+      return this.rightLinks.length === 0;
+    }
+  }, {
+    key: 'leftEdge',
+    value: function leftEdge() {
+      return this.x - this.width / 2;
+    }
+  }, {
+    key: 'rightEdge',
+    value: function rightEdge() {
+      return this.x + this.width / 2;
+    }
+  }, {
+    key: 'getLeftNodes',
+    value: function getLeftNodes() {
+      return this.leftLinks.map(function (l) {
+        return l.source;
+      });
+    }
+  }, {
+    key: 'getRightNodes',
+    value: function getRightNodes() {
+      return this.rightLinks.map(function (l) {
+        return l.target;
+      });
+    }
+  }, {
+    key: 'createAlignmentConstraints',
+    value: function createAlignmentConstraints(axis, nodes) {
+      return nodes.length > 1 ? {
+        type: 'alignment',
+        axis: axis,
+        offsets: nodes.map(function (n) {
+          return { node: n.id, offset: 0 };
+        })
+      } : null;
+    }
+  }, {
+    key: 'computeLeftConstraints',
+    value: function computeLeftConstraints() {
+      var nodes = this.getLeftNodes().filter(function (n) {
+        return n.rightLinks.length === 1;
+      });
+
+      return this.createAlignmentConstraints('x', nodes);
+    }
+  }, {
+    key: 'computeRightConstraints',
+    value: function computeRightConstraints() {
+      var nodes = this.getRightNodes().filter(function (n) {
+        return n.leftLinks.length === 1;
+      });
+
+      return this.createAlignmentConstraints('x', nodes);
+    }
+  }, {
+    key: 'computeOrderConstraints',
+    value: function computeOrderConstraints() {
+      var rules = [];
+
+      if (this.getRightNodes().length > 1) {
+        var nodes = this.getRightNodes();
+        for (var i = 1; i < nodes.length; i++) {
+          rules.push({
+            axis: 'y',
+            left: nodes[i - 1].id,
+            right: nodes[i].id,
+            gap: 5
+          });
+        }
+      }
+      if (this.getLeftNodes().length > 1) {
+        var _nodes = this.getLeftNodes();
+        for (var _i = 1; _i < _nodes.length; _i++) {
+          rules.push({
+            axis: 'y',
+            left: _nodes[_i - 1].id,
+            right: _nodes[_i].id,
+            gap: 5
+          });
+        }
+      }
+
+      return rules;
+    }
+  }, {
+    key: 'updateAttachPoints',
+    value: function updateAttachPoints() {
+      var _this = this;
+
+      if (this.leftLinks.length === 1) {
+        this.leftLinks[0].attachPoints.y2 = this.y;
+      } else if (this.leftLinks.length > 1) {
+        (function () {
+          var totalLeft = (0, _lodash.sum)(_this.leftLinks.map(function (l) {
+            return l.strokeWidth;
+          }));
+          var startPos = _this.y - (totalLeft + (_this.leftLinks.length - 1) * 2) / 2;
+          _this.leftLinks.concat().sort(function (a, b) {
+            return a.source.y - b.source.y;
+          }).forEach(function (link) {
+            link.attachPoints.y2 = startPos + link.strokeWidth / 2;
+            startPos += link.strokeWidth + 2;
+          });
+        })();
+      }
+
+      if (this.rightLinks.length === 1) {
+        this.rightLinks[0].attachPoints.y1 = this.y;
+      } else if (this.rightLinks.length > 1) {
+        (function () {
+          var totalRight = (0, _lodash.sum)(_this.rightLinks.map(function (l) {
+            return l.strokeWidth;
+          }));
+          var startPos = _this.y - (totalRight + (_this.rightLinks.length - 1) * 2) / 2;
+          _this.rightLinks.concat().sort(function (a, b) {
+            return a.target.y - b.target.y;
+          }).forEach(function (link) {
+            link.attachPoints.y1 = startPos + link.strokeWidth / 2;
+            startPos += link.strokeWidth + 2;
+          });
+        })();
+      }
+    }
+  }, {
+    key: 'canMerge',
+    value: function canMerge(node) {
+      return this.data.entity === node.data.entity;
+    }
+  }], [{
+    key: 'merge',
+    value: function merge(nodes) {
+      return new Node({
+        id: (0, _lodash.min)(nodes.map(function (n) {
+          return n.data.id;
+        })),
+        entity: nodes[0].data.entity,
+        freq: (0, _lodash.sum)(nodes.map(function (n) {
+          return n.data.freq;
+        })),
+        mergedData: nodes.map(function (n) {
+          return n.data;
+        }),
+        topEntries: nodes.reduce(function (acc, curr) {
+          return acc.concat(curr.data.topEntries);
+        }, []).slice(0, 5)
+      });
+    }
+  }]);
+
+  return Node;
+}();
+
+exports.default = Node;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
+
+/***/ }),
 /* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _SentenTreeModel = __webpack_require__(1);
+
+var _SentenTreeModel2 = _interopRequireDefault(_SentenTreeModel);
+
+var _TokenizedDataset = __webpack_require__(13);
+
+var _TokenizedDataset2 = _interopRequireDefault(_TokenizedDataset);
+
+var _WordFilter = __webpack_require__(2);
+
+var _WordFilter2 = _interopRequireDefault(_WordFilter);
+
+var _tokenize = __webpack_require__(3);
+
+var _tokenize2 = _interopRequireDefault(_tokenize);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var identity = function identity(x) {
+  return x;
+};
+
+var SentenTreeBuilder = function () {
+  function SentenTreeBuilder() {
+    _classCallCheck(this, SentenTreeBuilder);
+
+    this._tokenize = _tokenize2.default;
+    this._transformToken = identity;
+    var filter = _WordFilter2.default.getDefault();
+    this._filterToken = function (token) {
+      return !filter.test(token);
+    };
+  }
+
+  _createClass(SentenTreeBuilder, [{
+    key: 'tokenize',
+    value: function tokenize() {
+      if (arguments.length === 0) return this._tokenize;
+      this._tokenize = arguments.length <= 0 ? undefined : arguments[0];
+      return this;
+    }
+  }, {
+    key: 'transformToken',
+    value: function transformToken() {
+      if (arguments.length === 0) return this._transformToken;
+      this._transformToken = arguments.length <= 0 ? undefined : arguments[0];
+      return this;
+    }
+  }, {
+    key: 'filterToken',
+    value: function filterToken() {
+      if (arguments.length === 0) return this._filterToken;
+      this._filterToken = arguments.length <= 0 ? undefined : arguments[0];
+      return this;
+    }
+  }, {
+    key: 'buildTokenizedDataset',
+    value: function buildTokenizedDataset(entries) {
+      var _this = this;
+
+      var tokenizedEntries = entries.map(function (entry) {
+        return {
+          id: entry.id,
+          count: entry.count || 1,
+          tokens: _this._tokenize(entry.text).map(_this._transformToken).filter(_this._filterToken),
+          rawText: entry.text
+        };
+      }).filter(function (entry) {
+        return entry.tokens.length > 0;
+      });
+
+      return new _TokenizedDataset2.default(tokenizedEntries);
+    }
+  }, {
+    key: 'buildModel',
+    value: function buildModel(entries) {
+      var termWeights = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      return new _SentenTreeModel2.default(this.buildTokenizedDataset(entries), termWeights);
+    }
+  }]);
+
+  return SentenTreeBuilder;
+}();
+
+exports.default = SentenTreeBuilder;
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -833,17 +891,17 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _d = __webpack_require__(5);
+var _d = __webpack_require__(6);
 
 var d3 = _interopRequireWildcard(_d);
 
-var _d3kit = __webpack_require__(15);
+var _d3kit = __webpack_require__(16);
 
-var _Layout = __webpack_require__(13);
+var _Layout = __webpack_require__(14);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
-var _shapeUtil = __webpack_require__(14);
+var _shapeUtil = __webpack_require__(15);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1095,7 +1153,7 @@ var SentenTreeVis = function (_SvgChart) {
 exports.default = SentenTreeVis;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1109,15 +1167,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _lodash = __webpack_require__(0);
 
-var _heap = __webpack_require__(6);
+var _heap = __webpack_require__(7);
 
 var _heap2 = _interopRequireDefault(_heap);
 
-var _Link = __webpack_require__(3);
+var _Link = __webpack_require__(4);
 
 var _Link2 = _interopRequireDefault(_Link);
 
-var _Node = __webpack_require__(4);
+var _Node = __webpack_require__(5);
 
 var _Node2 = _interopRequireDefault(_Node);
 
@@ -1298,7 +1356,7 @@ var GraphBundler = function () {
 exports.default = GraphBundler;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1310,7 +1368,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RenderedGraph = __webpack_require__(11);
+var _RenderedGraph = __webpack_require__(12);
 
 var _RenderedGraph2 = _interopRequireDefault(_RenderedGraph);
 
@@ -1349,7 +1407,7 @@ var RawGraph = function () {
 exports.default = RawGraph;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1363,15 +1421,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _lodash = __webpack_require__(0);
 
-var _GraphBundler = __webpack_require__(9);
+var _GraphBundler = __webpack_require__(10);
 
 var _GraphBundler2 = _interopRequireDefault(_GraphBundler);
 
-var _Link = __webpack_require__(3);
+var _Link = __webpack_require__(4);
 
 var _Link2 = _interopRequireDefault(_Link);
 
-var _Node = __webpack_require__(4);
+var _Node = __webpack_require__(5);
 
 var _Node2 = _interopRequireDefault(_Node);
 
@@ -1555,7 +1613,7 @@ var RenderedGraph = function () {
 exports.default = RenderedGraph;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1565,8 +1623,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _lodash = __webpack_require__(0);
@@ -1575,45 +1631,73 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var TokenizedDataset = function () {
   function TokenizedDataset() {
-    var vocabularies = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var itemset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-    var entries = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+    var _this = this;
+
+    var entries = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
     _classCallCheck(this, TokenizedDataset);
 
-    this.vocabularies = vocabularies;
-    this.itemset = itemset;
-    this.entries = entries;
+    this.vocabularies = {};
+    this.itemset = [];
+    this.entries = entries.map(function (_ref) {
+      var id = _ref.id,
+          count = _ref.count,
+          tokens = _ref.tokens,
+          rawText = _ref.rawText;
+      return {
+        id: id,
+        count: count,
+        tokens: tokens.map(function (t) {
+          return _this.encode(t);
+        }),
+        rawText: rawText,
+        seqIndices: []
+      };
+    });
   }
 
   _createClass(TokenizedDataset, [{
-    key: 'filter',
-    value: function filter(wordFilter) {
-      var stopwordLookup = this.itemset.map(function (w) {
-        return wordFilter.test(w);
-      });
-      var newEntries = this.entries.map(function (entry) {
-        var tokens = entry.tokens.filter(function (w) {
-          return !stopwordLookup[w];
-        });
-        return tokens.length > 0 ? _extends({}, entry, { tokens: tokens }) : null;
-      }).filter(function (x) {
-        return x;
-      });
-
-      return new TokenizedDataset(this.vocabularies, this.itemset, newEntries);
+    key: 'hasToken',
+    value: function hasToken(token) {
+      return this.vocabularies.hasOwnProperty(token);
+    }
+  }, {
+    key: 'hasCode',
+    value: function hasCode(code) {
+      return code >= 0 && code < this.itemset.length;
+    }
+  }, {
+    key: 'getCode',
+    value: function getCode(token) {
+      return this.vocabularies[token];
+    }
+  }, {
+    key: 'encode',
+    value: function encode(token) {
+      if (this.vocabularies.hasOwnProperty(token)) {
+        return this.vocabularies[token];
+      }
+      var code = this.itemset.length;
+      this.itemset.push(token);
+      this.vocabularies[token] = code;
+      return code;
+    }
+  }, {
+    key: 'decode',
+    value: function decode(code) {
+      return this.itemset[code];
     }
   }, {
     key: 'encodeTermWeights',
     value: function encodeTermWeights() {
-      var _this = this;
+      var _this2 = this;
 
       var termWeights = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      return Object.keys(termWeights).map(function (key) {
-        return key in _this.vocabularies;
+      return Object.keys(termWeights).filter(function (key) {
+        return _this2.hasToken(key);
       }).reduce(function (acc, key) {
-        acc[_this.vocabularies[key]] = termWeights[key];
+        acc[_this2.getCode(key)] = termWeights[key];
         return acc;
       }, {});
     }
@@ -1632,7 +1716,7 @@ var TokenizedDataset = function () {
 exports.default = TokenizedDataset;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1644,11 +1728,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _d = __webpack_require__(5);
+var _d = __webpack_require__(6);
 
 var d3 = _interopRequireWildcard(_d);
 
-var _cola = __webpack_require__(16);
+var _cola = __webpack_require__(17);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -1730,7 +1814,7 @@ var Layout = function () {
 exports.default = Layout;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1750,12 +1834,6 @@ function line(x1, y1, x2, y2) {
 }
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
-
-/***/ }),
 /* 16 */
 /***/ (function(module, exports) {
 
@@ -1763,6 +1841,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_16__;
 
 /***/ }),
 /* 17 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_17__;
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1771,18 +1855,17 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_16__;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SentenTreeVis = exports.WordFilter = exports.SentenTreeModel = exports.Tokenizer = undefined;
 
-var _SentenTreeModel = __webpack_require__(7);
+var _tokenize = __webpack_require__(3);
 
-Object.defineProperty(exports, 'SentenTreeModel', {
+Object.defineProperty(exports, 'tokenize', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_SentenTreeModel).default;
+    return _interopRequireDefault(_tokenize).default;
   }
 });
 
-var _WordFilter = __webpack_require__(1);
+var _WordFilter = __webpack_require__(2);
 
 Object.defineProperty(exports, 'WordFilter', {
   enumerable: true,
@@ -1791,7 +1874,25 @@ Object.defineProperty(exports, 'WordFilter', {
   }
 });
 
-var _SentenTreeVis = __webpack_require__(8);
+var _SentenTreeBuilder = __webpack_require__(8);
+
+Object.defineProperty(exports, 'SentenTreeBuilder', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_SentenTreeBuilder).default;
+  }
+});
+
+var _SentenTreeModel = __webpack_require__(1);
+
+Object.defineProperty(exports, 'SentenTreeModel', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_SentenTreeModel).default;
+  }
+});
+
+var _SentenTreeVis = __webpack_require__(9);
 
 Object.defineProperty(exports, 'SentenTreeVis', {
   enumerable: true,
@@ -1800,15 +1901,7 @@ Object.defineProperty(exports, 'SentenTreeVis', {
   }
 });
 
-var _tokenizer = __webpack_require__(2);
-
-var Tokenizer = _interopRequireWildcard(_tokenizer);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.Tokenizer = Tokenizer;
 
 /***/ })
 /******/ ]);
