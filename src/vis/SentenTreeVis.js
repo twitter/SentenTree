@@ -1,3 +1,5 @@
+import 'd3-transition';
+
 import * as d3 from 'd3';
 
 import { SvgChart, helper } from 'd3kit';
@@ -75,14 +77,14 @@ class SentenTreeVis extends SvgChart {
 
     sUpdateNode.enter().append('g')
       .classed('node', true)
-    .append('text')
-      .attr('dy', '.28em')
-      .text(d => d.data.entity)
-      .style('cursor', 'pointer')
       .on('click.event', this.dispatchAs('nodeClick'))
       .on('mouseenter.event', this.dispatchAs('nodeMouseenter'))
       .on('mousemove.event', this.dispatchAs('nodeMousemove'))
-      .on('mouseleave.event', this.dispatchAs('nodeMouseleave'));
+      .on('mouseleave.event', this.dispatchAs('nodeMouseleave'))
+    .append('text')
+      .attr('dy', '.28em')
+      .text(d => d.data.entity)
+      .style('cursor', 'pointer');
 
     this.sNodes = this.layers.get('node').selectAll('g.node');
 
@@ -246,6 +248,23 @@ class SentenTreeVis extends SvgChart {
     //   this.placeNodes();
     //   this.placeLinks();
     // });
+  }
+
+  highlightNeighbors(node) {
+    const graphs = this.data();
+
+    this.sNodes.transition()
+      .style('opacity', d => d.gid === node.gid || graphs.some(g =>
+        g.linkLookup[[d.gid, node.gid].join(',')]
+        || g.linkLookup[[node.gid, d.gid].join(',')]
+      )
+        ? 1
+        : 0.3
+      );
+  }
+
+  clearHighlightNeighbors() {
+    this.sNodes.style('opacity', 1);
   }
 }
 

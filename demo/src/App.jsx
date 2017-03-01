@@ -144,10 +144,11 @@ class App extends React.Component {
           <div className="vis-container">
             <SentenTreeVis
               data={renderedGraphs}
+              onInit={chart => { this.chart = chart; }}
               onNodeClick={node => { console.log(node); }}
-              onNodeMouseenter={node => { this.selectNode(node); }}
+              onNodeMouseenter={node => { this.selectNode(node); this.chart.highlightNeighbors(node); }}
               onNodeMousemove={node => { this.selectNode(node); }}
-              onNodeMouseleave={() => { this.clearNode(); }}
+              onNodeMouseleave={() => { this.clearNode(); this.chart.clearHighlightNeighbors(); }}
             />
           </div>
         </div>
