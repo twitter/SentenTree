@@ -39,7 +39,7 @@ d3.tsv('data/goal.tsv', (error, data) => {
 
 ## For developers
 
-Install dependencies via npm
+Install dependencies via npm or yarn
 
 ```
 $ npm install
