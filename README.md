@@ -15,8 +15,13 @@ SentenTree is a novel text visualization technique for summarizing a collection 
 
 Mengdie Hu, Krist Wongsuphasawat and John Stasko. [Visualizing Social Media Content with SentenTree](http://www.cc.gatech.edu/~stasko/papers/infovis16-sententree.pdf), in IEEE Transactions on Visualization and Computer Graphics 2016.
 
-## Example usage
+## Installation
 
+```
+npm install sententree
+```
+
+## Example usage
 
 ```html
 <div id="vis"></div>
@@ -35,6 +40,7 @@ d3.tsv('data/goal.tsv', (error, data) => {
     .on('nodeClick', node => {
       console.log('node', node);
     });
+});
 ```
 
 ## For developers
