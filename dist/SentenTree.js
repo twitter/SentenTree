@@ -6,7 +6,7 @@
 	else if(typeof exports === 'object')
 		exports["SentenTree"] = factory(require("lodash"), require("d3"), require("heap"), require("d3kit"), require("webcola/WebCola/cola.js"));
 	else
-		root["SentenTree"] = factory(root["_"], root["d3"], root["heap"], root["d3Kit"], root["cola"]);
+		root["SentenTree"] = factory(root["_"], root["d3"], root["Heap"], root["d3Kit"], root["cola"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_43__, __WEBPACK_EXTERNAL_MODULE_44__, __WEBPACK_EXTERNAL_MODULE_135__, __WEBPACK_EXTERNAL_MODULE_136__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache

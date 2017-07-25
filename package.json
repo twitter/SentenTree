@@ -18,7 +18,9 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "NODE_ENV=production webpack && uglifyjs dist/sententree.js -m -c > dist/sententree.min.js",
+    "build-standalone": "NODE_ENV=production webpack --config webpack.config.standalone.js && uglifyjs dist/sententree-standalone.js -m -c > dist/sententree-standalone.min.js",
+    "build-lib": "NODE_ENV=production webpack && uglifyjs dist/sententree.js -m -c > dist/sententree.min.js",
+    "build": "npm run build-lib && npm run build-standalone",
     "test": "NODE_ENV=test karma start --single-run",
     "tdd": "NODE_ENV=test karma start",
     "eslint": "eslint --ignore-path .gitignore \"src/**/*.@(js|jsx)\"",
