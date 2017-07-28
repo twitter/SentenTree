@@ -28,7 +28,7 @@ npm install sententree
 ```
 
 ```js
-d3.tsv('data/goal.tsv', (error, data) => {
+d3.tsv('data/demo.tsv', (error, data) => {
   // data format is [{ id, text, count }]
 
   const model = new SentenTreeBuilder()
