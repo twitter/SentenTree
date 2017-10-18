@@ -5,17 +5,20 @@ import { SentenTreeBuilder, SentenTreeVis } from '../../src/main.js';
 const container = document.querySelector('#vis');
 container.innerHTML = 'Loading ...';
 
-DataService.loadFile('data/goal.tsv', (error, data) => {
+DataService.loadFile('data/test_thai.tsv', (error, data) => {
+  console.log('data', data);
   console.time('Build model');
   const model = new SentenTreeBuilder()
+    .tokenize(text => text.split(' '))
     .transformToken(token => (/score(d|s)?/.test(token) ? 'score' : token))
     .buildModel(data);
   console.timeEnd('Build model');
+  console.log(model); 
 
   container.innerHTML = '';
 
   new SentenTreeVis(container)
-    .data(model.getRenderedGraphs(3))
+    .data(model.getRenderedGraphs(10))
     .on('nodeClick', node => {
       console.log('node', node);
     })
