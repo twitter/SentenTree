@@ -186,16 +186,28 @@ function printSeq(words) {
 }
 
 export default class SentenTreeModel {
-  constructor(tokenizedData, termWeights = {}) {
-    // Revised from initGraphs
+  constructor(tokenizedData, options = {}) {
+    // extract options
+    const {
+      termWeights = {},
+      // minimum support is the max of
+      // minSupportCount
+      // and size * minSupportRatio
+      minSupportCount = 2,
+      minSupportRatio = 0.001,
+      maxSupportRatio = 0.75,
+    } = options;
+
+    this.options = options;
+
     const { itemset, entries } = tokenizedData;
     this.tokenizedData = tokenizedData;
     this.terms = tokenizedData.encodeTermWeights(termWeights);
     const size = tokenizedData.computeSize();
 
     this.supportRange = [
-      Math.max(size * 0.001, 2),
-      size * 0.75,
+      Math.max(size * minSupportRatio, minSupportCount),
+      size * maxSupportRatio,
     ];
     const [minSupport, maxSupport] = this.supportRange;
 

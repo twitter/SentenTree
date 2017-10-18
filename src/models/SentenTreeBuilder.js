@@ -46,10 +46,10 @@ export default class SentenTreeBuilder {
     return new TokenizedDataset(tokenizedEntries);
   }
 
-  buildModel(entries, termWeights = {}) {
+  buildModel(entries, options) {
     return new SentenTreeModel(
       this.buildTokenizedDataset(entries),
-      termWeights
+      options
     );
   }
 }
