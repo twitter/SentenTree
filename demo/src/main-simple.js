@@ -4,13 +4,13 @@ import { SentenTreeBuilder, SentenTreeVis, tokenizer } from '../../src/main.js';
 const container = document.querySelector('#vis');
 container.innerHTML = 'Loading ...';
 
-tsv('data/test_thai.tsv', (error, rawdata) => {
+tsv('data/demo.tsv', (error, rawdata) => {
   const data = rawdata.map(d => Object.assign({}, d, { count: +d.count }));
   console.time('Build model');
   const model = new SentenTreeBuilder()
     .tokenize(tokenizer.tokenizeBySpace)
     .transformToken(token => (/score(d|s)?/.test(token) ? 'score' : token))
-    .buildModel(data, { maxSupportRatio: 1 });
+    .buildModel(data);
   console.timeEnd('Build model');
 
   container.innerHTML = '';
