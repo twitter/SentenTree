@@ -1,7 +1,7 @@
 import SentenTreeModel from './SentenTreeModel.js';
 import TokenizedDataset from './TokenizedDataset.js';
 import WordFilter from './WordFilter.js';
-import tokenize from './tokenize.js';
+import { tokenize } from './tokenize.js';
 
 const identity = x => x;
 

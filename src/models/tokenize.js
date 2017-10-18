@@ -1,6 +1,6 @@
 const PATTERN = /http:\/\/t\.co\/\w+|http:\/\/vine\.co\/\w+|http:\/\/t\.co\w+|http:\/\/vine\.co\w+|http:\/\/t\.\w+|http:\/\/vine\.\w+|http:\/\/\w+|\@\w+|\#\w+|\d+(,\d+)+|\w+(-\w+)*|\$?\d+(\.\d+)?\%?|([A-Za-z]\.)+/g;
 
-export default function tokenize(text) {
+export function tokenize(text) {
   const tokens = [];
   PATTERN.lastIndex = 0;
   let tokenResult = PATTERN.exec(text);
@@ -9,4 +9,10 @@ export default function tokenize(text) {
     tokenResult = PATTERN.exec(text);
   }
   return tokens;
+}
+
+export function tokenizeBySpace(text) {
+  return text
+    .split(' ')
+    .filter(x => x.length > 0);
 }

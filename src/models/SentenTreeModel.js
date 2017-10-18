@@ -195,7 +195,7 @@ export default class SentenTreeModel {
 
     this.supportRange = [
       Math.max(size * 0.001, 2),
-      size,
+      size * 0.75,
     ];
     const [minSupport, maxSupport] = this.supportRange;
 

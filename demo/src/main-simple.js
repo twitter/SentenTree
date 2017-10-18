@@ -1,19 +1,18 @@
 import * as DataService from './DataService.js';
-
-import { SentenTreeBuilder, SentenTreeVis } from '../../src/main.js';
+import { tsv } from 'd3-request';
+import { SentenTreeBuilder, SentenTreeVis, tokenizer } from '../../src/main.js';
 
 const container = document.querySelector('#vis');
 container.innerHTML = 'Loading ...';
 
-DataService.loadFile('data/test_thai.tsv', (error, data) => {
-  console.log('data', data);
+tsv('data/demo.tsv', (error, rawdata) => {
+  const data = rawdata.map(d => Object.assign({}, d, { count: +d.count }));
   console.time('Build model');
   const model = new SentenTreeBuilder()
-    .tokenize(text => text.split(' '))
+    .tokenize(tokenizer.tokenizeBySpace)
     .transformToken(token => (/score(d|s)?/.test(token) ? 'score' : token))
     .buildModel(data);
   console.timeEnd('Build model');
-  console.log(model); 
 
   container.innerHTML = '';
 
