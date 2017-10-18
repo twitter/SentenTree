@@ -1757,11 +1757,23 @@ function printSeq(words) {
 
 var SentenTreeModel = function () {
   function SentenTreeModel(tokenizedData) {
-    var termWeights = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, SentenTreeModel);
 
-    // Revised from initGraphs
+    // extract options
+    var _options$termWeights = options.termWeights,
+        termWeights = _options$termWeights === undefined ? {} : _options$termWeights,
+        _options$minSupportCo = options.minSupportCount,
+        minSupportCount = _options$minSupportCo === undefined ? 2 : _options$minSupportCo,
+        _options$minSupportRa = options.minSupportRatio,
+        minSupportRatio = _options$minSupportRa === undefined ? 0.001 : _options$minSupportRa,
+        _options$maxSupportRa = options.maxSupportRatio,
+        maxSupportRatio = _options$maxSupportRa === undefined ? 0.75 : _options$maxSupportRa;
+
+
+    this.options = options;
+
     var itemset = tokenizedData.itemset,
         entries = tokenizedData.entries;
 
@@ -1769,7 +1781,7 @@ var SentenTreeModel = function () {
     this.terms = tokenizedData.encodeTermWeights(termWeights);
     var size = tokenizedData.computeSize();
 
-    this.supportRange = [Math.max(size * 0.001, 2), size / 3];
+    this.supportRange = [Math.max(size * minSupportRatio, minSupportCount), size * maxSupportRatio];
 
     var _supportRange = _slicedToArray(this.supportRange, 2),
         minSupport = _supportRange[0],
@@ -1929,8 +1941,9 @@ WordFilter.getDefault = function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = tokenize;
-var PATTERN = /http:\/\/t\.co\/\w+|http:\/\/vine\.co\/\w+|http:\/\/t\.co\w+|http:\/\/vine\.co\w+|http:\/\/t\.\w+|http:\/\/vine\.\w+|http:\/\/\w+|\@\w+|\#\w+|\d+(,\d+)+|\w+(-\w+)*|\$?\d+(\.\d+)?\%?|([A-Z]\.)+/g;
+exports.tokenize = tokenize;
+exports.tokenizeBySpace = tokenizeBySpace;
+var PATTERN = /http:\/\/t\.co\/\w+|http:\/\/vine\.co\/\w+|http:\/\/t\.co\w+|http:\/\/vine\.co\w+|http:\/\/t\.\w+|http:\/\/vine\.\w+|http:\/\/\w+|\@\w+|\#\w+|\d+(,\d+)+|\w+(-\w+)*|\$?\d+(\.\d+)?\%?|([A-Za-z]\.)+/g;
 
 function tokenize(text) {
   var tokens = [];
@@ -1941,6 +1954,12 @@ function tokenize(text) {
     tokenResult = PATTERN.exec(text);
   }
   return tokens;
+}
+
+function tokenizeBySpace(text) {
+  return text.split(' ').filter(function (x) {
+    return x.length > 0;
+  });
 }
 
 /***/ }),
@@ -2660,8 +2679,6 @@ var _WordFilter2 = _interopRequireDefault(_WordFilter);
 
 var _tokenize = __webpack_require__(25);
 
-var _tokenize2 = _interopRequireDefault(_tokenize);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2674,7 +2691,7 @@ var SentenTreeBuilder = function () {
   function SentenTreeBuilder() {
     _classCallCheck(this, SentenTreeBuilder);
 
-    this._tokenize = _tokenize2.default;
+    this._tokenize = _tokenize.tokenize;
     this._transformToken = identity;
     var filter = _WordFilter2.default.getDefault();
     this._filterToken = function (token) {
@@ -2723,10 +2740,8 @@ var SentenTreeBuilder = function () {
     }
   }, {
     key: 'buildModel',
-    value: function buildModel(entries) {
-      var termWeights = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      return new _SentenTreeModel2.default(this.buildTokenizedDataset(entries), termWeights);
+    value: function buildModel(entries, options) {
+      return new _SentenTreeModel2.default(this.buildTokenizedDataset(entries), options);
     }
   }]);
 
@@ -6454,15 +6469,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_136__;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _tokenize = __webpack_require__(25);
-
-Object.defineProperty(exports, 'tokenize', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_tokenize).default;
-  }
-});
+exports.SentenTreeVis = exports.SentenTreeModel = exports.SentenTreeBuilder = exports.WordFilter = exports.tokenizer = undefined;
 
 var _WordFilter = __webpack_require__(24);
 
@@ -6500,7 +6507,15 @@ Object.defineProperty(exports, 'SentenTreeVis', {
   }
 });
 
+var _tokenize = __webpack_require__(25);
+
+var _tokenizer = _interopRequireWildcard(_tokenize);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var tokenizer = exports.tokenizer = _tokenizer;
 
 /***/ })
 /******/ ]);
