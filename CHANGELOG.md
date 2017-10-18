@@ -1,5 +1,9 @@
 # SentenTree
 
+## v1.0.0
+- Add `tokenizeBySpace` and group tokenize functions under `tokenizer`
+- Add options when building model to control support range
+
 ## v0.1.0
 - Fix heap global import
 - Add standalone bundle
